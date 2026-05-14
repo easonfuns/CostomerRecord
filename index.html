@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恩典久久 · 客戶追蹤</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;}
+.app{max-width:760px;margin:0 auto;padding:1.5rem 1rem 3rem;}
+
+/* ── Header ── */
+.header{margin-bottom:1.25rem;}
+.header h1{font-size:20px;font-weight:700;letter-spacing:.02em;}
+.header p{font-size:13px;color:#888;margin-top:3px;}
+
+/* ── Card ── */
+.card{background:#fff;border:1px solid #e8e6e1;border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+.card-title{font-size:11px;font-weight:500;color:#999;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.08em;}
+
+/* ── Buttons ── */
+.btn{height:38px;padding:0 18px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:1px solid #ddd;background:#fff;color:#1a1a1a;font-family:'Noto Sans TC',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn:hover{background:#f5f4f0;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn.primary{background:#2c5f7a;color:#fff;border-color:#2c5f7a;}
+.btn.primary:hover:not(:disabled){background:#1e4257;}
+.btn.sm{height:30px;padding:0 12px;font-size:12px;}
+.btn.danger{color:#c0392b;border-color:#f5c6cb;}
+.btn.danger:hover{background:#fff5f5;}
+.btn.ghost{border-color:transparent;background:transparent;color:#666;}
+.btn.ghost:hover{background:#f0ede8;color:#1a1a1a;}
+.btn.full{width:100%;justify-content:center;}
+
+/* ── Fields ── */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.field label{font-size:13px;color:#666;}
+.field input,.field select,.field textarea{border:1px solid #ddd;border-radius:8px;padding:0 12px;font-size:14px;font-family:'Noto Sans TC',sans-serif;background:#fff;color:#1a1a1a;width:100%;}
+.field input,.field select{height:38px;}
+.field textarea{padding:10px 12px;resize:vertical;min-height:80px;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#5b8fa8;box-shadow:0 0 0 2px rgba(91,143,168,.15);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── Alert ── */
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;}
+.alert.success{background:#eaf3de;color:#3b6d11;border:1px solid #97c459;}
+.alert.error{background:#fff0f0;color:#c0392b;border:1px solid #f5c6cb;}
+
+/* ── Login ── */
+.role-tabs{display:flex;gap:5px;margin-bottom:1.25rem;padding:4px;background:#ebe9e4;border-radius:12px;}
+.role-tab{flex:1;padding:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:#666;border-radius:9px;transition:all .15s;font-family:'Noto Sans TC',sans-serif;}
+.role-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+
+/* ── User bar ── */
+.user-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#fff;border:1px solid #e8e6e1;border-radius:10px;margin-bottom:1rem;}
+.user-bar-left strong{font-size:14px;}
+.role-badge{font-size:11px;padding:2px 8px;border-radius:99px;background:#e8f0f5;color:#2c5f7a;font-weight:500;margin-left:6px;}
+.user-bar-sub{font-size:12px;color:#888;margin-top:2px;}
+.user-bar-right{display:flex;gap:6px;}
+
+/* ── Sub tabs ── */
+.sub-tabs{display:flex;gap:5px;margin-bottom:1rem;padding:4px;background:#ebe9e4;border-radius:10px;width:fit-content;}
+.sub-tab{padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:#666;border-radius:8px;transition:all .15s;font-family:'Noto Sans TC',sans-serif;}
+.sub-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+
+/* ── Filter row ── */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;}
+.filter-row select{height:34px;border:1px solid #ddd;border-radius:8px;padding:0 10px;font-size:13px;background:#fff;color:#1a1a1a;font-family:'Noto Sans TC',sans-serif;}
+
+/* ── Customer cards ── */
+.customer-list{display:flex;flex-direction:column;gap:10px;}
+.customer-card{background:#fff;border:1px solid #e8e6e1;border-radius:12px;padding:1rem;transition:all .15s;}
+.customer-card.clickable{cursor:pointer;}
+.customer-card.clickable:hover{border-color:#5b8fa8;box-shadow:0 2px 8px rgba(91,143,168,.12);}
+.ccard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.ccard-name{font-size:15px;font-weight:700;}
+.ccard-meta{font-size:12px;color:#888;margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.ccard-tasks{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.task-pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;}
+.task-pill.done{background:#eaf3de;color:#3b6d11;}
+.task-pill.todo{background:#f0ede8;color:#aaa;}
+.ccard-bottom{display:flex;gap:5px;flex-wrap:wrap;}
+.htag{font-size:11px;padding:2px 8px;border-radius:99px;background:#e8f0f5;color:#2c5f7a;}
+.inv-tag{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;}
+.inv-tag.booked{background:#eaf3de;color:#3b6d11;}
+.inv-tag.maybe{background:#fff4d6;color:#8a6200;}
+.inv-tag.refused{background:#f0ede8;color:#888;}
+.inv-tag.none{background:#f5f4f0;color:#aaa;}
+
+/* ── Task checkboxes (form) ── */
+.task-check-list{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;}
+.task-check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f7f4;border-radius:8px;border:1px solid #eee;cursor:pointer;transition:all .12s;user-select:none;}
+.task-check-item.checked{background:#eaf3de;border-color:#97c459;}
+.task-box{width:20px;height:20px;border:2px solid #ccc;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:all .12s;}
+.task-check-item.checked .task-box{background:#3b6d11;border-color:#3b6d11;color:#fff;}
+.task-label-main{font-size:14px;font-weight:500;}
+.task-label-sub{font-size:12px;color:#888;}
+
+/* ── Concerns grid ── */
+.concerns-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;}
+.concern-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8f7f4;border-radius:8px;border:1px solid #eee;cursor:pointer;transition:all .12s;user-select:none;}
+.concern-item:hover{border-color:#5b8fa8;}
+.concern-item.selected{background:#e8f0f5;border-color:#5b8fa8;}
+.concern-ck{width:16px;height:16px;border:1.5px solid #ccc;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transition:all .12s;}
+.concern-item.selected .concern-ck{background:#2c5f7a;border-color:#2c5f7a;color:#fff;}
+.concern-label{font-size:13px;color:#444;line-height:1.3;}
+
+/* ── Radio buttons ── */
+.radio-group{display:flex;gap:8px;flex-wrap:wrap;}
+.radio-btn{padding:7px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid #ddd;background:#fff;color:#666;font-family:'Noto Sans TC',sans-serif;transition:all .12s;}
+.radio-btn.selected{border-color:#2c5f7a;background:#e8f0f5;color:#2c5f7a;}
+
+/* ── Readonly display field ── */
+.ro-field{background:#f8f7f4;color:#555;border:1px solid #eee;border-radius:8px;padding:8px 12px;font-size:13px;font-family:'Noto Sans TC',sans-serif;min-height:36px;display:flex;align-items:center;}
+
+/* ── Section divider ── */
+.sdiv{height:1px;background:#f0ede8;margin:16px 0;}
+.slabel{font-size:11px;font-weight:500;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+
+/* ── Tags ── */
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;}
+.tag.blue{background:#e8f0f5;color:#2c5f7a;}
+.tag.green{background:#eaf3de;color:#3b6d11;}
+.tag.gray{background:#f0ede8;color:#888;}
+
+/* ── Password table ── */
+.pw-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0ede8;}
+.pw-row:last-child{border-bottom:none;}
+.pw-name{font-size:13px;font-weight:500;}
+.pw-sub{font-size:12px;color:#888;margin-top:2px;}
+
+/* ── Overlay modal ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;overflow-y:auto;}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:620px;padding:1.5rem;position:relative;margin:auto;}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;}
+.modal-title{font-size:16px;font-weight:700;}
+.modal-close{border:none;background:none;font-size:22px;cursor:pointer;color:#aaa;padding:2px 6px;border-radius:6px;line-height:1;}
+.modal-close:hover{background:#f0ede8;color:#1a1a1a;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f0ede8;}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:2.5rem;color:#aaa;font-size:14px;}
+
+/* ── List top bar ── */
+.list-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.list-bar-title{font-size:14px;font-weight:500;color:#666;}
+
+/* ── Responsive ── */
+@media(max-width:520px){
+  .field-row{grid-template-columns:1fr;}
+  .concerns-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══════════════════════════════ LOGIN ══════════════════════════════ -->
+<div id="login-screen">
+  <div class="header">
+    <h1>恩典久久 · 客戶追蹤</h1>
+    <p>請選擇身分並登入</p>
+  </div>
+  <div class="card">
+    <div class="role-tabs">
+      <button class="role-tab active" onclick="selectRole('dealer',this)">經銷商</button>
+      <button class="role-tab" onclick="selectRole('team',this)">團隊查看</button>
+      <button class="role-tab" onclick="selectRole('admin',this)">管理員</button>
+    </div>
+    <div id="login-alert"></div>
+
+    <div id="login-dealer">
+      <div class="field"><label>選擇你的名字</label>
+        <select id="l-dealer"><option value="">載入中…</option></select>
+      </div>
+      <div class="field"><label>密碼</label>
+        <input type="password" id="l-dealer-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+    </div>
+
+    <div id="login-team" style="display:none">
+      <div class="field"><label>選擇團隊</label>
+        <select id="l-team"><option value="">載入中…</option></select>
+      </div>
+      <div class="field"><label>團隊密碼</label>
+        <input type="password" id="l-team-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+    </div>
+
+    <div id="login-admin" style="display:none">
+      <div class="field"><label>管理員密碼</label>
+        <input type="password" id="l-admin-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+    </div>
+
+    <button class="btn primary full" onclick="doLogin()">登入</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MAIN APP ══════════════════════════════ -->
+<div id="main-app" style="display:none">
+  <div class="header"><h1>恩典久久 · 客戶追蹤</h1></div>
+
+  <div class="user-bar">
+    <div class="user-bar-left">
+      <div><strong id="ub-name">-</strong><span class="role-badge" id="ub-role">-</span></div>
+      <div class="user-bar-sub" id="ub-team"></div>
+    </div>
+    <div class="user-bar-right">
+      <button class="btn sm ghost" id="btn-changepw" onclick="openChangePw()" style="display:none">改密碼</button>
+      <button class="btn sm" onclick="doLogout()">登出</button>
+    </div>
+  </div>
+
+  <div id="main-alert"></div>
+
+  <!-- 經銷商 view -->
+  <div id="view-dealer" style="display:none">
+    <div class="list-bar">
+      <div class="list-bar-title">我的客戶</div>
+      <button class="btn primary sm" onclick="openCustomerForm(null)">＋ 新增客戶</button>
+    </div>
+    <div id="dealer-list" class="customer-list"></div>
+  </div>
+
+  <!-- 團隊 view -->
+  <div id="view-team" style="display:none">
+    <div class="filter-row">
+      <select id="tv-filter" onchange="renderTeamView()"><option value="">全部成員</option></select>
+    </div>
+    <div id="team-list" class="customer-list"></div>
+  </div>
+
+  <!-- 管理員 view -->
+  <div id="view-admin" style="display:none">
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchAdminTab('customers',this)">所有客戶</button>
+      <button class="sub-tab" onclick="switchAdminTab('passwords',this)">密碼管理</button>
+    </div>
+
+    <div id="admin-customers">
+      <div class="filter-row">
+        <select id="av-team" onchange="onAdminTeamChange()"><option value="">全部團隊</option></select>
+        <select id="av-dealer" onchange="renderAdminList()"><option value="">全部成員</option></select>
+      </div>
+      <div id="admin-list" class="customer-list"></div>
+    </div>
+
+    <div id="admin-passwords" style="display:none">
+      <div class="card">
+        <div class="card-title">經銷商密碼</div>
+        <div id="pw-dealer-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">團隊密碼</div>
+        <div id="pw-team-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ CUSTOMER FORM MODAL ══════════════════════════════ -->
+<div id="customer-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeCustomerForm()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div class="modal-title" id="form-title">新增客戶</div>
+      <button class="modal-close" onclick="closeCustomerForm()">✕</button>
+    </div>
+
+    <!-- 自動填寫資訊 -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+      <div><div class="slabel" style="margin-bottom:5px;">填寫日期</div><div class="ro-field" id="f-date">-</div></div>
+      <div><div class="slabel" style="margin-bottom:5px;">團隊</div><div class="ro-field" id="f-team">-</div></div>
+      <div><div class="slabel" style="margin-bottom:5px;">經銷商</div><div class="ro-field" id="f-dealer">-</div></div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <div class="field-row">
+      <div class="field"><label>客戶姓名／簡稱</label>
+        <input type="text" id="f-cname" placeholder="輸入客戶名稱">
+      </div>
+      <div class="field"><label>恩典卡售出日期</label>
+        <input type="date" id="f-sale-date">
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+    <div class="slabel">三階段任務</div>
+    <div class="task-check-list" style="margin-bottom:6px;">
+      <div class="task-check-item" id="tk1" onclick="toggleTask(0)">
+        <div class="task-box" id="tb1"></div>
+        <div><div class="task-label-main">7日產品使用</div><div class="task-label-sub">客戶持續使用產品滿7天</div></div>
+      </div>
+      <div class="task-check-item" id="tk2" onclick="toggleTask(1)">
+        <div class="task-box" id="tb2"></div>
+        <div><div class="task-label-main">週二課程</div><div class="task-label-sub">完成週二線上課程邀約</div></div>
+      </div>
+      <div class="task-check-item" id="tk3" onclick="toggleTask(2)">
+        <div class="task-box" id="tb3"></div>
+        <div><div class="task-label-main">家庭日</div><div class="task-label-sub">參加家庭日活動</div></div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+    <div class="slabel">客戶健康關注（可複選）</div>
+    <div class="concerns-grid" id="concerns-grid"></div>
+    <div id="other-concern-wrap" style="display:none;margin-top:8px;">
+      <div class="field"><label>其他（請說明）</label>
+        <input type="text" id="f-other" placeholder="輸入其他健康關注">
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+    <div class="field"><label>7日產品使用回饋</label>
+      <textarea id="f-feedback" placeholder="記錄客戶使用產品7天後的回饋…"></textarea>
+    </div>
+
+    <div class="sdiv"></div>
+    <div class="slabel">家庭日邀約狀況</div>
+    <div class="field"><label>是否已參加家庭日</label>
+      <div class="radio-group">
+        <button class="radio-btn" id="rd-yes" onclick="selectAttended('是')">是</button>
+        <button class="radio-btn" id="rd-no" onclick="selectAttended('否')">否</button>
+        <button class="radio-btn" id="rd-na" onclick="selectAttended('')">未填</button>
+      </div>
+    </div>
+    <div class="field"><label>邀約狀態</label>
+      <select id="f-inv">
+        <option value="">— 選擇狀態 —</option>
+        <option value="已報名">已報名</option>
+        <option value="考慮中">考慮中</option>
+        <option value="拒絕">拒絕</option>
+        <option value="未聯繫">未聯繫</option>
+      </select>
+    </div>
+    <div class="field"><label>未參加原因（選填）</label>
+      <textarea id="f-reason" placeholder="記錄客戶未參加的原因…" style="min-height:60px;"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn danger sm" id="btn-del" onclick="confirmDelete()" style="display:none">刪除客戶</button>
+      <button class="btn" onclick="closeCustomerForm()">取消</button>
+      <button class="btn primary" id="save-btn" onclick="saveCustomer()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ CHANGE PASSWORD MODAL ══════════════════════════════ -->
+<div id="changepw-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeChangePw()">
+  <div class="modal" style="max-width:400px;" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div class="modal-title">修改密碼</div>
+      <button class="modal-close" onclick="closeChangePw()">✕</button>
+    </div>
+    <div id="changepw-alert"></div>
+    <div class="field"><label>原密碼</label><input type="password" id="cp-old" placeholder="輸入原密碼"></div>
+    <div class="field"><label>新密碼</label><input type="password" id="cp-new" placeholder="輸入新密碼"></div>
+    <div class="field"><label>確認新密碼</label><input type="password" id="cp-cfm" placeholder="再次輸入新密碼"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeChangePw()">取消</button>
+      <button class="btn primary" onclick="doChangePw()">確認修改</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ SET PASSWORD MODAL (admin) ══════════════════════════════ -->
+<div id="setpw-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeSetPw()">
+  <div class="modal" style="max-width:400px;" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div class="modal-title" id="setpw-title">設定密碼</div>
+      <button class="modal-close" onclick="closeSetPw()">✕</button>
+    </div>
+    <div id="setpw-alert"></div>
+    <div class="field"><label id="setpw-lbl">對象</label><div class="ro-field" id="setpw-name">-</div></div>
+    <div class="field"><label>新密碼</label><input type="password" id="sp-new" placeholder="輸入新密碼"></div>
+    <div class="field"><label>確認新密碼</label><input type="password" id="sp-cfm" placeholder="再次輸入新密碼"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeSetPw()">取消</button>
+      <button class="btn primary" onclick="doSetPw()">確認設定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ★ 部署 Apps Script 後，把新的網址貼在這裡
+const API = 'https://script.google.com/macros/s/AKfycbwmXGGtjzdnYJ8Ahj-cShxLXJe00kzHuXGIjSUzQgPTY5-V4BBonirusQkbMi07ZI60/exec';
+
+const CONCERNS = [
+  '睡眠','精神體力','排便代謝','疼痛不適','體重管理','壓力疲勞',
+  '慢性調養需求','家人健康','價格疑慮','產品安全疑問','不知道是否適合長期使用','其他'
+];
+const TASK_NAMES = ['7日產品使用','週二課程','家庭日'];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let loginRole = 'dealer';
+let currentRole = null, currentId = null, currentName = null, currentTeam = null, currentPw = null;
+let dealers = [], teams = [], customers = [], passwords = [];
+let editingCid = null;
+let taskState  = [false, false, false];
+let selConcerns = new Set();
+let attendedVal = '';
+let setPwTarget = null;
+
+// ── API ───────────────────────────────────────────────────────────────────────
+async function api(data) {
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const d = await api({ action: 'getConfig' });
+    if (d.ok) {
+      dealers = d.dealers || [];
+      teams   = d.teams   || [];
+      populateLoginDropdowns();
+    }
+  } catch(e) {
+    showAlert('login-alert','error','無法連接伺服器，請確認網路後重試');
+  }
+}
+
+function populateLoginDropdowns() {
+  const ds = document.getElementById('l-dealer');
+  ds.innerHTML = '<option value="">— 選擇姓名 —</option>';
+  dealers.forEach(d => {
+    const o = document.createElement('option');
+    o.value = d.id;
+    o.textContent = d.name + (d.team ? ' · ' + d.team : '');
+    ds.appendChild(o);
+  });
+
+  const ts = document.getElementById('l-team');
+  ts.innerHTML = '<option value="">— 選擇團隊 —</option>';
+  teams.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t; o.textContent = t;
+    ts.appendChild(o);
+  });
+}
+
+function selectRole(role, btn) {
+  loginRole = role;
+  document.querySelectorAll('.role-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('login-dealer').style.display = role === 'dealer' ? 'block' : 'none';
+  document.getElementById('login-team').style.display   = role === 'team'   ? 'block' : 'none';
+  document.getElementById('login-admin').style.display  = role === 'admin'  ? 'block' : 'none';
+  document.getElementById('login-alert').innerHTML = '';
+}
+
+async function doLogin() {
+  let type, id, pw, name, team;
+
+  if (loginRole === 'dealer') {
+    id = document.getElementById('l-dealer').value;
+    pw = document.getElementById('l-dealer-pw').value;
+    if (!id) { showAlert('login-alert','error','請選擇你的名字'); return; }
+    if (!pw) { showAlert('login-alert','error','請輸入密碼'); return; }
+    type = 'dealer';
+    const d = dealers.find(x => x.id === id);
+    name = d ? d.name : id;
+    team = d ? (d.team || '') : '';
+  } else if (loginRole === 'team') {
+    id = document.getElementById('l-team').value;
+    pw = document.getElementById('l-team-pw').value;
+    if (!id) { showAlert('login-alert','error','請選擇團隊'); return; }
+    if (!pw) { showAlert('login-alert','error','請輸入密碼'); return; }
+    type = 'team'; name = id; team = id;
+  } else {
+    id  = 'admin';
+    pw  = document.getElementById('l-admin-pw').value;
+    if (!pw) { showAlert('login-alert','error','請輸入密碼'); return; }
+    type = 'admin'; name = '管理員'; team = '';
+  }
+
+  try {
+    const res = await api({ action: 'verifyAuth', type, id, password: pw });
+    if (!res.ok) { showAlert('login-alert','error','密碼錯誤，請再試'); return; }
+    currentRole = type; currentId = id; currentName = name; currentTeam = team; currentPw = pw;
+    await loadCustomers();
+    enterApp();
+  } catch(e) {
+    showAlert('login-alert','error','連線失敗，請再試一次');
+  }
+}
+
+async function loadCustomers() {
+  const res = await api({ action:'getCustomers', type:currentRole, id:currentId, password:currentPw });
+  if (res.ok) customers = res.customers || [];
+}
+
+function enterApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-app').style.display     = 'block';
+
+  document.getElementById('ub-name').textContent  = currentName;
+  document.getElementById('ub-role').textContent  = currentRole==='dealer'?'經銷商':currentRole==='team'?'團隊查看':'管理員';
+  document.getElementById('ub-team').textContent  = (currentRole==='dealer'&&currentTeam) ? currentTeam : '';
+  document.getElementById('btn-changepw').style.display = currentRole==='dealer'?'inline-flex':'none';
+
+  document.getElementById('view-dealer').style.display = currentRole==='dealer'?'block':'none';
+  document.getElementById('view-team').style.display   = currentRole==='team'  ?'block':'none';
+  document.getElementById('view-admin').style.display  = currentRole==='admin' ?'block':'none';
+
+  if (currentRole==='dealer') renderDealerView();
+  if (currentRole==='team')   renderTeamView();
+  if (currentRole==='admin')  renderAdminView();
+}
+
+function doLogout() {
+  currentRole=currentId=currentName=currentTeam=currentPw=null;
+  customers=[]; passwords=[];
+  document.getElementById('main-app').style.display    = 'none';
+  document.getElementById('login-screen').style.display= 'block';
+  ['l-dealer-pw','l-team-pw','l-admin-pw'].forEach(id => document.getElementById(id).value='');
+}
+
+// ── Render helpers ────────────────────────────────────────────────────────────
+function fmtDate(s) {
+  if (!s) return '';
+  if (s.includes('T')) s = s.split('T')[0]; // ISO date
+  const [y,m,d] = s.split('-');
+  return y + '/' + m + '/' + d;
+}
+
+function invClass(s) {
+  return s==='已報名'?'booked':s==='考慮中'?'maybe':s==='拒絕'?'refused':'none';
+}
+
+function customerCard(c, showDealer) {
+  const hcs = (c.health_concerns||[]).filter(h=>h!=='其他');
+  const tasks = [
+    {l:'7日產品',done:c.task1},
+    {l:'週二課程',done:c.task2},
+    {l:'家庭日',done:c.task3}
+  ];
+  const taskPills = tasks.map(t=>`<span class="task-pill ${t.done?'done':'todo'}">${t.done?'✓':'·'} ${t.l}</span>`).join('');
+  const hTags = hcs.map(h=>`<span class="htag">${h}</span>`).join('');
+  const invTag = c.invitation_status ? `<span class="inv-tag ${invClass(c.invitation_status)}">${c.invitation_status}</span>` : '';
+  const dealerBadge = showDealer ? `<span class="tag blue">${c.dname}${c.team?' · '+c.team:''}</span>` : '';
+  const saleStr = c.sale_date ? `恩典卡 ${fmtDate(c.sale_date)}` : '';
+
+  const canClick = currentRole==='dealer'||currentRole==='admin';
+  const clickAttr = canClick ? `onclick="openCustomerForm('${c.cid}')"` : '';
+  const cursorCls = canClick ? ' clickable' : '';
+
+  return `<div class="customer-card${cursorCls}" ${clickAttr}>
+    <div class="ccard-top">
+      <div>
+        <div class="ccard-name">${c.cname||'(未命名)'}</div>
+        <div class="ccard-meta">${saleStr?'<span>'+saleStr+'</span>':''}${dealerBadge}</div>
+      </div>
+      <div style="display:flex;gap:5px;align-items:center;">${invTag}</div>
+    </div>
+    <div class="ccard-tasks">${taskPills}</div>
+    ${hTags?`<div class="ccard-bottom">${hTags}</div>`:''}
+  </div>`;
+}
+
+function sorted(arr) {
+  return [...arr].sort((a,b)=>(b.updated_at||'').localeCompare(a.updated_at||''));
+}
+
+// ── Dealer view ───────────────────────────────────────────────────────────────
+function renderDealerView() {
+  const el = document.getElementById('dealer-list');
+  if (!customers.length) {
+    el.innerHTML = '<div class="empty">尚無客戶紀錄<br><span style="font-size:12px;">點擊「新增客戶」開始追蹤</span></div>';
+    return;
+  }
+  el.innerHTML = sorted(customers).map(c => customerCard(c,false)).join('');
+}
+
+// ── Team view ─────────────────────────────────────────────────────────────────
+function renderTeamView() {
+  const sel = document.getElementById('tv-filter');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">全部成員</option>';
+  dealers.filter(d=>d.team===currentId).forEach(d=>{
+    const o=document.createElement('option'); o.value=d.id; o.textContent=d.name; sel.appendChild(o);
+  });
+  sel.value = cur;
+
+  let list = customers;
+  if (cur) list = list.filter(c=>c.did===cur);
+
+  const el = document.getElementById('team-list');
+  el.innerHTML = list.length ? sorted(list).map(c=>customerCard(c,true)).join('') :
+    '<div class="empty">尚無客戶紀錄</div>';
+}
+
+// ── Admin view ────────────────────────────────────────────────────────────────
+function renderAdminView() {
+  const teamSel = document.getElementById('av-team');
+  const cur = teamSel.value;
+  teamSel.innerHTML = '<option value="">全部團隊</option>';
+  teams.forEach(t=>{ const o=document.createElement('option'); o.value=t; o.textContent=t; teamSel.appendChild(o); });
+  teamSel.value = cur;
+  renderAdminList();
+}
+
+function onAdminTeamChange() {
+  const t = document.getElementById('av-team').value;
+  const sel = document.getElementById('av-dealer');
+  sel.innerHTML = '<option value="">全部成員</option>';
+  (t ? dealers.filter(d=>d.team===t) : dealers).forEach(d=>{
+    const o=document.createElement('option'); o.value=d.id; o.textContent=d.name; sel.appendChild(o);
+  });
+  renderAdminList();
+}
+
+function renderAdminList() {
+  const ft = document.getElementById('av-team').value;
+  const fd = document.getElementById('av-dealer').value;
+  let list = customers;
+  if (ft) list = list.filter(c=>c.team===ft);
+  if (fd) list = list.filter(c=>c.did===fd);
+  const el = document.getElementById('admin-list');
+  el.innerHTML = list.length ? sorted(list).map(c=>customerCard(c,true)).join('') :
+    '<div class="empty">尚無客戶紀錄</div>';
+}
+
+function switchAdminTab(tab, btn) {
+  document.getElementById('admin-customers').style.display  = tab==='customers'?'block':'none';
+  document.getElementById('admin-passwords').style.display  = tab==='passwords'?'block':'none';
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab==='passwords') loadPasswordList();
+}
+
+// ── Password management ───────────────────────────────────────────────────────
+async function loadPasswordList() {
+  try {
+    const res = await api({ action:'getPasswords', adminPw:currentPw });
+    if (res.ok) passwords = res.passwords || [];
+  } catch(e){}
+  renderPasswordList();
+}
+
+function renderPasswordList() {
+  const dlEl = document.getElementById('pw-dealer-list');
+  dlEl.innerHTML = dealers.length ? dealers.map(d=>{
+    const rec = passwords.find(p=>p.type==='dealer'&&String(p.id)===String(d.id));
+    return `<div class="pw-row">
+      <div><div class="pw-name">${d.name}</div>
+      <div class="pw-sub">${d.team||'未分配'} · 密碼：${rec?'已設定':'(預設 777)'}</div></div>
+      <button class="btn sm" onclick="openSetPw('dealer','${d.id}','${d.name}')">設定密碼</button>
+    </div>`;
+  }).join('') : '<div style="color:#aaa;font-size:13px;padding:1rem 0;">尚無經銷商</div>';
+
+  const tmEl = document.getElementById('pw-team-list');
+  tmEl.innerHTML = teams.length ? teams.map(t=>{
+    const rec = passwords.find(p=>p.type==='team'&&p.id===t);
+    return `<div class="pw-row">
+      <div><div class="pw-name">${t}</div>
+      <div class="pw-sub">密碼：${rec?'已設定':'(預設 777)'}</div></div>
+      <button class="btn sm" onclick="openSetPw('team','${t}','${t}')">設定密碼</button>
+    </div>`;
+  }).join('') : '<div style="color:#aaa;font-size:13px;padding:1rem 0;">尚無團隊</div>';
+}
+
+function openSetPw(type,id,name) {
+  setPwTarget = {type,id,name};
+  document.getElementById('setpw-title').textContent = '設定密碼：' + name;
+  document.getElementById('setpw-name').textContent  = name;
+  document.getElementById('sp-new').value = '';
+  document.getElementById('sp-cfm').value = '';
+  document.getElementById('setpw-alert').innerHTML = '';
+  document.getElementById('setpw-modal').style.display = 'flex';
+}
+function closeSetPw() { document.getElementById('setpw-modal').style.display='none'; }
+
+async function doSetPw() {
+  const nw = document.getElementById('sp-new').value;
+  const cf = document.getElementById('sp-cfm').value;
+  if (!nw) { showAlert('setpw-alert','error','請輸入新密碼'); return; }
+  if (nw!==cf) { showAlert('setpw-alert','error','密碼不一致'); return; }
+  try {
+    const res = await api({ action:'setPassword', type:setPwTarget.type, id:setPwTarget.id, pw:nw, adminPw:currentPw });
+    if (res.ok) {
+      const idx = passwords.findIndex(p=>p.type===setPwTarget.type&&String(p.id)===String(setPwTarget.id));
+      if (idx!==-1) passwords[idx].password=nw; else passwords.push({type:setPwTarget.type,id:setPwTarget.id,password:nw});
+      closeSetPw(); renderPasswordList(); showAlert('main-alert','success','✓ 密碼已設定');
+    } else { showAlert('setpw-alert','error',res.error||'設定失敗'); }
+  } catch(e) { showAlert('setpw-alert','error','連線失敗'); }
+}
+
+// ── Customer form ─────────────────────────────────────────────────────────────
+function buildConcernsGrid() {
+  document.getElementById('concerns-grid').innerHTML = CONCERNS.map((c,i)=>
+    `<div class="concern-item" id="ci${i}" onclick="toggleConcern('${c}',${i})">
+      <div class="concern-ck" id="ck${i}"></div>
+      <div class="concern-label">${c}</div>
+    </div>`
+  ).join('');
+}
+
+function toggleConcern(c,i) {
+  if (selConcerns.has(c)) { selConcerns.delete(c); document.getElementById('ci'+i).classList.remove('selected'); document.getElementById('ck'+i).textContent=''; }
+  else { selConcerns.add(c); document.getElementById('ci'+i).classList.add('selected'); document.getElementById('ck'+i).textContent='✓'; }
+  document.getElementById('other-concern-wrap').style.display = selConcerns.has('其他')?'block':'none';
+}
+
+function renderConcernState() {
+  CONCERNS.forEach((c,i)=>{
+    const el=document.getElementById('ci'+i), ck=document.getElementById('ck'+i);
+    if (!el) return;
+    if (selConcerns.has(c)) { el.classList.add('selected'); ck.textContent='✓'; }
+    else { el.classList.remove('selected'); ck.textContent=''; }
+  });
+  document.getElementById('other-concern-wrap').style.display = selConcerns.has('其他')?'block':'none';
+}
+
+function toggleTask(n) {
+  taskState[n] = !taskState[n];
+  renderTaskState();
+}
+
+function renderTaskState() {
+  for (let i=0;i<3;i++) {
+    const item=document.getElementById('tk'+(i+1)), box=document.getElementById('tb'+(i+1));
+    if (taskState[i]) { item.classList.add('checked'); box.textContent='✓'; }
+    else { item.classList.remove('checked'); box.textContent=''; }
+  }
+}
+
+function selectAttended(val) {
+  attendedVal = val;
+  document.getElementById('rd-yes').classList.toggle('selected', val==='是');
+  document.getElementById('rd-no').classList.toggle('selected',  val==='否');
+  document.getElementById('rd-na').classList.toggle('selected',  val==='');
+}
+
+function openCustomerForm(cid) {
+  buildConcernsGrid();
+  editingCid  = cid;
+  taskState   = [false,false,false];
+  selConcerns = new Set();
+  attendedVal = '';
+
+  const today = new Date();
+  const todayStr = today.getFullYear() + '/' + String(today.getMonth()+1).padStart(2,'0') + '/' + String(today.getDate()).padStart(2,'0');
+  const isAdmin = currentRole==='admin';
+
+  document.getElementById('btn-del').style.display = (isAdmin && cid) ? 'inline-flex' : 'none';
+
+  if (cid) {
+    const c = customers.find(x=>x.cid===cid);
+    if (!c) return;
+    document.getElementById('form-title').textContent = '編輯客戶';
+    document.getElementById('f-date').textContent   = c.created_at ? fmtDate(c.created_at.split('T')[0]) : '-';
+    document.getElementById('f-team').textContent   = c.team || '（未分配）';
+    document.getElementById('f-dealer').textContent = c.dname;
+    document.getElementById('f-cname').value        = c.cname || '';
+    document.getElementById('f-sale-date').value    = c.sale_date || '';
+    taskState = [c.task1, c.task2, c.task3];
+    (c.health_concerns||[]).forEach(h=>selConcerns.add(h));
+    document.getElementById('f-other').value    = c.health_other || '';
+    document.getElementById('f-feedback').value = c.feedback_7day || '';
+    selectAttended(c.attended_family_day || '');
+    document.getElementById('f-inv').value    = c.invitation_status || '';
+    document.getElementById('f-reason').value = c.reason_not_attended || '';
+  } else {
+    document.getElementById('form-title').textContent = '新增客戶';
+    document.getElementById('f-date').textContent   = todayStr;
+    document.getElementById('f-team').textContent   = currentTeam || '（未分配）';
+    document.getElementById('f-dealer').textContent = currentName;
+    document.getElementById('f-cname').value = '';
+    document.getElementById('f-sale-date').value = '';
+    document.getElementById('f-other').value = '';
+    document.getElementById('f-feedback').value = '';
+    document.getElementById('f-inv').value = '';
+    document.getElementById('f-reason').value = '';
+    selectAttended('');
+  }
+
+  renderTaskState();
+  renderConcernState();
+  document.getElementById('customer-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCustomerForm() {
+  document.getElementById('customer-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+async function saveCustomer() {
+  const cname = document.getElementById('f-cname').value.trim();
+  if (!cname) { showAlert('main-alert','error','請輸入客戶姓名'); closeCustomerForm(); return; }
+
+  // 若管理員編輯，保留原始 did/dname/team
+  let did = currentId, dname = currentName, team = currentTeam||'';
+  if (currentRole==='admin' && editingCid) {
+    const orig = customers.find(x=>x.cid===editingCid);
+    if (orig) { did=orig.did; dname=orig.dname; team=orig.team||''; }
+  }
+
+  const customer = {
+    cid:  editingCid || null,
+    did, dname, team, cname,
+    sale_date: document.getElementById('f-sale-date').value,
+    task1: taskState[0], task2: taskState[1], task3: taskState[2],
+    health_concerns: [...selConcerns],
+    health_other:    document.getElementById('f-other').value,
+    feedback_7day:   document.getElementById('f-feedback').value,
+    attended_family_day: attendedVal,
+    invitation_status:   document.getElementById('f-inv').value,
+    reason_not_attended: document.getElementById('f-reason').value,
+  };
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled=true; btn.textContent='儲存中…';
+
+  try {
+    const res = await api({
+      action: 'saveCustomer',
+      customer,
+      did: currentRole==='admin' ? did : currentId,
+      password: currentPw,
+      isAdmin: currentRole==='admin'
+    });
+    if (res.ok) {
+      const now = new Date().toISOString();
+      if (editingCid) {
+        const idx = customers.findIndex(x=>x.cid===editingCid);
+        if (idx!==-1) customers[idx] = {...customer, cid:editingCid, updated_at:now, created_at:customers[idx].created_at};
+      } else {
+        customers.push({...customer, cid:res.cid, created_at:now, updated_at:now});
+      }
+      closeCustomerForm();
+      showAlert('main-alert','success', editingCid?'✓ 客戶資料已更新':'✓ 客戶已新增');
+      if (currentRole==='dealer') renderDealerView();
+      if (currentRole==='admin')  renderAdminList();
+    } else {
+      showAlert('main-alert','error', res.error||'儲存失敗');
+      closeCustomerForm();
+    }
+  } catch(e) {
+    showAlert('main-alert','error','連線失敗，請再試');
+    closeCustomerForm();
+  } finally {
+    btn.disabled=false; btn.textContent='儲存';
+  }
+}
+
+async function confirmDelete() {
+  if (!confirm('確定要刪除此客戶紀錄？此操作無法復原。')) return;
+  try {
+    const res = await api({ action:'deleteCustomer', cid:editingCid, password:currentPw });
+    if (res.ok) {
+      customers = customers.filter(x=>x.cid!==editingCid);
+      closeCustomerForm(); showAlert('main-alert','success','✓ 已刪除客戶'); renderAdminList();
+    } else { showAlert('main-alert','error',res.error||'刪除失敗'); }
+  } catch(e) { showAlert('main-alert','error','連線失敗'); }
+}
+
+// ── Change password ───────────────────────────────────────────────────────────
+function openChangePw() {
+  ['cp-old','cp-new','cp-cfm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('changepw-alert').innerHTML='';
+  document.getElementById('changepw-modal').style.display='flex';
+}
+function closeChangePw() { document.getElementById('changepw-modal').style.display='none'; }
+
+async function doChangePw() {
+  const old=document.getElementById('cp-old').value;
+  const nw =document.getElementById('cp-new').value;
+  const cf =document.getElementById('cp-cfm').value;
+  if (!old||!nw) { showAlert('changepw-alert','error','請填寫所有欄位'); return; }
+  if (nw!==cf)   { showAlert('changepw-alert','error','新密碼不一致'); return; }
+  try {
+    const res = await api({ action:'changePassword', type:currentRole, id:currentId, oldPw:old, newPw:nw });
+    if (res.ok) { currentPw=nw; closeChangePw(); showAlert('main-alert','success','✓ 密碼已修改'); }
+    else { showAlert('changepw-alert','error',res.error||'修改失敗'); }
+  } catch(e) { showAlert('changepw-alert','error','連線失敗'); }
+}
+
+// ── Util ──────────────────────────────────────────────────────────────────────
+function showAlert(id, type, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = `<div class="alert ${type}">${msg}</div>`;
+  setTimeout(()=>{ if(el) el.innerHTML=''; }, 4000);
+}
+
+// ── Start ─────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
