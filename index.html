@@ -753,7 +753,7 @@ function openCustomerForm(cid) {
   document.getElementById('btn-del').style.display = (isAdmin && cid) ? 'inline-flex' : 'none';
 
   if (cid) {
-    const c = customers.find(x=>x.cid===cid);
+    const c = customers.find(x=>String(x.cid)===String(cid));
     if (!c) return;
     document.getElementById('form-title').textContent = '編輯客戶';
     document.getElementById('f-date').textContent   = c.created_at ? fmtDate(c.created_at.split('T')[0]) : '-';
@@ -831,7 +831,7 @@ async function saveCustomer() {
     if (res.ok) {
       const now = new Date().toISOString();
       if (editingCid) {
-        const idx = customers.findIndex(x=>x.cid===editingCid);
+        const idx = customers.findIndex(x=>String(x.cid)===String(editingCid));
         if (idx!==-1) customers[idx] = {...customer, cid:editingCid, updated_at:now, created_at:customers[idx].created_at};
       } else {
         customers.push({...customer, cid:res.cid, created_at:now, updated_at:now});
@@ -857,7 +857,7 @@ async function confirmDelete() {
   try {
     const res = await api({ action:'deleteCustomer', cid:editingCid, password:currentPw });
     if (res.ok) {
-      customers = customers.filter(x=>x.cid!==editingCid);
+      customers = customers.filter(x=>String(x.cid)!==String(editingCid));
       closeCustomerForm(); showAlert('main-alert','success','✓ 已刪除客戶'); renderAdminList();
     } else { showAlert('main-alert','error',res.error||'刪除失敗'); }
   } catch(e) { showAlert('main-alert','error','連線失敗'); }
