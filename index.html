@@ -542,7 +542,8 @@ async function doLogin() {
     if (!pw){showAlert('login-alert','error','請輸入密碼');return;}
     type='dealer';
     const d=dealers.find(x=>x.id===id);
-    name=d?d.name:id; team=d?(d.team||')':'';
+    name=d?d.name:id; team=d?(d.team||''):'';
+
   } else if (loginRole==='team') {
     id=document.getElementById('l-team').value;
     pw=document.getElementById('l-team-pw').value;
