@@ -175,6 +175,41 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
   .concerns-grid{grid-template-columns:1fr;}
   .auto-info-bar{grid-template-columns:1fr 1fr;}
 }
+
+/* ── Dashboard ── */
+.dash-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem;}
+.stat-card{background:#fff;border:1px solid #e8e6e1;border-radius:12px;padding:1rem 1.1rem;}
+.stat-num{font-size:26px;font-weight:700;color:#1a1a1a;line-height:1.1;margin-bottom:3px;}
+.stat-unit{font-size:14px;font-weight:400;color:#888;margin-left:2px;}
+.stat-label{font-size:12px;color:#888;}
+.prog-item{margin-bottom:14px;}
+.prog-item:last-child{margin-bottom:0;}
+.prog-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.prog-name{font-size:13px;font-weight:500;}
+.prog-val{font-size:12px;color:#888;}
+.prog-bar{height:8px;background:#f0ede8;border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;transition:width .6s ease;}
+.prog-fill.c1{background:#2c5f7a;}
+.prog-fill.c2{background:#5b8fa8;}
+.prog-fill.c3{background:#3b6d11;}
+.hbar-item{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.hbar-item:last-child{margin-bottom:0;}
+.hbar-label{font-size:12px;color:#555;flex-shrink:0;text-align:right;}
+.hbar-track{flex:1;height:20px;background:#f0ede8;border-radius:5px;overflow:hidden;}
+.hbar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:7px;min-width:4px;}
+.hbar-text{font-size:11px;font-weight:700;color:#fff;}
+.hbar-count{font-size:12px;color:#999;width:24px;text-align:right;flex-shrink:0;}
+.dash-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.team-table{width:100%;border-collapse:collapse;font-size:12px;}
+.team-table th{text-align:left;padding:7px 6px;font-weight:500;font-size:11px;color:#999;border-bottom:1px solid #eee;white-space:nowrap;}
+.team-table td{padding:8px 6px;border-bottom:1px solid #f0ede8;}
+.team-table tr:last-child td{border-bottom:none;}
+.pct{font-size:11px;padding:2px 7px;border-radius:99px;font-weight:500;display:inline-block;}
+.pct.hi{background:#eaf3de;color:#3b6d11;}
+.pct.md{background:#fff4d6;color:#8a6200;}
+.pct.lo{background:#f0ede8;color:#888;}
+.dash-divider{height:1px;background:#f0ede8;margin:10px 0;}
+@media(max-width:600px){.dash-summary{grid-template-columns:repeat(2,1fr);}.dash-2col{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -260,6 +295,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
   <div id="view-admin" style="display:none">
     <div class="sub-tabs">
       <button class="sub-tab active" onclick="switchAdminTab('customers',this)">所有客戶</button>
+      <button class="sub-tab" onclick="switchAdminTab('dashboard',this)">數據儀表板</button>
       <button class="sub-tab" onclick="switchAdminTab('passwords',this)">密碼管理</button>
     </div>
     <div id="admin-customers">
@@ -277,6 +313,39 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
       <div class="card">
         <div class="card-title">團隊密碼</div>
         <div id="pw-team-list"></div>
+      </div>
+    </div>
+    <div id="admin-dashboard" style="display:none">
+      <div class="filter-row" style="margin-bottom:1rem;">
+        <select id="dash-period" onchange="renderDashboard()">
+          <option value="all">全部時間</option>
+          <option value="month">本月</option>
+          <option value="week">本週</option>
+        </select>
+        <select id="dash-team" onchange="renderDashboard()">
+          <option value="">全部團隊</option>
+        </select>
+      </div>
+      <div class="dash-summary" id="dash-summary"></div>
+      <div class="dash-2col">
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">三階段任務完成率</div>
+          <div id="dash-tasks"></div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">家庭日邀約狀態</div>
+          <div id="dash-fday"></div>
+        </div>
+      </div>
+      <div class="dash-2col" style="margin-top:10px;">
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">健康關注排行（前8）</div>
+          <div id="dash-health"></div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">各團隊表現</div>
+          <div id="dash-teams"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -695,11 +764,13 @@ function renderAdminList() {
 }
 
 function switchAdminTab(tab,btn) {
-  document.getElementById('admin-customers').style.display=tab==='customers'?'block':'none';
-  document.getElementById('admin-passwords').style.display=tab==='passwords'?'block':'none';
+  document.getElementById('admin-customers').style.display =tab==='customers' ?'block':'none';
+  document.getElementById('admin-dashboard').style.display =tab==='dashboard' ?'block':'none';
+  document.getElementById('admin-passwords').style.display =tab==='passwords' ?'block':'none';
   document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if (tab==='passwords') loadPasswordList();
+  if (tab==='dashboard') renderDashboard();
 }
 
 // ── Password management ────────────────────────────────────────────────────────
@@ -978,6 +1049,118 @@ async function doChangePw() {
 }
 
 // ── Utils ──────────────────────────────────────────────────────────────────────
+function getWeekStart() {
+  const d=new Date(); d.setHours(0,0,0,0);
+  d.setDate(d.getDate()-d.getDay());
+  return d;
+}
+
+function renderDashboard() {
+  // Populate team dropdown
+  const teamSel=document.getElementById('dash-team');
+  const curTeam=teamSel.value;
+  teamSel.innerHTML='<option value="">全部團隊</option>';
+  teams.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;teamSel.appendChild(o);});
+  if(curTeam) teamSel.value=curTeam;
+
+  const period=document.getElementById('dash-period').value;
+  const teamFilter=teamSel.value;
+  let list=customers;
+  if (period==='week') {
+    const ws=getWeekStart();
+    list=customers.filter(c=>c.created_at&&new Date(c.created_at)>=ws);
+  } else if (period==='month') {
+    const now=new Date();
+    const ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+    list=customers.filter(c=>c.created_at&&String(c.created_at).startsWith(ym));
+  }
+  if (teamFilter) list=list.filter(c=>c.team===teamFilter);
+  const total=list.length;
+  const attended=list.filter(c=>c.attended_family_day==='是').length;
+  const dayVal=list.reduce((s,c)=>s+(parseFloat(c.purchase_value_day)||0),0);
+  const val7d=list.reduce((s,c)=>s+(parseFloat(c.purchase_value_7days)||0),0);
+  const fmt=(n)=>n>0?'$'+n.toLocaleString():'—';
+
+  // Summary
+  document.getElementById('dash-summary').innerHTML=[
+    {n:total,      u:'人',l:'總客戶數'},
+    {n:attended,   u:'人',l:'家庭日到場'},
+    {n:fmt(dayVal),u:'',  l:'當日購買總計'},
+    {n:fmt(val7d), u:'',  l:'7日內購買總計'},
+  ].map(s=>`<div class="stat-card">
+    <div class="stat-num">${s.n}${s.u?`<span class="stat-unit">${s.u}</span>`:''}</div>
+    <div class="stat-label">${s.l}</div>
+  </div>`).join('');
+
+  // Tasks
+  const t1=list.filter(c=>c.task1).length;
+  const t2=list.filter(c=>c.task2).length;
+  const t3=list.filter(c=>c.task3).length;
+  const pct=n=>total>0?Math.round(n/total*100):0;
+  document.getElementById('dash-tasks').innerHTML=[
+    {n:'7日產品使用',v:t1,p:pct(t1),c:'c1'},
+    {n:'週二課程',   v:t2,p:pct(t2),c:'c2'},
+    {n:'家庭日任務', v:t3,p:pct(t3),c:'c3'},
+  ].map(t=>`<div class="prog-item">
+    <div class="prog-hd"><span class="prog-name">${t.n}</span><span class="prog-val">${t.v}/${total} &nbsp;${t.p}%</span></div>
+    <div class="prog-bar"><div class="prog-fill ${t.c}" style="width:${t.p}%"></div></div>
+  </div>`).join('');
+
+  // Family day status
+  const inv={已報名:0,考慮中:0,拒絕:0,未聯繫:0};
+  list.forEach(c=>{if(c.invitation_status)inv[c.invitation_status]=(inv[c.invitation_status]||0)+1;});
+  const maxInv=Math.max(...Object.values(inv),1);
+  const iCol={已報名:'#3b6d11',考慮中:'#c8960c',拒絕:'#aaa',未聯繫:'#5b8fa8'};
+  document.getElementById('dash-fday').innerHTML=
+    Object.entries(inv).map(([k,v])=>`<div class="hbar-item">
+      <div class="hbar-label" style="width:52px;">${k}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(v/maxInv*100)}%;background:${iCol[k]}">
+        ${v>0?`<span class="hbar-text">${v}</span>`:''}
+      </div></div>
+      <div class="hbar-count">${v}</div>
+    </div>`).join('')+
+    `<div class="dash-divider"></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;">
+      <span>實際到場</span><span style="font-weight:700;color:#1a1a1a;">${attended} 人</span>
+    </div>`;
+
+  // Health concerns ranking
+  const hc={};
+  list.forEach(c=>(c.health_concerns||[]).filter(h=>h!=='其他').forEach(h=>hc[h]=(hc[h]||0)+1));
+  const topHC=Object.entries(hc).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxHC=topHC.length>0?topHC[0][1]:1;
+  document.getElementById('dash-health').innerHTML=topHC.length>0?
+    topHC.map(([k,v])=>`<div class="hbar-item">
+      <div class="hbar-label" style="width:88px;font-size:11px;">${k}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(v/maxHC*100)}%;background:#5b8fa8">
+        ${v>0?`<span class="hbar-text">${v}</span>`:''}
+      </div></div>
+      <div class="hbar-count">${v}</div>
+    </div>`).join(''):
+    '<div class="empty" style="padding:1rem 0;">尚無資料</div>';
+
+  // Team stats
+  const ts={};
+  list.forEach(c=>{
+    const t=c.team||'未分配';
+    if(!ts[t])ts[t]={n:0,t1:0,t2:0,t3:0,att:0};
+    ts[t].n++;
+    if(c.task1)ts[t].t1++; if(c.task2)ts[t].t2++; if(c.task3)ts[t].t3++;
+    if(c.attended_family_day==='是')ts[t].att++;
+  });
+  const pb=(n,d)=>{const p=d>0?Math.round(n/d*100):0;const cl=p>=60?'hi':p>=30?'md':'lo';return `<span class="pct ${cl}">${p}%</span>`;};
+  document.getElementById('dash-teams').innerHTML=Object.keys(ts).length>0?
+    `<table class="team-table"><thead><tr>
+      <th>團隊</th><th>客戶</th><th>7日品</th><th>課程</th><th>家庭日</th><th>到場</th>
+    </tr></thead><tbody>`+
+    Object.entries(ts).sort((a,b)=>b[1].n-a[1].n).map(([t,s])=>`<tr>
+      <td style="font-weight:500;">${t}</td><td>${s.n}</td>
+      <td>${pb(s.t1,s.n)}</td><td>${pb(s.t2,s.n)}</td><td>${pb(s.t3,s.n)}</td>
+      <td>${s.att}</td>
+    </tr>`).join('')+'</tbody></table>':
+    '<div class="empty" style="padding:1rem 0;">尚無資料</div>';
+}
+
 function showAlert(id,type,msg){
   const el=document.getElementById(id);
   if (!el) return;
