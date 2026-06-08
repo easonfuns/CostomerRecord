@@ -699,7 +699,8 @@ function customerCard(c, showDealer) {
   const dealerBadge=showDealer?`<span class="tag blue">${c.dname}${c.team?' · '+c.team:''}</span>`:'';
   const saleStr=c.sale_date?`恩典卡 ${fmtDate(c.sale_date)}`:'';
   const fdayStr=c.attended_family_day==='是'&&c.family_day_date?`家庭日 ${fmtDate(c.family_day_date)}`:'';
-  const qBadge=(c.questions||[]).length>0?`<span class="tag gray">提問 ${c.questions.length} 條</span>`:'';
+  const _qs=Array.isArray(c.questions)?c.questions:[];
+  const qBadge=_qs.length>0?`<span class="tag gray">提問 ${_qs.length} 條</span>`:'';
   const isInquiry=c.source==='inquiry';
   const srcBadge=isInquiry?'<span class="tag inquiry">客戶自填</span>':'';
   const contactStr=isInquiry&&(c.contact_phone||c.contact_line)?
@@ -953,7 +954,8 @@ async function openCustomerForm(cid) {
       document.getElementById('ic-phone').textContent=c.contact_phone||'—';
       document.getElementById('ic-line').textContent=c.contact_line||'—';
       document.getElementById('ic-time').textContent=c.contact_time||'—';
-      document.getElementById('ic-products').textContent=(c.inquiry_products||[]).join('、')||'—';
+      const _ips=Array.isArray(c.inquiry_products)?c.inquiry_products:(typeof c.inquiry_products==='string'&&c.inquiry_products?(function(){try{return JSON.parse(c.inquiry_products);}catch(e){return[];}}()):[]);
+      document.getElementById('ic-products').textContent=_ips.join('、')||'—';
       inqPanel.style.display='block';
     } else {
       inqPanel.style.display='none';
