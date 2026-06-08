@@ -138,6 +138,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
 .tag.green{background:#eaf3de;color:#3b6d11;}
 .tag.gray{background:#f0ede8;color:#888;}
 .tag.inquiry{background:#fff4d6;color:#8a6200;border:1px solid #f0d080;}
+/* ── Select mode ── */
+.card-cb{width:20px;height:20px;border:2px solid #ccc;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;transition:all .12s;margin-top:1px;}
+.card-cb.on{background:#c0392b;border-color:#c0392b;}
+.customer-card.sel-card{border-color:#f5c6cb;background:#fff8f8;}
+.bulk-bar{display:none;justify-content:space-between;align-items:center;padding:10px 14px;background:#fff0f0;border:1px solid #f5c6cb;border-radius:10px;margin-bottom:10px;}
+
 
 /* Password rows */
 .pw-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0ede8;}
@@ -279,7 +285,17 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
   <div id="view-dealer" style="display:none">
     <div class="list-bar">
       <div class="list-bar-title">我的客戶</div>
-      <button class="btn primary sm" onclick="openCustomerForm(null)">＋ 新增客戶</button>
+      <div style="display:flex;gap:7px;">
+        <button class="btn sm" id="btn-select-mode" onclick="toggleSelectMode()">選取</button>
+        <button class="btn primary sm" id="btn-add-customer" onclick="openCustomerForm(null)">＋ 新增客戶</button>
+      </div>
+    </div>
+    <div class="bulk-bar" id="bulk-bar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn sm ghost" onclick="toggleSelectAll()" id="btn-sel-all">全選</button>
+        <span style="font-size:13px;color:#666;">已選取 <strong id="bulk-count">0</strong> 筆</span>
+      </div>
+      <button class="btn sm danger" id="btn-bulk-del" onclick="bulkDelete()">刪除選取</button>
     </div>
     <div id="dealer-list" class="customer-list"></div>
   </div>
@@ -372,12 +388,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
 
       <!-- 客戶自填聯絡資訊 -->
       <div id="inquiry-contact-panel" style="display:none;background:#fff8e6;border:1px solid #f0d080;border-radius:10px;padding:12px 14px;margin:1rem 0 0;">
-        <div style="font-size:11px;font-weight:700;color:#8a6200;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">📋 客戶自填資訊</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
-          <div><span style="color:#aaa;">電話：</span><span id="ic-phone" style="font-weight:500;"></span></div>
-          <div><span style="color:#aaa;">LINE：</span><span id="ic-line" style="font-weight:500;"></span></div>
-          <div><span style="color:#aaa;">聯絡時間：</span><span id="ic-time" style="font-weight:500;"></span></div>
-          <div style="grid-column:1/-1;"><span style="color:#aaa;">想了解：</span><span id="ic-products" style="font-weight:500;"></span></div>
+        <div style="font-size:11px;font-weight:700;color:#8a6200;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">📋 客戶自填資訊</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:13px;">
+          <div><span style="color:#aaa;">偏好聯絡時間：</span><span id="ic-time" style="font-weight:500;"></span></div>
+          <div><span style="color:#aaa;">想了解：</span><span id="ic-products" style="font-weight:500;"></span></div>
         </div>
       </div>
 
@@ -387,6 +401,16 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
         <div class="field">
           <label>客戶姓名／簡稱</label>
           <input type="text" id="f-cname" placeholder="輸入客戶名稱">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>聯絡電話</label>
+            <input type="tel" id="f-phone" placeholder="09xx-xxx-xxx">
+          </div>
+          <div class="field">
+            <label>LINE ID</label>
+            <input type="text" id="f-line" placeholder="輸入 LINE ID">
+          </div>
         </div>
       </div>
 
@@ -703,8 +727,28 @@ function customerCard(c, showDealer) {
   const qBadge=_qs.length>0?`<span class="tag gray">提問 ${_qs.length} 條</span>`:'';
   const isInquiry=c.source==='inquiry';
   const srcBadge=isInquiry?'<span class="tag inquiry">客戶自填</span>':'';
-  const contactStr=isInquiry&&(c.contact_phone||c.contact_line)?
+  const contactStr=(c.contact_phone||c.contact_line)?
     (c.contact_phone?'📞 '+c.contact_phone:'')+(c.contact_phone&&c.contact_line?' ‧ ':'')+(c.contact_line?'LINE: '+c.contact_line:''):'';
+  // Select mode (dealer only)
+  if (selectMode && currentRole==='dealer') {
+    const isSel=selectedCids.has(String(c.cid));
+    return `<div class="customer-card ${isSel?'sel-card':''}" onclick="toggleSelect('${c.cid}')" style="cursor:pointer;">
+      <div class="ccard-top">
+        <div style="display:flex;align-items:flex-start;gap:10px;">
+          <div class="card-cb ${isSel?'on':''}">${isSel?'✓':''}</div>
+          <div>
+            <div class="ccard-name" style="display:flex;align-items:center;gap:6px;">${c.cname||'(未命名)'}${srcBadge}</div>
+            <div class="ccard-meta">
+              ${saleStr?'<span>'+saleStr+'</span>':''}
+              ${contactStr?'<span style="color:#2c5f7a;">'+contactStr+'</span>':''}
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">${invTag}</div>
+      </div>
+      <div class="ccard-tasks">${taskPills}</div>
+    </div>`;
+  }
   const canClick=currentRole==='dealer'||currentRole==='admin';
   const clickAttr=canClick?`onclick="openCustomerForm('${c.cid}')"`:'';
   const cursorCls=canClick?' clickable':'';
@@ -908,6 +952,8 @@ function getQuestions() {
 
 function clearForm() {
   document.getElementById('f-cname').value='';
+  document.getElementById('f-phone').value='';
+  document.getElementById('f-line').value='';
   document.getElementById('f-sale-date').value='';
   document.getElementById('f-inv').value='';
   document.getElementById('f-fday-date').value='';
@@ -934,7 +980,7 @@ async function openCustomerForm(cid) {
   const today=new Date();
   const todayStr=today.getFullYear()+'/'+String(today.getMonth()+1).padStart(2,'0')+'/'+String(today.getDate()).padStart(2,'0');
 
-  document.getElementById('btn-del').style.display=(isAdmin&&cid)?'inline-flex':'none';
+  document.getElementById('btn-del').style.display=((isAdmin||currentRole==='dealer')&&cid)?'inline-flex':'none';
 
   if (cid) {
     let c=customers.find(x=>String(x.cid)===String(cid));
@@ -948,11 +994,12 @@ async function openCustomerForm(cid) {
     document.getElementById('f-date').textContent=c.created_at?fmtDate(String(c.created_at).split('T')[0]):'-';
     document.getElementById('f-team').textContent=c.team||'（未分配）';
     document.getElementById('f-dealer').textContent=c.dname;
-    // Show inquiry contact info panel
+    // Populate phone/LINE fields
+    document.getElementById('f-phone').value=c.contact_phone||'';
+    document.getElementById('f-line').value=c.contact_line||'';
+    // Show inquiry panel (time + products) if source is inquiry
     const inqPanel=document.getElementById('inquiry-contact-panel');
     if(c.source==='inquiry'){
-      document.getElementById('ic-phone').textContent=c.contact_phone||'—';
-      document.getElementById('ic-line').textContent=c.contact_line||'—';
       document.getElementById('ic-time').textContent=c.contact_time||'—';
       const _ips=Array.isArray(c.inquiry_products)?c.inquiry_products:(typeof c.inquiry_products==='string'&&c.inquiry_products?(function(){try{return JSON.parse(c.inquiry_products);}catch(e){return[];}}()):[]);
       document.getElementById('ic-products').textContent=_ips.join('、')||'—';
@@ -1007,6 +1054,8 @@ async function saveCustomer() {
     if (orig){did=orig.did;dname=orig.dname;team=orig.team||'';}
   }
 
+  // 保留原始 inquiry 欄位（自填標記、聯絡時間、想了解項目）
+  const _orig=editingCid?customers.find(x=>String(x.cid)===String(editingCid)):null;
   const customer={
     cid:  editingCid||null,
     did, dname, team, cname,
@@ -1023,6 +1072,11 @@ async function saveCustomer() {
     family_day_feedback:  document.getElementById('f-fday-feedback').value,
     questions:            getQuestions(),
     notes:                document.getElementById('f-notes').value,
+    contact_phone:        document.getElementById('f-phone').value,
+    contact_line:         document.getElementById('f-line').value,
+    contact_time:         _orig?(_orig.contact_time||''):'',
+    inquiry_products:     _orig?(function(){const v=_orig.inquiry_products;return Array.isArray(v)?v:(typeof v==='string'&&v?(function(){try{return JSON.parse(v);}catch(e){return[];}}()):[]);}()):[],
+    source:               _orig?(_orig.source||''):'',
   };
 
   const btn=document.getElementById('save-btn');
@@ -1060,10 +1114,11 @@ async function saveCustomer() {
 async function confirmDelete() {
   if (!confirm('確定要刪除此客戶紀錄？此操作無法復原。')) return;
   try {
-    const res=await api({action:'deleteCustomer',cid:editingCid,password:currentPw});
+    const res=await api({action:'deleteCustomer',cid:editingCid,password:currentPw,did:currentId});
     if (res.ok){
       customers=customers.filter(x=>String(x.cid)!==String(editingCid));
-      closeCustomerForm(); showAlert('main-alert','success','✓ 已刪除客戶'); renderAdminList();
+      closeCustomerForm(); showAlert('main-alert','success','✓ 已刪除客戶');
+      if(currentRole==='admin') renderAdminList(); else renderDealerView();
     } else {showAlert('main-alert','error',res.error||'刪除失敗');}
   } catch(e){showAlert('main-alert','error','連線失敗');}
 }
@@ -1200,6 +1255,76 @@ function renderDashboard() {
       <td>${s.att}</td>
     </tr>`).join('')+'</tbody></table>':
     '<div class="empty" style="padding:1rem 0;">尚無資料</div>';
+}
+
+// ── Select mode ───────────────────────────────────────────────────────────────
+let selectMode=false;
+let selectedCids=new Set();
+
+function toggleSelectMode(){
+  selectMode=!selectMode;
+  selectedCids=new Set();
+  const btn=document.getElementById('btn-select-mode');
+  const addBtn=document.getElementById('btn-add-customer');
+  if(selectMode){
+    btn.textContent='取消';btn.classList.add('danger');
+    addBtn.style.display='none';
+  } else {
+    btn.textContent='選取';btn.classList.remove('danger');
+    addBtn.style.display='';
+    document.getElementById('bulk-bar').style.display='none';
+  }
+  renderDealerView();
+}
+
+function toggleSelect(cid){
+  if(selectedCids.has(String(cid))) selectedCids.delete(String(cid));
+  else selectedCids.add(String(cid));
+  updateBulkBar();
+  renderDealerView();
+}
+
+function toggleSelectAll(){
+  const all=customers.map(c=>String(c.cid));
+  if(selectedCids.size===all.length) selectedCids=new Set();
+  else all.forEach(id=>selectedCids.add(id));
+  updateBulkBar();
+  renderDealerView();
+}
+
+function updateBulkBar(){
+  const bar=document.getElementById('bulk-bar');
+  const n=selectedCids.size;
+  if(n>0){
+    bar.style.display='flex';
+    document.getElementById('bulk-count').textContent=n;
+    document.getElementById('btn-sel-all').textContent=selectedCids.size===customers.length?'取消全選':'全選';
+  } else {
+    bar.style.display='none';
+  }
+}
+
+async function bulkDelete(){
+  const n=selectedCids.size;
+  if(!n) return;
+  if(!confirm(`確定要刪除 ${n} 筆客戶資料？此操作無法復原。`)) return;
+  const btn=document.getElementById('btn-bulk-del');
+  btn.disabled=true; btn.textContent='刪除中…';
+  try {
+    const res=await api({action:'bulkDeleteCustomers',cids:[...selectedCids],did:currentId,password:currentPw});
+    if(res.ok){
+      customers=customers.filter(c=>!selectedCids.has(String(c.cid)));
+      selectedCids=new Set();
+      selectMode=false;
+      document.getElementById('btn-select-mode').textContent='選取';
+      document.getElementById('btn-select-mode').classList.remove('danger');
+      document.getElementById('btn-add-customer').style.display='';
+      document.getElementById('bulk-bar').style.display='none';
+      showAlert('main-alert','success','✓ 已刪除 '+res.deleted+' 筆客戶');
+      renderDealerView();
+    } else { showAlert('main-alert','error',res.error||'刪除失敗'); }
+  } catch(e){ showAlert('main-alert','error','連線失敗，請再試'); }
+  finally{ btn.disabled=false; btn.textContent='刪除選取'; }
 }
 
 function showAlert(id,type,msg){
