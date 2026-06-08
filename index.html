@@ -137,6 +137,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
 .tag.blue{background:#e8f0f5;color:#2c5f7a;}
 .tag.green{background:#eaf3de;color:#3b6d11;}
 .tag.gray{background:#f0ede8;color:#888;}
+.tag.inquiry{background:#fff4d6;color:#8a6200;border:1px solid #f0d080;}
 
 /* Password rows */
 .pw-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0ede8;}
@@ -368,6 +369,17 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
     </div>
 
     <div class="modal-body">
+
+      <!-- 客戶自填聯絡資訊 -->
+      <div id="inquiry-contact-panel" style="display:none;background:#fff8e6;border:1px solid #f0d080;border-radius:10px;padding:12px 14px;margin:1rem 0 0;">
+        <div style="font-size:11px;font-weight:700;color:#8a6200;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">📋 客戶自填資訊</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+          <div><span style="color:#aaa;">電話：</span><span id="ic-phone" style="font-weight:500;"></span></div>
+          <div><span style="color:#aaa;">LINE：</span><span id="ic-line" style="font-weight:500;"></span></div>
+          <div><span style="color:#aaa;">聯絡時間：</span><span id="ic-time" style="font-weight:500;"></span></div>
+          <div style="grid-column:1/-1;"><span style="color:#aaa;">想了解：</span><span id="ic-products" style="font-weight:500;"></span></div>
+        </div>
+      </div>
 
       <!-- ── 基本資料 ── -->
       <div class="fsec">
@@ -688,16 +700,21 @@ function customerCard(c, showDealer) {
   const saleStr=c.sale_date?`恩典卡 ${fmtDate(c.sale_date)}`:'';
   const fdayStr=c.attended_family_day==='是'&&c.family_day_date?`家庭日 ${fmtDate(c.family_day_date)}`:'';
   const qBadge=(c.questions||[]).length>0?`<span class="tag gray">提問 ${c.questions.length} 條</span>`:'';
+  const isInquiry=c.source==='inquiry';
+  const srcBadge=isInquiry?'<span class="tag inquiry">客戶自填</span>':'';
+  const contactStr=isInquiry&&(c.contact_phone||c.contact_line)?
+    (c.contact_phone?'📞 '+c.contact_phone:'')+(c.contact_phone&&c.contact_line?' ‧ ':'')+(c.contact_line?'LINE: '+c.contact_line:''):'';
   const canClick=currentRole==='dealer'||currentRole==='admin';
   const clickAttr=canClick?`onclick="openCustomerForm('${c.cid}')"`:'';
   const cursorCls=canClick?' clickable':'';
   return `<div class="customer-card${cursorCls}" ${clickAttr}>
     <div class="ccard-top">
       <div>
-        <div class="ccard-name">${c.cname||'(未命名)'}</div>
+        <div class="ccard-name" style="display:flex;align-items:center;gap:6px;">${c.cname||'(未命名)'}${srcBadge}</div>
         <div class="ccard-meta">
           ${saleStr?'<span>'+saleStr+'</span>':''}
           ${fdayStr?'<span>'+fdayStr+'</span>':''}
+          ${contactStr?'<span style="color:#2c5f7a;">'+contactStr+'</span>':''}
           ${dealerBadge}
         </div>
       </div>
@@ -900,6 +917,7 @@ function clearForm() {
   document.getElementById('f-other').value='';
   document.getElementById('f-notes').value='';
   document.getElementById('questions-list').innerHTML='';
+  document.getElementById('inquiry-contact-panel').style.display='none';
   taskState=[false,false,false];
   selConcerns=new Set();
   attendedVal='';
@@ -923,6 +941,17 @@ function openCustomerForm(cid) {
     document.getElementById('f-date').textContent=c.created_at?fmtDate(String(c.created_at).split('T')[0]):'-';
     document.getElementById('f-team').textContent=c.team||'（未分配）';
     document.getElementById('f-dealer').textContent=c.dname;
+    // Show inquiry contact info panel
+    const inqPanel=document.getElementById('inquiry-contact-panel');
+    if(c.source==='inquiry'){
+      document.getElementById('ic-phone').textContent=c.contact_phone||'—';
+      document.getElementById('ic-line').textContent=c.contact_line||'—';
+      document.getElementById('ic-time').textContent=c.contact_time||'—';
+      document.getElementById('ic-products').textContent=(c.inquiry_products||[]).join('、')||'—';
+      inqPanel.style.display='block';
+    } else {
+      inqPanel.style.display='none';
+    }
     document.getElementById('f-cname').value=c.cname||'';
     document.getElementById('f-sale-date').value=c.sale_date||'';
     taskState=[c.task1,c.task2,c.task3];
