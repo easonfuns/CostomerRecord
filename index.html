@@ -923,7 +923,8 @@ function clearForm() {
   attendedVal='';
 }
 
-function openCustomerForm(cid) {
+async function openCustomerForm(cid) {
+  try {
   buildConcernsGrid();
   clearForm();
   editingCid=cid;
@@ -935,8 +936,13 @@ function openCustomerForm(cid) {
   document.getElementById('btn-del').style.display=(isAdmin&&cid)?'inline-flex':'none';
 
   if (cid) {
-    const c=customers.find(x=>String(x.cid)===String(cid));
-    if (!c) return;
+    let c=customers.find(x=>String(x.cid)===String(cid));
+    if (!c) {
+      // 嘗試重新從伺服器載入
+      await loadCustomers();
+      c=customers.find(x=>String(x.cid)===String(cid));
+      if (!c) { showAlert('main-alert','error','找不到此客戶，請重新整理頁面'); return; }
+    }
     document.getElementById('form-title').textContent='編輯客戶';
     document.getElementById('f-date').textContent=c.created_at?fmtDate(String(c.created_at).split('T')[0]):'-';
     document.getElementById('f-team').textContent=c.team||'（未分配）';
@@ -978,6 +984,10 @@ function openCustomerForm(cid) {
   renderConcernState();
   document.getElementById('customer-modal').style.display='flex';
   document.body.style.overflow='hidden';
+  } catch(err) {
+    showAlert('main-alert','error','開啟失敗：'+err.message);
+    console.error('openCustomerForm error:', err);
+  }
 }
 
 function closeCustomerForm(){
