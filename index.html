@@ -272,6 +272,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
     <div class="user-bar-left">
       <div><strong id="ub-name">-</strong><span class="role-badge" id="ub-role">-</span></div>
       <div class="user-bar-sub" id="ub-team"></div>
+      <div style="font-size:11px;color:#aaa;margin-top:1px;display:none;" id="ub-id"></div>
     </div>
     <div class="user-bar-right">
       <button class="btn sm ghost" id="btn-changepw" onclick="openChangePw()" style="display:none">改密碼</button>
@@ -682,6 +683,13 @@ function enterApp() {
   document.getElementById('ub-name').textContent=currentName;
   document.getElementById('ub-role').textContent=currentRole==='dealer'?'經銷商':currentRole==='team'?'團隊查看':'管理員';
   document.getElementById('ub-team').textContent=(currentRole==='dealer'&&currentTeam)?currentTeam:'';
+  if(currentRole==='dealer'){
+    const last5=String(currentId).slice(-5);
+    document.getElementById('ub-id').textContent='我的 ID：'+last5;
+    document.getElementById('ub-id').style.display='block';
+  } else {
+    document.getElementById('ub-id').style.display='none';
+  }
   document.getElementById('btn-changepw').style.display=currentRole==='dealer'?'inline-flex':'none';
   document.getElementById('view-dealer').style.display=currentRole==='dealer'?'block':'none';
   document.getElementById('view-team').style.display  =currentRole==='team'  ?'block':'none';
