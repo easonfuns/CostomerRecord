@@ -303,10 +303,46 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
 
   <!-- 團隊 view -->
   <div id="view-team" style="display:none">
-    <div class="filter-row">
-      <select id="tv-filter" onchange="renderTeamView()"><option value="">全部成員</option></select>
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchTeamTab('list',this)">客戶列表</button>
+      <button class="sub-tab" onclick="switchTeamTab('dashboard',this)">數據儀表板</button>
     </div>
-    <div id="team-list" class="customer-list"></div>
+    <div id="team-list-section">
+      <div class="filter-row">
+        <select id="tv-filter" onchange="renderTeamView()"><option value="">全部成員</option></select>
+      </div>
+      <div id="team-list" class="customer-list"></div>
+    </div>
+    <div id="team-dashboard-section" style="display:none">
+      <div class="filter-row" style="margin-bottom:1rem;">
+        <select id="tdash-period" onchange="renderTeamDashboard()">
+          <option value="all">全部時間</option>
+          <option value="month">本月</option>
+          <option value="week">本週</option>
+        </select>
+      </div>
+      <div class="dash-summary" id="tdash-summary"></div>
+      <div class="dash-2col">
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">三階段任務完成率</div>
+          <div id="tdash-tasks"></div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">家庭日邀約狀態</div>
+          <div id="tdash-fday"></div>
+        </div>
+      </div>
+      <div class="dash-2col" style="margin-top:10px;">
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">健康關注排行（前8）</div>
+          <div id="tdash-health"></div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">成員表現</div>
+          <div id="tdash-members"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 管理員 view -->
@@ -1259,6 +1295,111 @@ function renderDashboard() {
     </tr></thead><tbody>`+
     Object.entries(ts).sort((a,b)=>b[1].n-a[1].n).map(([t,s])=>`<tr>
       <td style="font-weight:500;">${t}</td><td>${s.n}</td>
+      <td>${pb(s.t1,s.n)}</td><td>${pb(s.t2,s.n)}</td><td>${pb(s.t3,s.n)}</td>
+      <td>${s.att}</td>
+    </tr>`).join('')+'</tbody></table>':
+    '<div class="empty" style="padding:1rem 0;">尚無資料</div>';
+}
+
+function switchTeamTab(tab, btn) {
+  document.getElementById('team-list-section').style.display     = tab==='list'      ?'block':'none';
+  document.getElementById('team-dashboard-section').style.display= tab==='dashboard' ?'block':'none';
+  document.querySelectorAll('#view-team .sub-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab==='dashboard') renderTeamDashboard();
+}
+
+function renderTeamDashboard() {
+  const period=document.getElementById('tdash-period').value;
+  let list=customers; // already filtered to team
+  if (period==='week') {
+    const ws=getWeekStart();
+    list=customers.filter(c=>c.created_at&&new Date(c.created_at)>=ws);
+  } else if (period==='month') {
+    const now=new Date();
+    const ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+    list=customers.filter(c=>c.created_at&&String(c.created_at).startsWith(ym));
+  }
+  const total=list.length;
+  const attended=list.filter(c=>c.attended_family_day==='是').length;
+  const dayVal=list.reduce((s,c)=>s+(parseFloat(c.purchase_value_day)||0),0);
+  const val7d=list.reduce((s,c)=>s+(parseFloat(c.purchase_value_7days)||0),0);
+  const fmt=(n)=>n>0?'$'+n.toLocaleString():'—';
+
+  // Summary
+  document.getElementById('tdash-summary').innerHTML=[
+    {n:total,      u:'人',l:'總客戶數'},
+    {n:attended,   u:'人',l:'家庭日到場'},
+    {n:fmt(dayVal),u:'',  l:'當日購買總計'},
+    {n:fmt(val7d), u:'',  l:'7日內購買總計'},
+  ].map(s=>`<div class="stat-card">
+    <div class="stat-num">${s.n}${s.u?`<span class="stat-unit">${s.u}</span>`:''}</div>
+    <div class="stat-label">${s.l}</div>
+  </div>`).join('');
+
+  // Tasks
+  const t1=list.filter(c=>c.task1).length;
+  const t2=list.filter(c=>c.task2).length;
+  const t3=list.filter(c=>c.task3).length;
+  const pct=n=>total>0?Math.round(n/total*100):0;
+  document.getElementById('tdash-tasks').innerHTML=[
+    {n:'7日產品使用',v:t1,p:pct(t1),c:'c1'},
+    {n:'週二課程',   v:t2,p:pct(t2),c:'c2'},
+    {n:'家庭日任務', v:t3,p:pct(t3),c:'c3'},
+  ].map(t=>`<div class="prog-item">
+    <div class="prog-hd"><span class="prog-name">${t.n}</span><span class="prog-val">${t.v}/${total} &nbsp;${t.p}%</span></div>
+    <div class="prog-bar"><div class="prog-fill ${t.c}" style="width:${t.p}%"></div></div>
+  </div>`).join('');
+
+  // Family day
+  const inv={已報名:0,考慮中:0,拒絕:0,未聯繫:0};
+  list.forEach(c=>{if(c.invitation_status)inv[c.invitation_status]=(inv[c.invitation_status]||0)+1;});
+  const maxInv=Math.max(...Object.values(inv),1);
+  const iCol={已報名:'#3b6d11',考慮中:'#c8960c',拒絕:'#aaa',未聯繫:'#5b8fa8'};
+  document.getElementById('tdash-fday').innerHTML=
+    Object.entries(inv).map(([k,v])=>`<div class="hbar-item">
+      <div class="hbar-label" style="width:52px;">${k}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(v/maxInv*100)}%;background:${iCol[k]}">
+        ${v>0?`<span class="hbar-text">${v}</span>`:''}
+      </div></div>
+      <div class="hbar-count">${v}</div>
+    </div>`).join('')+
+    `<div class="dash-divider"></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;">
+      <span>實際到場</span><span style="font-weight:700;color:#1a1a1a;">${attended} 人</span>
+    </div>`;
+
+  // Health concerns
+  const hc={};
+  list.forEach(c=>(c.health_concerns||[]).filter(h=>h!=='其他').forEach(h=>hc[h]=(hc[h]||0)+1));
+  const topHC=Object.entries(hc).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxHC=topHC.length>0?topHC[0][1]:1;
+  document.getElementById('tdash-health').innerHTML=topHC.length>0?
+    topHC.map(([k,v])=>`<div class="hbar-item">
+      <div class="hbar-label" style="width:88px;font-size:11px;">${k}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(v/maxHC*100)}%;background:#5b8fa8">
+        ${v>0?`<span class="hbar-text">${v}</span>`:''}
+      </div></div>
+      <div class="hbar-count">${v}</div>
+    </div>`).join(''):
+    '<div class="empty" style="padding:1rem 0;">尚無資料</div>';
+
+  // Member stats (team members performance)
+  const ms={};
+  list.forEach(c=>{
+    const nm=c.dname||'未知';
+    if(!ms[nm])ms[nm]={n:0,t1:0,t2:0,t3:0,att:0};
+    ms[nm].n++;
+    if(c.task1)ms[nm].t1++; if(c.task2)ms[nm].t2++; if(c.task3)ms[nm].t3++;
+    if(c.attended_family_day==='是')ms[nm].att++;
+  });
+  const pb=(n,d)=>{const p=d>0?Math.round(n/d*100):0;const cl=p>=60?'hi':p>=30?'md':'lo';return `<span class="pct ${cl}">${p}%</span>`;};
+  document.getElementById('tdash-members').innerHTML=Object.keys(ms).length>0?
+    `<table class="team-table"><thead><tr>
+      <th>成員</th><th>客戶</th><th>7日品</th><th>課程</th><th>家庭日</th><th>到場</th>
+    </tr></thead><tbody>`+
+    Object.entries(ms).sort((a,b)=>b[1].n-a[1].n).map(([nm,s])=>`<tr>
+      <td style="font-weight:500;">${nm}</td><td>${s.n}</td>
       <td>${pb(s.t1,s.n)}</td><td>${pb(s.t2,s.n)}</td><td>${pb(s.t3,s.n)}</td>
       <td>${s.att}</td>
     </tr>`).join('')+'</tbody></table>':
