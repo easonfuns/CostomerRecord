@@ -100,7 +100,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
 .task-label-sub{font-size:12px;color:#888;margin-top:1px;}
 
 /* Concerns */
-.concerns-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;}
+.concerns-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:14px;}
+.concern-group-title{font-size:11px;font-weight:700;color:#2c5f7a;margin-bottom:7px;letter-spacing:.04em;}
 .concern-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8f7f4;border-radius:8px;border:1px solid #eee;cursor:pointer;transition:all .12s;user-select:none;}
 .concern-item:hover{border-color:#5b8fa8;}
 .concern-item.selected{background:#e8f0f5;border-color:#5b8fa8;}
@@ -368,6 +369,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
         <div class="card-title">團隊密碼</div>
         <div id="pw-team-list"></div>
       </div>
+      <div class="card">
+        <div class="card-title">資料維護（一次性工具）</div>
+        <div style="font-size:13px;color:#888;margin-bottom:10px;">將舊版健康關注詞自動轉換為新分類用語，可重複執行，不會重複轉換已轉換過的資料。</div>
+        <button class="btn sm" onclick="runMigration()">執行健康關注詞轉換</button>
+      </div>
     </div>
     <div id="admin-dashboard" style="display:none">
       <div class="filter-row" style="margin-bottom:1rem;">
@@ -611,10 +617,20 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwmXGGtjzdnYJ8Ahj-cShxLXJe00kzHuXGIjSUzQgPTY5-V4BBonirusQkbMi07ZI60/exec';
 
-const CONCERNS = [
-  '睡眠','精神體力','排便代謝','疼痛不適','體重管理','壓力疲勞',
-  '慢性調養需求','家人健康','價格疑慮','產品安全疑問','不知道是否適合長期使用','其他'
+const CONCERN_GROUPS = [
+  { g:'心血管系統',   items:['心悸','胸悶胸痛','血壓異常','血脂異常','四肢冰冷水腫'] },
+  { g:'呼吸系統',     items:['容易喘','慢性咳嗽','過敏性鼻炎','睡眠呼吸中止'] },
+  { g:'消化系統',     items:['排便不順','腹脹','食慾不佳','胃酸逆流'] },
+  { g:'神經系統',     items:['頭痛頭暈','記憶力減退','失眠','情緒焦慮'] },
+  { g:'骨骼肌肉系統', items:['關節疼痛','肩頸僵硬','腰背痠痛','肌少無力'] },
+  { g:'內分泌與代謝', items:['血糖異常','體重控制困難','甲狀腺相關症狀','更年期症狀'] },
+  { g:'生殖泌尿系統', items:['經期不適','頻尿','性功能相關'] },
+  { g:'免疫系統',     items:['容易感冒','傷口復原慢','過敏體質'] },
+  { g:'生活型態',     items:['久坐少動','缺乏運動習慣','外食頻繁','熬夜／作息不規律','長時間用眼／用電腦','工作壓力大','三餐不定時','重口味飲食'] },
+  { g:'病史背景',     items:['三高家族史'] },
+  { g:'其他',         items:['其他'] },
 ];
+const CONCERNS = CONCERN_GROUPS.flatMap(g=>g.items);
 
 // ── State ──────────────────────────────────────────────────────────────────────
 let loginRole = 'dealer';
@@ -880,6 +896,22 @@ function switchAdminTab(tab,btn) {
 }
 
 // ── Password management ────────────────────────────────────────────────────────
+async function runMigration() {
+  if (!confirm('確定要執行健康關注詞轉換？建議只執行一次。')) return;
+  try {
+    const res = await api({ action:'migrateHealthConcerns', adminPw: currentPw });
+    if (res.ok) {
+      showAlert('main-alert','success','✓ 已轉換 '+res.converted+' 筆客戶資料');
+      await loadCustomers();
+      renderAdminList();
+    } else {
+      showAlert('main-alert','error', res.error || '轉換失敗');
+    }
+  } catch(e) {
+    showAlert('main-alert','error','連線失敗，請再試一次');
+  }
+}
+
 async function loadPasswordList() {
   try {
     const res=await api({action:'getPasswords',adminPw:currentPw});
@@ -932,12 +964,20 @@ async function doSetPw() {
 
 // ── Customer Form ──────────────────────────────────────────────────────────────
 function buildConcernsGrid() {
-  document.getElementById('concerns-grid').innerHTML=CONCERNS.map((c,i)=>
-    `<div class="concern-item" id="ci${i}" onclick="toggleConcern('${c}',${i})">
-      <div class="concern-ck" id="ck${i}"></div>
-      <div class="concern-label">${c}</div>
-    </div>`
-  ).join('');
+  let idx=0;
+  let html='';
+  CONCERN_GROUPS.forEach(group=>{
+    html+=`<div class="concern-group-title">${group.g}</div><div class="concerns-grid">`;
+    group.items.forEach(c=>{
+      const i=idx++;
+      html+=`<div class="concern-item" id="ci${i}" onclick="toggleConcern('${c.replace(/'/g,"\\'")}',${i})">
+        <div class="concern-ck" id="ck${i}"></div>
+        <div class="concern-label">${c}</div>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById('concerns-grid').outerHTML=`<div id="concerns-grid">${html}</div>`;
 }
 
 function toggleConcern(c,i) {
