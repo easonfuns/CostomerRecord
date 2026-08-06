@@ -3,498 +3,529 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>恩典久久 · 客戶追蹤</title>
+<title>健康管家 · 顧客管理系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+:root{
+  --moss:#1e3d30; --moss2:#2d4a3e; --moss3:#3d6b59; --moss-pale:#eef5f0;
+  --gold:#c9a84c; --gold-pale:#fdf3d6;
+  --cream:#f8f5ef; --warm:#fdfbf7;
+  --ink:#1a1a18; --muted:#6b6b66; --hint:#a8a8a2;
+  --border:#e8e4dc; --border2:#d0cbc0;
+  --r:12px; --r2:16px;
+  --shadow:0 2px 12px rgba(30,61,48,.07);
+  --shadow2:0 6px 24px rgba(30,61,48,.1);
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;}
-.app{max-width:760px;margin:0 auto;padding:1.5rem 1rem 3rem;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
 
-.header{margin-bottom:1.25rem;}
-.header h1{font-size:20px;font-weight:700;letter-spacing:.02em;}
-.header p{font-size:13px;color:#888;margin-top:3px;}
+/* ── LOGIN ── */
+#login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem 1rem;}
+.login-wrap{width:100%;max-width:420px;border-radius:20px;overflow:hidden;box-shadow:var(--shadow2);background:var(--warm);}
+.login-hero{background:var(--moss);padding:2.25rem 1.5rem 3rem;text-align:center;position:relative;}
+.login-hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:36px;background:var(--warm);clip-path:ellipse(55% 100% at 50% 100%);}
+.lh-mark{width:54px;height:54px;border-radius:15px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;}
+.lh-title{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:600;color:#fff;letter-spacing:.06em;margin-bottom:4px;}
+.lh-sub{font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.12em;}
+.login-body{padding:1.75rem 1.5rem 2rem;}
+.role-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:rgba(0,0,0,.08);border-radius:10px;padding:3px;margin-bottom:1.5rem;}
+.role-tab{padding:8px 4px;border-radius:8px;font-size:13px;font-weight:500;text-align:center;cursor:pointer;color:#3a3a35;border:none;background:none;font-family:'Noto Sans TC',sans-serif;transition:all .15s;}
+.role-tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1);font-weight:600;}
+.lfield{margin-bottom:14px;}
+.lfield label{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase;}
+.lfield select,.lfield input{width:100%;height:44px;border:1.5px solid var(--border2);border-radius:10px;padding:0 14px;font-size:14px;font-family:'Noto Sans TC',sans-serif;background:#fff;color:var(--ink);transition:border-color .15s;}
+.lfield select:focus,.lfield input:focus{outline:none;border-color:var(--moss2);box-shadow:0 0 0 3px rgba(45,74,62,.1);}
+.login-btn{width:100%;height:48px;border:none;border-radius:12px;background:var(--moss2);color:#fff;font-size:15px;font-weight:600;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-top:6px;letter-spacing:.04em;transition:background .15s;}
+.login-btn:hover{background:var(--moss);}
+.login-hint{text-align:center;font-size:12px;color:var(--hint);margin-top:14px;line-height:1.8;}
+.login-hint span{color:var(--moss2);font-weight:600;}
+.login-err{font-size:12px;color:#c0392b;margin-top:6px;min-height:16px;text-align:center;}
 
-.card{background:#fff;border:1px solid #e8e6e1;border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
-.card-title{font-size:11px;font-weight:500;color:#999;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.08em;}
+/* ── APP HEADER ── */
+.app-header{background:var(--moss);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;position:sticky;top:0;z-index:50;}
+.ah-brand{display:flex;align-items:center;gap:9px;}
+.ah-logo{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ah-titles{}
+.ah-name{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;color:#fff;letter-spacing:.04em;line-height:1.2;}
+.ah-sub{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.08em;line-height:1.2;}
+.ah-right{display:flex;align-items:center;gap:7px;}
+.user-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:99px;padding:4px 11px 4px 6px;}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--moss);flex-shrink:0;}
+.user-info{}
+.user-name-text{font-size:12px;color:#fff;font-weight:500;line-height:1.2;}
+.user-id-text{font-size:10px;color:rgba(255,255,255,.45);line-height:1.2;}
+.ah-badge{font-size:10px;padding:2px 8px;border-radius:99px;background:rgba(201,168,76,.25);color:var(--gold);font-weight:500;border:1px solid rgba(201,168,76,.3);}
+.ah-btn{height:28px;padding:0 10px;border:1px solid rgba(255,255,255,.2);border-radius:6px;background:none;color:rgba(255,255,255,.65);font-size:12px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .15s;}
+.ah-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
 
-/* Buttons */
-.btn{height:38px;padding:0 18px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:1px solid #ddd;background:#fff;color:#1a1a1a;font-family:'Noto Sans TC',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
-.btn:hover{background:#f5f4f0;}
+/* ── MAIN CONTENT ── */
+.app-content{max-width:760px;margin:0 auto;padding:1.25rem 1rem 3rem;}
+.main-alert-wrap{margin-bottom:12px;}
+
+/* ── SUB TABS ── */
+.sub-tabs{display:flex;gap:4px;margin-bottom:1rem;padding:3px;background:rgba(0,0,0,.06);border-radius:10px;width:fit-content;}
+.sub-tab{padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:#3a3a35;border-radius:8px;transition:all .15s;font-family:'Noto Sans TC',sans-serif;}
+.sub-tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:600;}
+
+/* ── ALERT ── */
+.alert{padding:11px 15px;border-radius:10px;font-size:13px;margin-bottom:12px;}
+.alert.success{background:#e8f4e0;color:#2a6e10;border:1px solid #9fd87e;}
+.alert.error{background:#fef0f0;color:#c0392b;border:1px solid #f5c6cb;}
+
+/* ── LIST BAR ── */
+.list-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.list-bar-left{}
+.list-bar-title{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:600;color:var(--ink);}
+.list-bar-count{font-size:12px;color:var(--hint);margin-top:2px;}
+.list-bar-right{display:flex;gap:7px;}
+
+/* ── BUTTONS ── */
+.btn{height:36px;padding:0 16px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--ink);font-family:'Noto Sans TC',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn:hover{background:var(--cream);border-color:var(--moss3);}
 .btn:disabled{opacity:.5;cursor:not-allowed;}
-.btn.primary{background:#2c5f7a;color:#fff;border-color:#2c5f7a;}
-.btn.primary:hover:not(:disabled){background:#1e4257;}
-.btn.sm{height:30px;padding:0 12px;font-size:12px;}
-.btn.xs{height:26px;padding:0 10px;font-size:11px;}
+.btn.primary{background:var(--moss2);color:#fff;border-color:var(--moss2);}
+.btn.primary:hover:not(:disabled){background:var(--moss);}
+.btn.sm{height:30px;padding:0 11px;font-size:12px;}
+.btn.xs{height:26px;padding:0 9px;font-size:11px;}
 .btn.danger{color:#c0392b;border-color:#f5c6cb;}
 .btn.danger:hover{background:#fff5f5;}
-.btn.ghost{border-color:transparent;background:transparent;color:#666;}
-.btn.ghost:hover{background:#f0ede8;color:#1a1a1a;}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted);}
+.btn.ghost:hover{background:var(--cream);color:var(--ink);}
 .btn.full{width:100%;justify-content:center;}
-.btn.dashed{border-style:dashed;border-color:#ccc;color:#888;background:#fafafa;}
-.btn.dashed:hover{border-color:#5b8fa8;color:#2c5f7a;background:#f0f6fa;}
+.btn.dashed{border-style:dashed;border-color:var(--border2);color:var(--muted);background:var(--cream);}
+.btn.dashed:hover{border-color:var(--moss3);color:var(--moss2);}
 
-/* Fields */
+/* ── NEEDS PW BANNER ── */
+.needs-pw-banner{background:var(--gold-pale);border:1.5px solid #f0d080;border-radius:12px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+.needs-pw-text{font-size:13px;color:#7a5500;}
+
+/* ── BULK BAR ── */
+.bulk-bar{display:none;justify-content:space-between;align-items:center;padding:10px 14px;background:#fff5f5;border:1.5px solid #f5c6cb;border-radius:12px;margin-bottom:10px;}
+
+/* ── CUSTOMER CARDS ── */
+.customer-list{display:flex;flex-direction:column;gap:8px;}
+.customer-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r2);padding:1rem 1.125rem;transition:all .15s;}
+.customer-card.clickable{cursor:pointer;}
+.customer-card.clickable:hover{border-color:var(--moss3);box-shadow:0 3px 14px rgba(30,61,48,.09);}
+.customer-card.sel-card{border-color:#f5c6cb;background:#fff8f8;}
+.ccard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+.ccard-name{font-size:15px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.ccard-meta{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.ccard-tasks{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.task-pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;}
+.task-pill.done{background:#e8f4e0;color:#2a6e10;}
+.task-pill.todo{background:var(--cream);color:var(--hint);}
+.ccard-bottom{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
+.htag{font-size:11px;padding:2px 9px;border-radius:99px;background:var(--moss-pale);color:var(--moss2);}
+.inv-tag{font-size:11px;padding:3px 11px;border-radius:99px;font-weight:500;}
+.inv-tag.booked{background:#e8f4e0;color:#2a6e10;}
+.inv-tag.maybe{background:var(--gold-pale);color:#7a5500;}
+.inv-tag.refused{background:var(--cream);color:var(--muted);}
+.inv-tag.none{background:var(--cream);color:var(--hint);}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;}
+.tag.blue{background:var(--moss-pale);color:var(--moss2);}
+.tag.green{background:#e8f4e0;color:#2a6e10;}
+.tag.gray{background:var(--cream);color:var(--muted);}
+.tag.inquiry{background:var(--gold-pale);color:#7a5500;border:1px solid #f0d080;}
+.card-cb{width:20px;height:20px;border:2px solid var(--border2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;transition:all .12s;margin-top:1px;}
+.card-cb.on{background:#c0392b;border-color:#c0392b;}
+
+/* ── FILTER ROW ── */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;}
+.filter-row select{height:34px;border:1.5px solid var(--border2);border-radius:var(--r);padding:0 10px;font-size:13px;background:#fff;color:var(--ink);font-family:'Noto Sans TC',sans-serif;}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem;}
+.card-title{font-size:10px;font-weight:700;color:var(--hint);margin-bottom:1rem;text-transform:uppercase;letter-spacing:.1em;}
+
+/* ── DASHBOARD ── */
+.dash-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
+.stat-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r2);padding:.875rem 1rem;}
+.stat-num{font-family:'Noto Serif TC',serif;font-size:24px;font-weight:600;color:var(--ink);line-height:1.1;margin-bottom:3px;}
+.stat-unit{font-size:14px;font-weight:400;color:var(--muted);}
+.stat-label{font-size:12px;color:var(--hint);}
+.dash-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.prog-item{margin-bottom:12px;}
+.prog-item:last-child{margin-bottom:0;}
+.prog-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.prog-name{font-size:13px;font-weight:500;color:var(--ink);}
+.prog-val{font-size:12px;color:var(--muted);}
+.prog-bar{height:7px;background:var(--cream);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;}
+.prog-fill.c1{background:var(--moss2);}
+.prog-fill.c2{background:var(--moss3);}
+.prog-fill.c3{background:var(--gold);}
+.hbar-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.hbar-item:last-child{margin-bottom:0;}
+.hbar-label{font-size:12px;color:var(--muted);flex-shrink:0;text-align:right;}
+.hbar-track{flex:1;height:20px;background:var(--cream);border-radius:5px;overflow:hidden;}
+.hbar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:7px;min-width:4px;}
+.hbar-text{font-size:11px;font-weight:700;color:#fff;}
+.hbar-count{font-size:12px;color:var(--hint);width:24px;text-align:right;flex-shrink:0;}
+.team-table{width:100%;border-collapse:collapse;font-size:12px;}
+.team-table th{text-align:left;padding:7px 6px;font-weight:600;font-size:11px;color:var(--hint);border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+.team-table td{padding:9px 6px;border-bottom:1px solid var(--cream);color:var(--ink);}
+.team-table tr:last-child td{border-bottom:none;}
+.pct{font-size:11px;padding:2px 7px;border-radius:99px;font-weight:600;display:inline-block;}
+.pct.hi{background:#e8f4e0;color:#2a6e10;}
+.pct.md{background:var(--gold-pale);color:#7a5500;}
+.pct.lo{background:var(--cream);color:var(--muted);}
+.dash-divider{height:1px;background:var(--border);margin:10px 0;}
+
+/* ── FIELDS ── */
 .field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
 .field:last-child{margin-bottom:0;}
-.field label{font-size:13px;color:#666;}
-.field input,.field select,.field textarea{border:1px solid #ddd;border-radius:8px;padding:0 12px;font-size:14px;font-family:'Noto Sans TC',sans-serif;background:#fff;color:#1a1a1a;width:100%;}
-.field input,.field select{height:38px;}
+.field label{font-size:12px;color:var(--muted);font-weight:500;}
+.field input,.field select,.field textarea{border:1.5px solid var(--border2);border-radius:var(--r);padding:0 12px;font-size:14px;font-family:'Noto Sans TC',sans-serif;background:#fff;color:var(--ink);width:100%;}
+.field input,.field select{height:40px;}
 .field textarea{padding:10px 12px;resize:vertical;min-height:80px;}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#5b8fa8;box-shadow:0 0 0 2px rgba(91,143,168,.15);}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--moss2);box-shadow:0 0 0 3px rgba(45,74,62,.09);}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ro-field{background:var(--cream);color:var(--muted);border:1.5px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:13px;font-family:'Noto Sans TC',sans-serif;min-height:38px;display:flex;align-items:center;}
 
-/* Alert */
-.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;}
-.alert.success{background:#eaf3de;color:#3b6d11;border:1px solid #97c459;}
-.alert.error{background:#fff0f0;color:#c0392b;border:1px solid #f5c6cb;}
-
-/* Login */
-.role-tabs{display:flex;gap:5px;margin-bottom:1.25rem;padding:4px;background:#ebe9e4;border-radius:12px;}
-.role-tab{flex:1;padding:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:#666;border-radius:9px;transition:all .15s;font-family:'Noto Sans TC',sans-serif;}
-.role-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,.08);}
-
-/* User bar */
-.user-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#fff;border:1px solid #e8e6e1;border-radius:10px;margin-bottom:1rem;}
-.user-bar-left strong{font-size:14px;}
-.role-badge{font-size:11px;padding:2px 8px;border-radius:99px;background:#e8f0f5;color:#2c5f7a;font-weight:500;margin-left:6px;}
-.user-bar-sub{font-size:12px;color:#888;margin-top:2px;}
-.user-bar-right{display:flex;gap:6px;}
-
-/* Sub tabs */
-.sub-tabs{display:flex;gap:5px;margin-bottom:1rem;padding:4px;background:#ebe9e4;border-radius:10px;width:fit-content;}
-.sub-tab{padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:#666;border-radius:8px;transition:all .15s;font-family:'Noto Sans TC',sans-serif;}
-.sub-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,.08);}
-
-/* Filter row */
-.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;}
-.filter-row select{height:34px;border:1px solid #ddd;border-radius:8px;padding:0 10px;font-size:13px;background:#fff;color:#1a1a1a;font-family:'Noto Sans TC',sans-serif;}
-
-/* Customer cards */
-.customer-list{display:flex;flex-direction:column;gap:10px;}
-.customer-card{background:#fff;border:1px solid #e8e6e1;border-radius:12px;padding:1rem;transition:all .15s;}
-.customer-card.clickable{cursor:pointer;}
-.customer-card.clickable:hover{border-color:#5b8fa8;box-shadow:0 2px 8px rgba(91,143,168,.12);}
-.ccard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.ccard-name{font-size:15px;font-weight:700;}
-.ccard-meta{font-size:12px;color:#888;margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-.ccard-tasks{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.task-pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;}
-.task-pill.done{background:#eaf3de;color:#3b6d11;}
-.task-pill.todo{background:#f0ede8;color:#aaa;}
-.ccard-bottom{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
-.htag{font-size:11px;padding:2px 8px;border-radius:99px;background:#e8f0f5;color:#2c5f7a;}
-.inv-tag{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;}
-.inv-tag.booked{background:#eaf3de;color:#3b6d11;}
-.inv-tag.maybe{background:#fff4d6;color:#8a6200;}
-.inv-tag.refused{background:#f0ede8;color:#888;}
-.inv-tag.none{background:#f5f4f0;color:#aaa;}
-
-/* Task checkboxes */
-.task-check-list{display:flex;flex-direction:column;gap:8px;}
-.task-check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f7f4;border-radius:8px;border:1px solid #eee;cursor:pointer;transition:all .12s;user-select:none;}
-.task-check-item.checked{background:#eaf3de;border-color:#97c459;}
-.task-box{width:20px;height:20px;border:2px solid #ccc;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:all .12s;}
-.task-check-item.checked .task-box{background:#3b6d11;border-color:#3b6d11;color:#fff;}
-.task-label-main{font-size:14px;font-weight:500;}
-.task-label-sub{font-size:12px;color:#888;margin-top:1px;}
-
-/* Concerns */
-.concerns-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:14px;}
-.concern-group-title{font-size:11px;font-weight:700;color:#2c5f7a;margin-bottom:7px;letter-spacing:.04em;}
-.concern-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8f7f4;border-radius:8px;border:1px solid #eee;cursor:pointer;transition:all .12s;user-select:none;}
-.concern-item:hover{border-color:#5b8fa8;}
-.concern-item.selected{background:#e8f0f5;border-color:#5b8fa8;}
-.concern-ck{width:16px;height:16px;border:1.5px solid #ccc;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transition:all .12s;}
-.concern-item.selected .concern-ck{background:#2c5f7a;border-color:#2c5f7a;color:#fff;}
-.concern-label{font-size:13px;color:#444;line-height:1.3;}
-
-/* Radio buttons */
-.radio-group{display:flex;gap:8px;flex-wrap:wrap;}
-.radio-btn{padding:7px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid #ddd;background:#fff;color:#666;font-family:'Noto Sans TC',sans-serif;transition:all .12s;}
-.radio-btn.selected{border-color:#2c5f7a;background:#e8f0f5;color:#2c5f7a;}
-
-/* Readonly field */
-.ro-field{background:#f8f7f4;color:#555;border:1px solid #eee;border-radius:8px;padding:8px 12px;font-size:13px;font-family:'Noto Sans TC',sans-serif;min-height:36px;display:flex;align-items:center;}
-
-/* Form sections */
-.fsec{margin-bottom:0;padding:1rem 0;}
-.fsec + .fsec{border-top:1px solid #f0ede8;}
-.fsec-title{font-size:11px;font-weight:700;color:#2c5f7a;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
-.fsec-title::before{content:'';display:inline-block;width:3px;height:13px;background:#2c5f7a;border-radius:2px;}
-
-.slabel{font-size:11px;font-weight:500;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
-
-/* Questions */
-.question-item{display:flex;gap:8px;align-items:center;}
-.question-input{flex:1;height:36px;border:1px solid #ddd;border-radius:8px;padding:0 12px;font-size:13px;font-family:'Noto Sans TC',sans-serif;background:#fff;color:#1a1a1a;}
-.question-input:focus{outline:none;border-color:#5b8fa8;box-shadow:0 0 0 2px rgba(91,143,168,.15);}
-.question-del{width:28px;height:28px;border:none;background:none;cursor:pointer;color:#bbb;font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all .12s;}
-.question-del:hover{background:#fff0f0;color:#c0392b;}
-.questions-wrap{display:flex;flex-direction:column;gap:7px;margin-bottom:8px;}
-
-/* Tags */
-.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;}
-.tag.blue{background:#e8f0f5;color:#2c5f7a;}
-.tag.green{background:#eaf3de;color:#3b6d11;}
-.tag.gray{background:#f0ede8;color:#888;}
-.tag.inquiry{background:#fff4d6;color:#8a6200;border:1px solid #f0d080;}
-/* ── Select mode ── */
-.card-cb{width:20px;height:20px;border:2px solid #ccc;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;transition:all .12s;margin-top:1px;}
-.card-cb.on{background:#c0392b;border-color:#c0392b;}
-.customer-card.sel-card{border-color:#f5c6cb;background:#fff8f8;}
-.bulk-bar{display:none;justify-content:space-between;align-items:center;padding:10px 14px;background:#fff0f0;border:1px solid #f5c6cb;border-radius:10px;margin-bottom:10px;}
-
-
-/* Password rows */
-.pw-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0ede8;}
-.pw-row:last-child{border-bottom:none;}
-.pw-name{font-size:13px;font-weight:500;}
-.pw-sub{font-size:12px;color:#888;margin-top:2px;}
-
-/* List bar */
-.list-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
-.list-bar-title{font-size:14px;font-weight:500;color:#666;}
-
-/* Overlay / Modal */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;overflow-y:auto;}
-.modal{background:#fff;border-radius:16px;width:100%;max-width:620px;padding:0;position:relative;margin:auto;overflow:hidden;}
-.modal-hd{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem 1rem;border-bottom:1px solid #f0ede8;}
-.modal-title{font-size:16px;font-weight:700;}
-.modal-close{border:none;background:none;font-size:22px;cursor:pointer;color:#aaa;padding:2px 6px;border-radius:6px;line-height:1;}
-.modal-close:hover{background:#f0ede8;color:#1a1a1a;}
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;overflow-y:auto;}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:620px;padding:0;position:relative;margin:auto;overflow:hidden;}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem 1rem;border-bottom:1.5px solid var(--border);}
+.modal-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:600;color:var(--ink);}
+.modal-close{border:none;background:none;font-size:22px;cursor:pointer;color:var(--hint);padding:2px 6px;border-radius:6px;line-height:1;}
+.modal-close:hover{background:var(--cream);color:var(--ink);}
 .modal-body{padding:0 1.5rem;max-height:70vh;overflow-y:auto;}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;padding:1rem 1.5rem;border-top:1px solid #f0ede8;background:#fafaf8;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;padding:1rem 1.5rem;border-top:1.5px solid var(--border);background:var(--cream);}
+.auto-info-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:1rem 1.5rem;background:var(--cream);border-bottom:1.5px solid var(--border);}
+.auto-info-cell .ai-label{font-size:10px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.auto-info-cell .ai-val{font-size:13px;font-weight:600;color:var(--muted);}
 
-/* Auto-info bar in form */
-.auto-info-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:1rem 1.5rem;background:#f8f7f4;border-bottom:1px solid #f0ede8;}
-.auto-info-cell .ai-label{font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
-.auto-info-cell .ai-val{font-size:13px;font-weight:500;color:#444;}
+/* ── FORM SECTIONS ── */
+.fsec{padding:1rem 0;}
+.fsec + .fsec{border-top:1px solid var(--border);}
+.fsec-title{font-size:11px;font-weight:700;color:var(--moss2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.fsec-title::before{content:'';display:inline-block;width:3px;height:13px;background:var(--moss2);border-radius:2px;}
+.slabel{font-size:11px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.sdiv{height:1px;background:var(--border);margin:14px 0;}
 
-/* Conditional panels */
-.cond-panel{background:#f8f7f4;border-radius:10px;padding:12px;margin-top:10px;border:1px solid #eee;}
+/* ── TASK CHECK ── */
+.task-check-list{display:flex;flex-direction:column;gap:7px;}
+.task-check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--cream);border-radius:var(--r);border:1.5px solid var(--border);cursor:pointer;transition:all .12s;user-select:none;}
+.task-check-item.checked{background:var(--moss-pale);border-color:var(--moss3);}
+.task-box{width:20px;height:20px;border:2px solid var(--border2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:all .12s;}
+.task-check-item.checked .task-box{background:var(--moss2);border-color:var(--moss2);color:#fff;}
+.task-label-main{font-size:14px;font-weight:500;color:var(--ink);}
+.task-label-sub{font-size:12px;color:var(--muted);margin-top:1px;}
 
-/* Empty state */
-.empty{text-align:center;padding:2.5rem;color:#aaa;font-size:14px;}
+/* ── CONCERNS ── */
+.concerns-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;}
+.concern-group-title{font-size:11px;font-weight:700;color:var(--moss2);margin-bottom:6px;letter-spacing:.04em;grid-column:1/-1;}
+.concern-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--cream);border-radius:var(--r);border:1.5px solid transparent;cursor:pointer;transition:all .12s;user-select:none;}
+.concern-item:hover{border-color:var(--moss3);}
+.concern-item.selected{background:var(--moss-pale);border-color:var(--moss2);}
+.concern-ck{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transition:all .12s;}
+.concern-item.selected .concern-ck{background:var(--moss2);border-color:var(--moss2);color:#fff;}
+.concern-label{font-size:13px;color:var(--ink);line-height:1.3;}
 
-/* Responsive */
+/* ── RADIO ── */
+.radio-group{display:flex;gap:8px;flex-wrap:wrap;}
+.radio-btn{padding:7px 18px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:'Noto Sans TC',sans-serif;transition:all .12s;}
+.radio-btn.selected{border-color:var(--moss2);background:var(--moss-pale);color:var(--moss2);}
+
+/* ── COND PANEL ── */
+.cond-panel{background:var(--cream);border-radius:var(--r);padding:12px;margin-top:10px;border:1.5px solid var(--border);}
+
+/* ── QUESTIONS ── */
+.questions-wrap{display:flex;flex-direction:column;gap:7px;margin-bottom:8px;}
+.question-item{display:flex;gap:8px;align-items:center;}
+.question-input{flex:1;height:36px;border:1.5px solid var(--border2);border-radius:var(--r);padding:0 12px;font-size:13px;font-family:'Noto Sans TC',sans-serif;background:#fff;color:var(--ink);}
+.question-input:focus{outline:none;border-color:var(--moss2);box-shadow:0 0 0 3px rgba(45,74,62,.09);}
+.question-del{width:28px;height:28px;border:none;background:none;cursor:pointer;color:var(--hint);font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all .12s;}
+.question-del:hover{background:#fff0f0;color:#c0392b;}
+
+/* ── INQUIRY PANEL ── */
+.inquiry-contact-panel{background:var(--gold-pale);border:1.5px solid #f0d080;border-radius:var(--r);padding:12px 14px;margin:1rem 0 0;}
+
+/* ── PW ROWS ── */
+.pw-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
+.pw-row:last-child{border-bottom:none;}
+.pw-name{font-size:13px;font-weight:600;color:var(--ink);}
+.pw-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:2.5rem;color:var(--hint);font-size:14px;}
+
+/* ── USER BAR (legacy compat) ── */
+.user-bar{display:none;}
+
+/* ── WEEK BADGE ── */
+.week-badge{font-size:11px;background:var(--moss-pale);color:var(--moss2);padding:2px 9px;border-radius:99px;font-weight:500;display:inline-block;}
+
+/* ── NUM CELL ── */
+.num-cell{text-align:right;font-weight:500;}
+
+/* ── MEMBER TABLE ── */
+.member-table{width:100%;border-collapse:collapse;font-size:13px;}
+.member-table th{text-align:left;padding:7px 8px;font-weight:600;font-size:11px;color:var(--hint);border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+.member-table td{padding:10px 8px;border-bottom:1px solid var(--cream);color:var(--ink);vertical-align:middle;}
+.member-table tr:last-child td{border-bottom:none;}
+.member-table tr:hover td{background:var(--cream);}
+
+/* ── SUMMARY BAND ── */
+.summary-band{background:var(--cream);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;border:1.5px solid var(--border);}
+.band-label{font-size:10px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.summary-numbers{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.snum{text-align:center;}
+.snum .n{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:var(--ink);}
+.snum .l{font-size:10px;color:var(--hint);margin-top:2px;line-height:1.3;}
+
+/* ── SECTION LABEL ── */
+.section-label{font-size:11px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.divider{height:1px;background:var(--border);margin:14px 0;}
+.inline-row{display:flex;gap:8px;align-items:center;}
+
+/* ── RESPONSIVE ── */
 @media(max-width:520px){
   .field-row{grid-template-columns:1fr;}
   .concerns-grid{grid-template-columns:1fr;}
   .auto-info-bar{grid-template-columns:1fr 1fr;}
+  .dash-summary{grid-template-columns:repeat(2,1fr);}
+  .dash-2col{grid-template-columns:1fr;}
 }
-
-/* ── Dashboard ── */
-.dash-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem;}
-.stat-card{background:#fff;border:1px solid #e8e6e1;border-radius:12px;padding:1rem 1.1rem;}
-.stat-num{font-size:26px;font-weight:700;color:#1a1a1a;line-height:1.1;margin-bottom:3px;}
-.stat-unit{font-size:14px;font-weight:400;color:#888;margin-left:2px;}
-.stat-label{font-size:12px;color:#888;}
-.prog-item{margin-bottom:14px;}
-.prog-item:last-child{margin-bottom:0;}
-.prog-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.prog-name{font-size:13px;font-weight:500;}
-.prog-val{font-size:12px;color:#888;}
-.prog-bar{height:8px;background:#f0ede8;border-radius:99px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:99px;transition:width .6s ease;}
-.prog-fill.c1{background:#2c5f7a;}
-.prog-fill.c2{background:#5b8fa8;}
-.prog-fill.c3{background:#3b6d11;}
-.hbar-item{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
-.hbar-item:last-child{margin-bottom:0;}
-.hbar-label{font-size:12px;color:#555;flex-shrink:0;text-align:right;}
-.hbar-track{flex:1;height:20px;background:#f0ede8;border-radius:5px;overflow:hidden;}
-.hbar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:7px;min-width:4px;}
-.hbar-text{font-size:11px;font-weight:700;color:#fff;}
-.hbar-count{font-size:12px;color:#999;width:24px;text-align:right;flex-shrink:0;}
-.dash-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-.team-table{width:100%;border-collapse:collapse;font-size:12px;}
-.team-table th{text-align:left;padding:7px 6px;font-weight:500;font-size:11px;color:#999;border-bottom:1px solid #eee;white-space:nowrap;}
-.team-table td{padding:8px 6px;border-bottom:1px solid #f0ede8;}
-.team-table tr:last-child td{border-bottom:none;}
-.pct{font-size:11px;padding:2px 7px;border-radius:99px;font-weight:500;display:inline-block;}
-.pct.hi{background:#eaf3de;color:#3b6d11;}
-.pct.md{background:#fff4d6;color:#8a6200;}
-.pct.lo{background:#f0ede8;color:#888;}
-.dash-divider{height:1px;background:#f0ede8;margin:10px 0;}
-@media(max-width:600px){.dash-summary{grid-template-columns:repeat(2,1fr);}.dash-2col{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-<div class="app">
 
-<!-- ═══════════════════════ LOGIN ═══════════════════════ -->
+<!-- ═══════════════ LOGIN ═══════════════ -->
 <div id="login-screen">
-  <div class="header">
-    <h1>恩典久久 · 客戶追蹤</h1>
-    <p>請選擇身分並登入</p>
-  </div>
-  <div class="card">
-    <div class="role-tabs">
-      <button class="role-tab active" onclick="selectRole('dealer',this)">經銷商</button>
-      <button class="role-tab" onclick="selectRole('team',this)">團隊查看</button>
-      <button class="role-tab" onclick="selectRole('admin',this)">管理員</button>
+  <div class="login-wrap">
+    <div class="login-hero">
+      <div class="lh-mark">🌿</div>
+      <div class="lh-title">健康管家</div>
+      <div class="lh-sub">顧客管理系統</div>
     </div>
-    <div id="login-alert"></div>
-
-    <div id="login-dealer">
-      <div class="field"><label>選擇你的名字</label>
-        <select id="l-dealer"><option value="">載入中…</option></select>
+    <div class="login-body">
+      <div class="role-tabs">
+        <button class="role-tab active" onclick="selectRole('dealer',this)">健管師</button>
+        <button class="role-tab" onclick="selectRole('team',this)">團隊查看</button>
+        <button class="role-tab" onclick="selectRole('admin',this)">管理員</button>
       </div>
-      <div class="field"><label>密碼</label>
-        <input type="password" id="l-dealer-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+      <div id="login-alert"></div>
+      <div id="login-dealer">
+        <div class="lfield"><label>選擇姓名</label>
+          <select id="l-dealer"><option value="">載入中…</option></select>
+        </div>
+        <div class="lfield"><label>密碼</label>
+          <input type="password" id="l-dealer-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
       </div>
+      <div id="login-team" style="display:none">
+        <div class="lfield"><label>選擇團隊</label>
+          <select id="l-team"><option value="">載入中…</option></select>
+        </div>
+        <div class="lfield"><label>團隊密碼</label>
+          <input type="password" id="l-team-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+      </div>
+      <div id="login-admin" style="display:none">
+        <div class="lfield"><label>管理員密碼</label>
+          <input type="password" id="l-admin-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+      </div>
+      <button class="login-btn" onclick="doLogin()">登入</button>
+      <div class="login-hint">尚未設定密碼？新增第一筆客戶時<br>系統會引導您<span>設定專屬密碼</span></div>
     </div>
-
-    <div id="login-team" style="display:none">
-      <div class="field"><label>選擇團隊</label>
-        <select id="l-team"><option value="">載入中…</option></select>
-      </div>
-      <div class="field"><label>團隊密碼</label>
-        <input type="password" id="l-team-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
-    </div>
-
-    <div id="login-admin" style="display:none">
-      <div class="field"><label>管理員密碼</label>
-        <input type="password" id="l-admin-pw" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
-    </div>
-
-    <button class="btn primary full" onclick="doLogin()">登入</button>
   </div>
 </div>
 
-<!-- ═══════════════════════ MAIN APP ═══════════════════════ -->
+<!-- ═══════════════ MAIN APP ═══════════════ -->
 <div id="main-app" style="display:none">
-  <div class="header"><h1>恩典久久 · 客戶追蹤</h1></div>
-
-  <div class="user-bar">
-    <div class="user-bar-left">
-      <div><strong id="ub-name">-</strong><span class="role-badge" id="ub-role">-</span></div>
-      <div class="user-bar-sub" id="ub-team"></div>
-      <div style="font-size:11px;color:#aaa;margin-top:1px;display:none;" id="ub-id"></div>
+  <div class="app-header">
+    <div class="ah-brand">
+      <div class="ah-logo">🌿</div>
+      <div class="ah-titles">
+        <div class="ah-name">健康管家</div>
+        <div class="ah-sub">顧客管理系統</div>
+      </div>
     </div>
-    <div class="user-bar-right">
-      <button class="btn sm ghost" id="btn-changepw" onclick="openChangePw()" style="display:none">改密碼</button>
-      <button class="btn sm" onclick="doLogout()">登出</button>
+    <div class="ah-right">
+      <div class="user-pill">
+        <div class="user-avatar" id="ub-avatar">-</div>
+        <div class="user-info">
+          <div class="user-name-text"><strong id="ub-name">-</strong></div>
+          <div class="user-id-text" id="ub-id" style="display:none"></div>
+        </div>
+      </div>
+      <span class="ah-badge" id="ub-role">-</span>
+      <button class="ah-btn" id="btn-changepw" onclick="openChangePw()" style="display:none">改密碼</button>
+      <button class="ah-btn" onclick="doLogout()">登出</button>
     </div>
   </div>
 
-  <div id="main-alert"></div>
+  <!-- compat: hidden user-bar team text -->
+  <div class="user-bar"><div id="ub-team"></div></div>
 
-  <!-- 經銷商 view -->
-  <div id="view-dealer" style="display:none">
-    <div class="list-bar">
-      <div class="list-bar-title">我的客戶</div>
-      <div style="display:flex;gap:7px;">
-        <button class="btn sm" id="btn-select-mode" onclick="toggleSelectMode()">選取</button>
-        <button class="btn primary sm" id="btn-add-customer" onclick="openCustomerForm(null)">＋ 新增客戶</button>
-      </div>
-    </div>
-    <div class="bulk-bar" id="bulk-bar">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <button class="btn sm ghost" onclick="toggleSelectAll()" id="btn-sel-all">全選</button>
-        <span style="font-size:13px;color:#666;">已選取 <strong id="bulk-count">0</strong> 筆</span>
-      </div>
-      <button class="btn sm danger" id="btn-bulk-del" onclick="bulkDelete()">刪除選取</button>
-    </div>
-    <div id="dealer-list" class="customer-list"></div>
-  </div>
+  <div class="app-content">
+    <div id="main-alert" class="main-alert-wrap"></div>
 
-  <!-- 團隊 view -->
-  <div id="view-team" style="display:none">
-    <div class="sub-tabs">
-      <button class="sub-tab active" onclick="switchTeamTab('list',this)">客戶列表</button>
-      <button class="sub-tab" onclick="switchTeamTab('dashboard',this)">數據儀表板</button>
+    <!-- 健管師 view -->
+    <div id="view-dealer" style="display:none">
+      <div id="needs-pw-banner" class="needs-pw-banner" style="display:none">
+        <div class="needs-pw-text">⚠️ 請先設定密碼，才能新增客戶資料</div>
+        <button class="btn sm primary" onclick="openSetMyPassword()">立即設定</button>
+      </div>
+      <div class="list-bar">
+        <div class="list-bar-left">
+          <div class="list-bar-title">我的客戶</div>
+        </div>
+        <div class="list-bar-right">
+          <button class="btn sm" id="btn-select-mode" onclick="toggleSelectMode()">選取</button>
+          <button class="btn sm primary" id="btn-add-customer" onclick="checkBeforeAdd()">＋ 新增客戶</button>
+        </div>
+      </div>
+      <div class="bulk-bar" id="bulk-bar">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="btn sm ghost" onclick="toggleSelectAll()" id="btn-sel-all">全選</button>
+          <span style="font-size:13px;color:var(--muted);">已選取 <strong id="bulk-count">0</strong> 筆</span>
+        </div>
+        <button class="btn sm danger" id="btn-bulk-del" onclick="bulkDelete()">刪除選取</button>
+      </div>
+      <div id="dealer-list" class="customer-list"></div>
     </div>
-    <div id="team-list-section">
-      <div class="filter-row">
-        <select id="tv-filter" onchange="renderTeamView()"><option value="">全部成員</option></select>
-      </div>
-      <div id="team-list" class="customer-list"></div>
-    </div>
-    <div id="team-dashboard-section" style="display:none">
-      <div class="filter-row" style="margin-bottom:1rem;">
-        <select id="tdash-period" onchange="renderTeamDashboard()">
-          <option value="all">全部時間</option>
-          <option value="month">本月</option>
-          <option value="week">本週</option>
-        </select>
-      </div>
-      <div class="dash-summary" id="tdash-summary"></div>
-      <div class="dash-2col">
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">三階段任務完成率</div>
-          <div id="tdash-tasks"></div>
-        </div>
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">家庭日邀約狀態</div>
-          <div id="tdash-fday"></div>
-        </div>
-      </div>
-      <div class="dash-2col" style="margin-top:10px;">
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">健康關注排行（前8）</div>
-          <div id="tdash-health"></div>
-        </div>
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">成員表現</div>
-          <div id="tdash-members"></div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- 管理員 view -->
-  <div id="view-admin" style="display:none">
-    <div class="sub-tabs">
-      <button class="sub-tab active" onclick="switchAdminTab('customers',this)">所有客戶</button>
-      <button class="sub-tab" onclick="switchAdminTab('dashboard',this)">數據儀表板</button>
-      <button class="sub-tab" onclick="switchAdminTab('passwords',this)">密碼管理</button>
-    </div>
-    <div id="admin-customers">
-      <div class="filter-row">
-        <select id="av-team" onchange="onAdminTeamChange()"><option value="">全部團隊</option></select>
-        <select id="av-dealer" onchange="renderAdminList()"><option value="">全部成員</option></select>
+    <!-- 團隊 view -->
+    <div id="view-team" style="display:none">
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="switchTeamTab('list',this)">客戶列表</button>
+        <button class="sub-tab" onclick="switchTeamTab('dashboard',this)">數據儀表板</button>
       </div>
-      <div id="admin-list" class="customer-list"></div>
-    </div>
-    <div id="admin-passwords" style="display:none">
-      <div class="card">
-        <div class="card-title">經銷商密碼</div>
-        <div id="pw-dealer-list"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">團隊密碼</div>
-        <div id="pw-team-list"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">資料維護（一次性工具）</div>
-        <div style="font-size:13px;color:#888;margin-bottom:10px;">將舊版健康關注詞自動轉換為新分類用語，可重複執行，不會重複轉換已轉換過的資料。</div>
-        <button class="btn sm" onclick="runMigration()">執行健康關注詞轉換</button>
-      </div>
-    </div>
-    <div id="admin-dashboard" style="display:none">
-      <div class="filter-row" style="margin-bottom:1rem;">
-        <select id="dash-period" onchange="renderDashboard()">
-          <option value="all">全部時間</option>
-          <option value="month">本月</option>
-          <option value="week">本週</option>
-        </select>
-        <select id="dash-team" onchange="renderDashboard()">
-          <option value="">全部團隊</option>
-        </select>
-      </div>
-      <div class="dash-summary" id="dash-summary"></div>
-      <div class="dash-2col">
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">三階段任務完成率</div>
-          <div id="dash-tasks"></div>
+      <div id="team-list-section">
+        <div class="filter-row">
+          <select id="tv-filter" onchange="renderTeamView()"><option value="">全部成員</option></select>
         </div>
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">家庭日邀約狀態</div>
-          <div id="dash-fday"></div>
+        <div id="team-list" class="customer-list"></div>
+      </div>
+      <div id="team-dashboard-section" style="display:none">
+        <div class="filter-row" style="margin-bottom:1rem;">
+          <select id="tdash-period" onchange="renderTeamDashboard()">
+            <option value="all">全部時間</option>
+            <option value="month">本月</option>
+            <option value="week">本週</option>
+          </select>
+        </div>
+        <div class="dash-summary" id="tdash-summary"></div>
+        <div class="dash-2col">
+          <div class="card" style="margin-bottom:0"><div class="card-title">三階段任務完成率</div><div id="tdash-tasks"></div></div>
+          <div class="card" style="margin-bottom:0"><div class="card-title">家庭日邀約狀態</div><div id="tdash-fday"></div></div>
+        </div>
+        <div class="dash-2col" style="margin-top:10px;">
+          <div class="card" style="margin-bottom:0"><div class="card-title">健康關注排行（前8）</div><div id="tdash-health"></div></div>
+          <div class="card" style="margin-bottom:0"><div class="card-title">成員表現</div><div id="tdash-members"></div></div>
         </div>
       </div>
-      <div class="dash-2col" style="margin-top:10px;">
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">健康關注排行（前8）</div>
-          <div id="dash-health"></div>
+    </div>
+
+    <!-- 管理員 view -->
+    <div id="view-admin" style="display:none">
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="switchAdminTab('customers',this)">所有客戶</button>
+        <button class="sub-tab" onclick="switchAdminTab('dashboard',this)">數據儀表板</button>
+        <button class="sub-tab" onclick="switchAdminTab('passwords',this)">密碼管理</button>
+      </div>
+      <div id="admin-customers">
+        <div class="filter-row">
+          <select id="av-team" onchange="onAdminTeamChange()"><option value="">全部團隊</option></select>
+          <select id="av-dealer" onchange="renderAdminList()"><option value="">全部成員</option></select>
         </div>
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">各團隊表現</div>
-          <div id="dash-teams"></div>
+        <div id="admin-list" class="customer-list"></div>
+      </div>
+      <div id="admin-dashboard" style="display:none">
+        <div class="filter-row" style="margin-bottom:1rem;">
+          <select id="dash-period" onchange="renderDashboard()">
+            <option value="all">全部時間</option>
+            <option value="month">本月</option>
+            <option value="week">本週</option>
+          </select>
+          <select id="dash-team" onchange="renderDashboard()">
+            <option value="">全部團隊</option>
+          </select>
+        </div>
+        <div class="dash-summary" id="dash-summary"></div>
+        <div class="dash-2col">
+          <div class="card" style="margin-bottom:0"><div class="card-title">三階段任務完成率</div><div id="dash-tasks"></div></div>
+          <div class="card" style="margin-bottom:0"><div class="card-title">家庭日邀約狀態</div><div id="dash-fday"></div></div>
+        </div>
+        <div class="dash-2col" style="margin-top:10px;">
+          <div class="card" style="margin-bottom:0"><div class="card-title">健康關注排行（前8）</div><div id="dash-health"></div></div>
+          <div class="card" style="margin-bottom:0"><div class="card-title">各團隊表現</div><div id="dash-teams"></div></div>
+        </div>
+      </div>
+      <div id="admin-passwords" style="display:none">
+        <div class="card">
+          <div class="card-title">健管師密碼</div>
+          <div id="pw-dealer-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">團隊密碼</div>
+          <div id="pw-team-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">資料維護（一次性工具）</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">將舊版健康關注詞自動轉換為新分類用語，可重複執行。</div>
+          <button class="btn sm" onclick="runMigration()">執行健康關注詞轉換</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════ CUSTOMER FORM MODAL ═══════════════════════ -->
+<!-- ═══════════════ CUSTOMER FORM MODAL ═══════════════ -->
 <div id="customer-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeCustomerForm()">
   <div class="modal" onclick="event.stopPropagation()">
-
     <div class="modal-hd">
       <div class="modal-title" id="form-title">新增客戶</div>
       <button class="modal-close" onclick="closeCustomerForm()">✕</button>
     </div>
-
-    <!-- 自動填入資訊列 -->
     <div class="auto-info-bar">
       <div class="auto-info-cell"><div class="ai-label">填寫日期</div><div class="ai-val" id="f-date">-</div></div>
       <div class="auto-info-cell"><div class="ai-label">團隊</div><div class="ai-val" id="f-team">-</div></div>
-      <div class="auto-info-cell"><div class="ai-label">經銷商</div><div class="ai-val" id="f-dealer">-</div></div>
+      <div class="auto-info-cell"><div class="ai-label">健管師</div><div class="ai-val" id="f-dealer">-</div></div>
     </div>
-
     <div class="modal-body">
-
-      <!-- 客戶自填聯絡資訊 -->
-      <div id="inquiry-contact-panel" style="display:none;background:#fff8e6;border:1px solid #f0d080;border-radius:10px;padding:12px 14px;margin:1rem 0 0;">
-        <div style="font-size:11px;font-weight:700;color:#8a6200;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">📋 客戶自填資訊</div>
+      <div id="inquiry-contact-panel" class="inquiry-contact-panel" style="display:none;margin-bottom:0;">
+        <div style="font-size:11px;font-weight:700;color:#7a5500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">📋 客戶自填資訊</div>
         <div style="display:flex;flex-direction:column;gap:5px;font-size:13px;">
-          <div><span style="color:#aaa;">偏好聯絡時間：</span><span id="ic-time" style="font-weight:500;"></span></div>
-          <div><span style="color:#aaa;">想了解：</span><span id="ic-products" style="font-weight:500;"></span></div>
+          <div><span style="color:var(--hint);">偏好聯絡時間：</span><span id="ic-time" style="font-weight:600;color:var(--ink);"></span></div>
+          <div><span style="color:var(--hint);">想了解：</span><span id="ic-products" style="font-weight:600;color:var(--ink);"></span></div>
         </div>
       </div>
-
-      <!-- ── 基本資料 ── -->
       <div class="fsec">
         <div class="fsec-title">基本資料</div>
-        <div class="field">
-          <label>客戶姓名／簡稱</label>
-          <input type="text" id="f-cname" placeholder="輸入客戶名稱">
-        </div>
+        <div class="field"><label>客戶姓名／簡稱</label><input type="text" id="f-cname" placeholder="輸入客戶名稱"></div>
         <div class="field-row">
-          <div class="field">
-            <label>聯絡電話</label>
-            <input type="tel" id="f-phone" placeholder="09xx-xxx-xxx">
-          </div>
-          <div class="field">
-            <label>LINE ID</label>
-            <input type="text" id="f-line" placeholder="輸入 LINE ID">
-          </div>
+          <div class="field"><label>聯絡電話</label><input type="tel" id="f-phone" placeholder="09xx-xxx-xxx"></div>
+          <div class="field"><label>LINE ID</label><input type="text" id="f-line" placeholder="輸入 LINE ID"></div>
         </div>
       </div>
-
-      <!-- ── 恩典卡 ── -->
       <div class="fsec">
         <div class="fsec-title">恩典卡</div>
-        <div class="field">
-          <label>購買時間</label>
-          <input type="date" id="f-sale-date">
-        </div>
+        <div class="field"><label>購買時間</label><input type="date" id="f-sale-date"></div>
         <div class="slabel">三階段任務</div>
         <div class="task-check-list">
           <div class="task-check-item" id="tk1" onclick="toggleTask(0)">
             <div class="task-box" id="tb1"></div>
-            <div>
-              <div class="task-label-main">7日產品使用</div>
-              <div class="task-label-sub">客戶持續使用產品滿7天</div>
-            </div>
+            <div><div class="task-label-main">7日產品使用</div><div class="task-label-sub">客戶持續使用產品滿7天</div></div>
           </div>
           <div class="task-check-item" id="tk2" onclick="toggleTask(1)">
             <div class="task-box" id="tb2"></div>
-            <div>
-              <div class="task-label-main">週二課程</div>
-              <div class="task-label-sub">完成週二線上課程邀約</div>
-            </div>
+            <div><div class="task-label-main">週二課程</div><div class="task-label-sub">完成週二線上課程邀約</div></div>
           </div>
           <div class="task-check-item" id="tk3" onclick="toggleTask(2)">
             <div class="task-box" id="tb3"></div>
-            <div>
-              <div class="task-label-main">家庭日</div>
-              <div class="task-label-sub">參加家庭日活動</div>
-            </div>
+            <div><div class="task-label-main">家庭日</div><div class="task-label-sub">參加家庭日活動</div></div>
           </div>
         </div>
       </div>
-
-      <!-- ── 家庭日 ── -->
       <div class="fsec">
         <div class="fsec-title">家庭日</div>
-        <div class="field">
-          <label>邀約狀態</label>
+        <div class="field"><label>邀約狀態</label>
           <select id="f-inv">
             <option value="">— 選擇狀態 —</option>
             <option value="已報名">已報名</option>
@@ -503,75 +534,42 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
             <option value="未聯繫">未聯繫</option>
           </select>
         </div>
-        <div class="field">
-          <label>是否已參加家庭日</label>
+        <div class="field"><label>是否已參加家庭日</label>
           <div class="radio-group">
             <button class="radio-btn" id="rd-yes" onclick="selectAttended('是')">是</button>
-            <button class="radio-btn" id="rd-no"  onclick="selectAttended('否')">否</button>
-            <button class="radio-btn" id="rd-na"  onclick="selectAttended('')">未填</button>
+            <button class="radio-btn" id="rd-no" onclick="selectAttended('否')">否</button>
+            <button class="radio-btn" id="rd-na" onclick="selectAttended('')">未填</button>
           </div>
         </div>
-
-        <!-- 已參加 → 展開 -->
         <div id="panel-attended" style="display:none;" class="cond-panel">
-          <div class="field">
-            <label>實際參加時間</label>
-            <input type="date" id="f-fday-date">
-          </div>
+          <div class="field"><label>實際參加時間</label><input type="date" id="f-fday-date"></div>
           <div class="field-row">
-            <div class="field">
-              <label>當日購買產品價值（元）</label>
-              <input type="number" id="f-val-day" placeholder="0" min="0">
-            </div>
-            <div class="field">
-              <label>7天內購買產品價值（元）</label>
-              <input type="number" id="f-val-7days" placeholder="0" min="0">
-            </div>
+            <div class="field"><label>當日購買產品價值（元）</label><input type="number" id="f-val-day" placeholder="0" min="0"></div>
+            <div class="field"><label>7天內購買產品價值（元）</label><input type="number" id="f-val-7days" placeholder="0" min="0"></div>
           </div>
-          <div class="field">
-            <label>回饋／感受</label>
-            <textarea id="f-fday-feedback" placeholder="記錄客戶參加家庭日後的回饋…"></textarea>
-          </div>
+          <div class="field"><label>回饋／感受</label><textarea id="f-fday-feedback" placeholder="記錄客戶參加家庭日後的回饋…"></textarea></div>
         </div>
-
-        <!-- 未參加 → 展開 -->
         <div id="panel-notattended" style="display:none;" class="cond-panel">
-          <div class="field">
-            <label>未參加原因</label>
-            <textarea id="f-reason" placeholder="記錄未參加原因…" style="min-height:60px;"></textarea>
-          </div>
+          <div class="field"><label>未參加原因</label><textarea id="f-reason" placeholder="記錄未參加原因…" style="min-height:60px;"></textarea></div>
         </div>
       </div>
-
-      <!-- ── 身體狀況與資訊 ── -->
       <div class="fsec">
         <div class="fsec-title">身體狀況與資訊</div>
-        <div class="concerns-grid" id="concerns-grid"></div>
-        <div id="other-concern-wrap" style="display:none;margin-top:10px;">
-          <div class="field">
-            <label>其他（請說明）</label>
-            <input type="text" id="f-other" placeholder="輸入其他健康關注">
-          </div>
+        <div id="concerns-grid"></div>
+        <div id="other-concern-wrap" style="display:none;margin-top:8px;">
+          <div class="field"><label>其他（請說明）</label><input type="text" id="f-other" placeholder="輸入其他健康關注"></div>
         </div>
       </div>
-
-      <!-- ── 產品使用時提問 ── -->
       <div class="fsec">
         <div class="fsec-title">產品使用時提問</div>
         <div class="questions-wrap" id="questions-list"></div>
-        <button class="btn dashed sm" style="width:100%;justify-content:center;" onclick="addQuestion('')">＋ 新增問題</button>
+        <button class="btn dashed sm full" onclick="addQuestion('')">＋ 新增問題</button>
       </div>
-
-      <!-- ── 備註 ── -->
       <div class="fsec" style="padding-bottom:1.25rem;">
         <div class="fsec-title">備註</div>
-        <div class="field">
-          <textarea id="f-notes" placeholder="其他備註…"></textarea>
-        </div>
+        <div class="field"><textarea id="f-notes" placeholder="其他備註…"></textarea></div>
       </div>
-
-    </div><!-- end modal-body -->
-
+    </div>
     <div class="modal-footer">
       <button class="btn danger sm" id="btn-del" onclick="confirmDelete()" style="display:none">刪除客戶</button>
       <button class="btn" onclick="closeCustomerForm()">取消</button>
@@ -580,13 +578,13 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
   </div>
 </div>
 
-<!-- ═══════════════════════ CHANGE PW MODAL ═══════════════════════ -->
+<!-- ═══════════════ CHANGE PW MODAL ═══════════════ -->
 <div id="changepw-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeChangePw()">
-  <div class="modal" style="max-width:400px;" onclick="event.stopPropagation()">
-    <div class="modal-hd"><div class="modal-title">修改密碼</div><button class="modal-close" onclick="closeChangePw()">✕</button></div>
+  <div class="modal" style="max-width:420px;" onclick="event.stopPropagation()">
+    <div class="modal-hd"><div class="modal-title" id="changepw-title">修改密碼</div><button class="modal-close" onclick="closeChangePw()">✕</button></div>
     <div class="modal-body" style="padding:1rem 1.5rem;">
       <div id="changepw-alert"></div>
-      <div class="field"><label>原密碼</label><input type="password" id="cp-old" placeholder="輸入原密碼"></div>
+      <div id="cp-old-wrap"><div class="field"><label>原密碼</label><input type="password" id="cp-old" placeholder="輸入原密碼"></div></div>
       <div class="field"><label>新密碼</label><input type="password" id="cp-new" placeholder="輸入新密碼"></div>
       <div class="field"><label>確認新密碼</label><input type="password" id="cp-cfm" placeholder="再次輸入新密碼"></div>
     </div>
@@ -597,9 +595,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
   </div>
 </div>
 
-<!-- ═══════════════════════ SET PW MODAL (admin) ═══════════════════════ -->
+<!-- ═══════════════ SET PW MODAL ═══════════════ -->
 <div id="setpw-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeSetPw()">
-  <div class="modal" style="max-width:400px;" onclick="event.stopPropagation()">
+  <div class="modal" style="max-width:420px;" onclick="event.stopPropagation()">
     <div class="modal-hd"><div class="modal-title" id="setpw-title">設定密碼</div><button class="modal-close" onclick="closeSetPw()">✕</button></div>
     <div class="modal-body" style="padding:1rem 1.5rem;">
       <div id="setpw-alert"></div>
@@ -615,6 +613,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
 </div>
 
 <script>
+
 const API = 'https://script.google.com/macros/s/AKfycbwmXGGtjzdnYJ8Ahj-cShxLXJe00kzHuXGIjSUzQgPTY5-V4BBonirusQkbMi07ZI60/exec';
 
 const CONCERN_GROUPS = [
@@ -637,6 +636,7 @@ let loginRole = 'dealer';
 let currentRole=null, currentId=null, currentName=null, currentTeam=null, currentPw=null;
 let dealers=[], teams=[], customers=[], passwords=[];
 let editingCid=null;
+let currentNeedsPassword=false;
 let taskState=[false,false,false];
 let selConcerns=new Set();
 let attendedVal='';
@@ -717,7 +717,9 @@ async function doLogin() {
     const res=await api({action:'verifyAuth',type,id,password:pw});
     if (!res.ok){showAlert('login-alert','error','密碼錯誤，請再試');return;}
     currentRole=type; currentId=id; currentName=name; currentTeam=team; currentPw=pw;
-    await loadCustomers();
+    const cusRes=await api({action:'getCustomers',type:currentRole,id:currentId,password:currentPw});
+    if(cusRes.ok){ customers=cusRes.customers||[]; currentNeedsPassword=!!cusRes.needsPassword; }
+    else{ customers=[]; currentNeedsPassword=false; }
     enterApp();
   } catch(e) {
     showAlert('login-alert','error','連線失敗，請再試一次');
@@ -726,7 +728,7 @@ async function doLogin() {
 
 async function loadCustomers() {
   const res=await api({action:'getCustomers',type:currentRole,id:currentId,password:currentPw});
-  if (res.ok) customers=res.customers||[];
+  if(res.ok){ customers=res.customers||[]; currentNeedsPassword=!!res.needsPassword; }
 }
 
 function enterApp() {
@@ -735,6 +737,8 @@ function enterApp() {
   document.getElementById('ub-name').textContent=currentName;
   document.getElementById('ub-role').textContent=currentRole==='dealer'?'經銷商':currentRole==='team'?'團隊查看':'管理員';
   document.getElementById('ub-team').textContent=(currentRole==='dealer'&&currentTeam)?currentTeam:'';
+  const banner=document.getElementById('needs-pw-banner');
+  if(banner) banner.style.display=(currentRole==='dealer'&&currentNeedsPassword)?'flex':'none';
   if(currentRole==='dealer'){
     const last5=String(currentId).slice(-5);
     document.getElementById('ub-id').textContent='我的 ID：'+last5;
@@ -914,24 +918,26 @@ async function runMigration() {
 
 async function loadPasswordList() {
   try {
-    const res=await api({action:'getPasswords',adminPw:currentPw});
-    if (res.ok) passwords=res.passwords||[];
+    const res=await api({action:'getPasswordStatus',adminPw:currentPw});
+    if (res.ok) passwords=res.statuses||[];
   } catch(e){}
   renderPasswordList();
 }
 
 function renderPasswordList() {
   document.getElementById('pw-dealer-list').innerHTML=dealers.length?dealers.map(d=>{
-    const rec=passwords.find(p=>p.type==='dealer'&&String(p.id)===String(d.id));
+    const s=passwords.find(p=>p.type==='dealer'&&String(p.id)===String(d.id));
+    const isSet=s?s.isSet:false;
     return `<div class="pw-row"><div><div class="pw-name">${d.name}</div>
-    <div class="pw-sub">${d.team||'未分配'} · 密碼：${rec?'已設定':'(預設 777)'}</div></div>
+    <div class="pw-sub">${d.team||'未分配'} · ${isSet?'已設定密碼':'<span style="color:#c0392b;">尚未設定密碼</span>'}</div></div>
     <button class="btn sm" onclick="openSetPw('dealer','${d.id}','${d.name}')">設定密碼</button></div>`;
   }).join(''):'<div style="color:#aaa;font-size:13px;padding:1rem 0;">尚無經銷商</div>';
 
   document.getElementById('pw-team-list').innerHTML=teams.length?teams.map(t=>{
-    const rec=passwords.find(p=>p.type==='team'&&p.id===t);
+    const s=passwords.find(p=>p.type==='team'&&p.id===t);
+    const isSet=s?s.isSet:false;
     return `<div class="pw-row"><div><div class="pw-name">${t}</div>
-    <div class="pw-sub">密碼：${rec?'已設定':'(預設 777)'}</div></div>
+    <div class="pw-sub">${isSet?'已設定密碼':'<span style="color:#c0392b;">尚未設定密碼</span>'}</div></div>
     <button class="btn sm" onclick="openSetPw('team','${t}','${t}')">設定密碼</button></div>`;
   }).join(''):'<div style="color:#aaa;font-size:13px;padding:1rem 0;">尚無團隊</div>';
 }
@@ -1216,15 +1222,25 @@ function openChangePw(){
 function closeChangePw(){document.getElementById('changepw-modal').style.display='none';}
 
 async function doChangePw() {
-  const old=document.getElementById('cp-old').value;
-  const nw =document.getElementById('cp-new').value;
-  const cf =document.getElementById('cp-cfm').value;
-  if (!old||!nw){showAlert('changepw-alert','error','請填寫所有欄位');return;}
+  const isFirstTime = currentNeedsPassword;
+  const old = isFirstTime ? '' : document.getElementById('cp-old').value;
+  const nw  = document.getElementById('cp-new').value;
+  const cf  = document.getElementById('cp-cfm').value;
+  if (!isFirstTime && !old){showAlert('changepw-alert','error','請輸入原密碼');return;}
+  if (!nw){showAlert('changepw-alert','error','請輸入新密碼');return;}
   if (nw!==cf){showAlert('changepw-alert','error','新密碼不一致');return;}
   try {
     const res=await api({action:'changePassword',type:currentRole,id:currentId,oldPw:old,newPw:nw});
-    if (res.ok){currentPw=nw;closeChangePw();showAlert('main-alert','success','✓ 密碼已修改');}
-    else{showAlert('changepw-alert','error',res.error||'修改失敗');}
+    if (res.ok){
+      currentPw=nw;
+      if(isFirstTime){
+        currentNeedsPassword=false;
+        const banner=document.getElementById('needs-pw-banner');
+        if(banner) banner.style.display='none';
+      }
+      closeChangePw();
+      showAlert('main-alert','success', isFirstTime?'✓ 密碼設定完成，現在可以新增客戶了':'✓ 密碼已修改');
+    } else {showAlert('changepw-alert','error',res.error||'修改失敗');}
   } catch(e){showAlert('changepw-alert','error','連線失敗');}
 }
 
@@ -1516,6 +1532,29 @@ async function bulkDelete(){
   finally{ btn.disabled=false; btn.textContent='刪除選取'; }
 }
 
+function checkBeforeAdd(){
+  if(currentNeedsPassword){ openSetMyPassword(); return; }
+  openCustomerForm(null);
+}
+
+function openSetMyPassword(){
+  // 開啟改密碼視窗，第一次設定模式（不需要舊密碼）
+  document.getElementById('cp-old-wrap').style.display='none';
+  document.getElementById('changepw-title').textContent='設定您的密碼';
+  document.getElementById('cp-new').value='';
+  document.getElementById('cp-cfm').value='';
+  document.getElementById('changepw-alert').innerHTML='';
+  document.getElementById('changepw-modal').style.display='flex';
+}
+
+function openChangePw(){
+  document.getElementById('cp-old-wrap').style.display='block';
+  document.getElementById('changepw-title').textContent='修改密碼';
+  ['cp-old','cp-new','cp-cfm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('changepw-alert').innerHTML='';
+  document.getElementById('changepw-modal').style.display='flex';
+}
+
 function showAlert(id,type,msg){
   const el=document.getElementById(id);
   if (!el) return;
@@ -1524,6 +1563,7 @@ function showAlert(id,type,msg){
 }
 
 init();
+
 </script>
 </body>
 </html>
