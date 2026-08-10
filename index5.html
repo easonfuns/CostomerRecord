@@ -19,14 +19,14 @@
   --header-h:56px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;}
+html,body{height:100%;}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);}
 
 /* ── LOGIN ── */
-#login-screen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem 1rem;background:var(--cream);}
+
 .login-wrap{width:100%;max-width:420px;border-radius:20px;overflow:hidden;box-shadow:var(--shadow2);background:var(--warm);}
 .login-hero{background:var(--moss);padding:2.25rem 1.5rem 3rem;text-align:center;position:relative;}
-.login-hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:36px;background:var(--warm);clip-path:ellipse(55% 100% at 50% 100%);pointer-events:none;}
+
 .lh-mark{width:54px;height:54px;border-radius:15px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;}
 .lh-title{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:600;color:#fff;letter-spacing:.06em;margin-bottom:4px;}
 .lh-sub{font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.12em;}
@@ -44,7 +44,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .login-hint span{color:var(--moss2);font-weight:600;}
 
 /* ── HEADER ── */
-.app-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--moss);height:var(--header-h);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;}
+.app-header{position:relative;z-index:100;background:var(--moss);height:var(--header-h);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;}
 .ah-brand{display:flex;align-items:center;gap:9px;flex-shrink:0;}
 .ah-logo{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .ah-name{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;color:#fff;letter-spacing:.04em;line-height:1.2;}
@@ -70,10 +70,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .ah-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
 
 /* ── PANELS WRAPPER (swipeable) ── */
-#main-app{display:block;position:fixed;top:var(--header-h);left:0;right:0;bottom:0;}
-.panels-wrapper{display:flex;width:100%;height:100%;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.panels-wrapper::-webkit-scrollbar{display:none;}
-.panel{min-width:100vw;width:100vw;height:100%;scroll-snap-align:start;overflow-y:auto;flex-shrink:0;}
+#main-app{display:flex;flex:1;overflow:hidden;}
+.panels-container{flex:1;overflow:hidden;position:relative;}
+.panels-track{display:flex;width:200%;height:100%;transition:transform .35s cubic-bezier(.25,.46,.45,.94);will-change:transform;}
+.panel{width:50%;height:100%;overflow-y:auto;flex-shrink:0;}
 
 /* ── PANEL CONTENT ── */
 .panel-inner{max-width:760px;margin:0 auto;padding:1.25rem 1rem 3rem;}
@@ -281,7 +281,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 }
 
 /* ── INLINE LOGIN IN PANEL ── */
-#ct-login-section{display:flex;align-items:center;justify-content:center;padding:2rem 1rem;min-height:calc(100vh - var(--header-h));}
+#ct-login-section{display:flex;align-items:center;justify-content:center;padding:2rem 1rem;min-height:100%;}
 #ct-content-section{display:none;}
 .inline-login-wrap{width:100%;max-width:400px;}
 .il-hero{background:var(--moss);padding:2rem 1.5rem 2.75rem;text-align:center;position:relative;border-radius:20px 20px 0 0;z-index:0;}
@@ -321,7 +321,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 
 <!-- ═══════════ TWO-PANEL SWIPEABLE LAYOUT ═══════════ -->
 <div id="main-app">
-  <div class="panels-wrapper" id="panels-wrapper">
+  <div class="panels-container" id="panels-container"><div class="panels-track" id="panels-track">
 
     <!-- ══ PANEL 1: 顧客管理 ══ -->
     <div class="panel" id="panel-0">
@@ -518,8 +518,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
       </div>
     </div><!-- /panel-1 -->
 
-  </div>
-</div>
+  </div><!-- /panels-track -->
+</div><!-- /panels-container -->
+</div><!-- /main-app -->
 
 <!-- ═══════════ MODALS ═══════════ -->
 <div id="customer-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeCustomerForm()">
@@ -584,12 +585,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 </div>
 
 <script>
+
 // ── PANEL SWITCHER ─────────────────────────────────────────────
 function scrollToPanel(idx){
-  const w=document.getElementById('panels-wrapper');
-  if(!w) return;
-  const panelW = document.getElementById('panel-0').offsetWidth || window.innerWidth;
-  w.scrollTo({left:idx*panelW,behavior:'smooth'});
+  _currentPanel = idx;
+  const track = document.getElementById('panels-track');
+  if(track) track.style.transform = 'translateX(' + (-idx * 50) + '%)';
   updateTabIndicator(idx);
 }
 function updateTabIndicator(idx){
@@ -600,11 +601,33 @@ function updateTabIndicator(idx){
 let wr_initialized=false;
 // Listen to scroll and sync tab indicator
 document.addEventListener('DOMContentLoaded',()=>{
-  const w=document.getElementById('panels-wrapper');
-  w.addEventListener('scroll',()=>{
-    const idx=Math.round(w.scrollLeft/window.innerWidth);
-    updateTabIndicator(idx);
+  const container = document.getElementById('panels-container');
+  if(!container) return;
+  let startX=0, startY=0, isDragging=false;
+  // Touch swipe
+  container.addEventListener('touchstart', e=>{
+    startX=e.touches[0].clientX; startY=e.touches[0].clientY; isDragging=true;
   },{passive:true});
+  container.addEventListener('touchend', e=>{
+    if(!isDragging) return; isDragging=false;
+    const dx=e.changedTouches[0].clientX-startX;
+    const dy=e.changedTouches[0].clientY-startY;
+    if(Math.abs(dx)>Math.abs(dy)*1.5 && Math.abs(dx)>40){
+      if(dx<0 && _currentPanel===0) scrollToPanel(1);
+      else if(dx>0 && _currentPanel===1) scrollToPanel(0);
+    }
+  },{passive:true});
+  // Mouse drag swipe
+  container.addEventListener('mousedown', e=>{startX=e.clientX; startY=e.clientY; isDragging=true;});
+  container.addEventListener('mouseup', e=>{
+    if(!isDragging) return; isDragging=false;
+    const dx=e.clientX-startX;
+    const dy=e.clientY-startY;
+    if(Math.abs(dx)>Math.abs(dy)*1.5 && Math.abs(dx)>60){
+      if(dx<0 && _currentPanel===0) scrollToPanel(1);
+      else if(dx>0 && _currentPanel===1) scrollToPanel(0);
+    }
+  });
 });
 
 // ── CUSTOMER TRACKER ────────────────────────────────────────────────────
@@ -783,8 +806,7 @@ function doLogout() {
   document.getElementById('btn-changepw').style.display='none';
   document.getElementById('btn-logout').style.display='none';
   // Scroll back to panel 0
-  const w=document.getElementById('panels-wrapper');
-  if(w) w.scrollTo({left:0,behavior:'smooth'});
+  scrollToPanel(0); // return to panel 0
   // login-screen removed, ct-login-section handles login within panel
   ['l-dealer-pw','l-team-pw','l-admin-pw'].forEach(id=>document.getElementById(id).value='');
 }
@@ -1786,6 +1808,7 @@ function wr_init(){
 
 // ── INIT ──────────────────────────────────────────────────────────────
 init(); // customer tracker init
+
 </script>
 </body>
 </html>
