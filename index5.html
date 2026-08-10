@@ -284,12 +284,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 #ct-login-section{display:flex;align-items:center;justify-content:center;padding:2rem 1rem;min-height:calc(100vh - var(--header-h));}
 #ct-content-section{display:none;}
 .inline-login-wrap{width:100%;max-width:400px;}
-.il-hero{background:var(--moss);padding:2rem 1.5rem 2.75rem;text-align:center;position:relative;border-radius:20px 20px 0 0;}
+.il-hero{background:var(--moss);padding:2rem 1.5rem 2.75rem;text-align:center;position:relative;border-radius:20px 20px 0 0;z-index:0;}
 .il-hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:var(--warm);clip-path:ellipse(55% 100% at 50% 100%);pointer-events:none;}
 .il-mark{width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px;}
 .il-title{font-family:'Noto Serif TC',serif;font-size:19px;font-weight:600;color:#fff;letter-spacing:.06em;margin-bottom:3px;}
 .il-sub{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.1em;}
-.il-body{background:var(--warm);border-radius:0 0 20px 20px;padding:1.5rem;box-shadow:var(--shadow2);}
+.il-body{background:var(--warm);border-radius:0 0 20px 20px;padding:1.5rem;box-shadow:var(--shadow2);position:relative;z-index:1;}
 
 </style>
 </head>
@@ -587,7 +587,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 // ── PANEL SWITCHER ─────────────────────────────────────────────
 function scrollToPanel(idx){
   const w=document.getElementById('panels-wrapper');
-  w.scrollTo({left:idx*window.innerWidth,behavior:'smooth'});
+  if(!w) return;
+  const panelW = document.getElementById('panel-0').offsetWidth || window.innerWidth;
+  w.scrollTo({left:idx*panelW,behavior:'smooth'});
+  updateTabIndicator(idx);
 }
 function updateTabIndicator(idx){
   document.querySelectorAll('.swipe-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
@@ -652,10 +655,22 @@ async function init() {
       dealers = d.dealers || [];
       teams   = d.teams   || [];
       populateLoginDropdowns();
+    } else {
+      showInitError(d.error || '伺服器回應錯誤');
     }
   } catch(e) {
-    showAlert('login-alert','error','無法連接伺服器，請確認網路後重試');
+    showInitError('無法連接伺服器，請確認 Apps Script 已部署');
   }
+}
+
+function showInitError(msg) {
+  const el = document.getElementById('login-alert');
+  if (el) el.innerHTML = '<div class="alert error">' + msg + '<br><button class="btn sm" style="margin-top:8px;" onclick="init()">重新載入</button></div>';
+  // Reset dropdowns to show error state
+  const ds = document.getElementById('l-dealer');
+  if (ds) { ds.innerHTML = '<option value="">⚠ 載入失敗，請重試</option>'; }
+  const ts = document.getElementById('l-team');
+  if (ts) { ts.innerHTML = '<option value="">⚠ 載入失敗，請重試</option>'; }
 }
 
 function populateLoginDropdowns() {
