@@ -333,6 +333,63 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 /* ══ 列表列 ══ */
 .list-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:10px;flex-wrap:wrap;}
 .list-bar-title{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:600;}
+
+/* ══ 週報 ══ */
+.wr-mode-bar{display:flex;gap:4px;margin-bottom:1.25rem;padding:3px;background:rgba(0,0,0,.06);border-radius:10px;width:fit-content;flex-wrap:wrap;}
+.wr-mode-btn{padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:#3a3a35;border-radius:8px;transition:all .15s;font-family:'Noto Sans TC',sans-serif;}
+.wr-mode-btn.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:600;}
+.wr-page{display:none;}
+.wr-page.active{display:block;}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
+.metric-cell{background:var(--cream);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;border:1.5px solid var(--border);}
+.metric-cell label{font-size:12px;color:var(--muted);line-height:1.4;}
+.metric-input{height:46px;border:1.5px solid var(--border2);border-radius:var(--r);font-size:22px;font-weight:700;text-align:center;background:#fff;color:var(--ink);font-family:'Noto Sans TC',sans-serif;width:100%;}
+.metric-input:focus{outline:none;border-color:var(--moss2);box-shadow:0 0 0 3px rgba(45,74,62,.09);}
+.note-box{font-size:12px;color:var(--muted);background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.7;}
+.note-box strong{color:var(--ink);}
+
+/* ══ 個人週報面板 ══ */
+.stats-panel{background:linear-gradient(135deg,var(--moss) 0%,var(--moss2) 100%);border-radius:16px;padding:1.25rem 1.375rem;margin-bottom:1rem;color:#fff;}
+.stats-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:10px;flex-wrap:wrap;}
+.stats-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+.scope-btn{padding:3px 11px;border-radius:99px;font-size:10.5px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-family:'Noto Sans TC',sans-serif;transition:all .15s;}
+.scope-btn:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
+.scope-btn.on{background:var(--gold);border-color:var(--gold);color:var(--moss);}
+.stats-sub{font-size:11px;color:var(--gold);margin-bottom:10px;}
+.stats-nums{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+.snum-cell{text-align:center;padding:8px 4px;background:rgba(255,255,255,.07);border-radius:9px;}
+.snum-v{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:#fff;line-height:1.1;}
+.snum-l{font-size:9px;color:rgba(255,255,255,.5);margin-top:3px;line-height:1.2;}
+.weeks-toggle{width:100%;margin-top:12px;padding:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;color:rgba(255,255,255,.7);font-size:12px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .15s;}
+.weeks-toggle:hover{background:rgba(255,255,255,.14);color:#fff;}
+.weeks-detail{margin-top:10px;display:none;}
+.weeks-detail.open{display:block;}
+.wk-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px;margin-bottom:5px;font-size:12px;}
+.wk-row:last-child{margin-bottom:0;}
+.wk-label{color:var(--gold);font-weight:600;min-width:80px;font-size:11px;line-height:1.3;}
+.wk-nums{display:flex;gap:9px;flex-wrap:wrap;color:rgba(255,255,255,.75);font-size:11px;flex:1;}
+.wk-nums span strong{color:#fff;font-weight:600;}
+.clear-week-btn{width:100%;margin-top:10px;padding:9px;background:rgba(220,80,80,.14);border:1px solid rgba(220,80,80,.3);border-radius:9px;color:rgba(255,190,190,.9);font-size:11.5px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .15s;}
+.clear-week-btn:hover{background:rgba(220,80,80,.24);color:#ffd0d0;}
+
+/* ══ 表格 ══ */
+.wtable{width:100%;border-collapse:collapse;font-size:13px;}
+.wtable th{text-align:left;padding:7px 8px;font-weight:600;font-size:11px;color:var(--hint);border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+.wtable td{padding:10px 8px;border-bottom:1px solid var(--cream);vertical-align:middle;}
+.wtable tr:last-child td{border-bottom:none;}
+.wtable tr:hover td{background:var(--cream);}
+.num-cell{text-align:right;font-weight:500;}
+.week-badge{font-size:11px;background:var(--moss-pale);color:var(--moss2);padding:2px 9px;border-radius:99px;font-weight:500;display:inline-block;white-space:nowrap;}
+.summary-band{background:var(--cream);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;border:1.5px solid var(--border);}
+.band-label{font-size:10px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.summary-numbers{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.snum{text-align:center;}
+.snum .n{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;}
+.snum .l{font-size:10px;color:var(--hint);margin-top:2px;line-height:1.3;}
+@media(max-width:560px){
+  .metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .summary-numbers,.stats-nums{grid-template-columns:repeat(3,1fr);}
+}
 </style>
 </head>
 <body>
@@ -445,6 +502,55 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
           <button class="btn sm primary" onclick="openCustomerForm(null)">＋ 新增客戶</button>
         </div>
         <div id="customer-list" class="customer-list"></div>
+      </div>
+
+      <!-- 週報系統 -->
+      <div id="tab-report" class="tab-panel" style="display:none">
+        <div id="wr-stats"></div>
+
+        <div class="wr-mode-bar">
+          <button class="wr-mode-btn active" data-wr="submit">填報</button>
+          <button class="wr-mode-btn" data-wr="data">數據</button>
+        </div>
+
+        <div id="wr-page-submit" class="wr-page active">
+          <div id="wr-alert"></div>
+          <div class="card">
+            <div class="card-title">本週業績填報</div>
+            <div class="note-box">
+              💡 <strong>當週可重複填寫</strong>，多次填報的數量會自動累加在一起。<br>
+              <span style="color:var(--hint);">若填錯需要重來，可用上方面板的「清除本週填報」功能。</span>
+            </div>
+            <div class="field-row" style="margin-bottom:14px;">
+              <div class="field"><label>填報人</label><div class="ai-val" id="wr-who" style="padding:10px 12px;background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r);">—</div></div>
+              <div class="field"><label>填報週次</label><div class="ai-val" id="wr-week" style="padding:10px 12px;background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r);">—</div></div>
+            </div>
+            <div class="metrics-grid">
+              <div class="metric-cell"><label>新開發<br>潛在名單（人）</label><input class="metric-input" type="number" id="wr-m0" min="0" value="0"></div>
+              <div class="metric-cell"><label>恩典卡<br>售出（張）</label><input class="metric-input" type="number" id="wr-m1" min="0" value="0"></div>
+              <div class="metric-cell"><label>線上課程<br>邀請（人）</label><input class="metric-input" type="number" id="wr-m2" min="0" value="0"></div>
+              <div class="metric-cell"><label>家庭日/ABC/小組<br>成功邀約（人）</label><input class="metric-input" type="number" id="wr-m3" min="0" value="0"></div>
+              <div class="metric-cell"><label>健康卡<br>售出（張）</label><input class="metric-input" type="number" id="wr-m4" min="0" value="0"></div>
+              <div class="metric-cell"><label>帶領<br>加入B11（人）</label><input class="metric-input" type="number" id="wr-m5" min="0" value="0"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button class="btn" onclick="wrClear()">清除</button>
+            <button class="btn primary" id="wr-submit-btn" onclick="wrSubmit()">送出填報</button>
+          </div>
+        </div>
+
+        <div id="wr-page-data" class="wr-page">
+          <div class="field" style="max-width:220px;">
+            <label>統計範圍</label>
+            <select id="wr-period" onchange="renderWrData()">
+              <option value="week">本週</option>
+              <option value="month">本月</option>
+              <option value="all" selected>全部</option>
+            </select>
+          </div>
+          <div id="wr-data-out"></div>
+        </div>
       </div>
 
       <!-- 帳號管理 -->
@@ -741,6 +847,7 @@ async function bootApp(user){
 
   $('list-title').textContent = isAdmin() ? '所有客戶' : '我的客戶';
   renderTabs();
+  initWrPage();
   showScreen('app');
   await reloadAll();
   updateMyStats();
@@ -754,6 +861,7 @@ function isSuper(){ return ME && ME.role==='superadmin'; }
 
 function renderTabs(){
   const tabs = [{k:'customers', l: isAdmin() ? '所有客戶' : '我的客戶'}];
+  tabs.push({k:'report', l:'週報系統'});
   if(isAdmin()) tabs.push({k:'accounts', l:'帳號管理'});
   $('main-tabs').innerHTML = tabs.map(t =>
     `<button class="tab ${t.k===currentTab?'active':''}" data-tab="${t.k}">${t.l}</button>`
@@ -766,7 +874,9 @@ function renderTabs(){
 function switchTab(k){
   currentTab = k;
   $('tab-customers').style.display = k==='customers' ? 'block' : 'none';
+  $('tab-report').style.display    = k==='report'    ? 'block' : 'none';
   $('tab-accounts').style.display  = k==='accounts'  ? 'block' : 'none';
+  if(k==='report'){ renderWrStats(); renderWrData(); }
   $('main-tabs').querySelectorAll('.tab').forEach(b =>
     b.classList.toggle('active', b.dataset.tab===k));
 }
@@ -776,8 +886,10 @@ window.reloadAll = async function(){
   setSync('syncing');
   const t0 = Date.now();
   try{
-    await Promise.all([loadCustomers(), loadDealersTeams(), isAdmin()?loadUsers():Promise.resolve()]);
+    await Promise.all([loadCustomers(), loadDealersTeams(), loadReports(), isAdmin()?loadUsers():Promise.resolve()]);
     renderCustomers();
+    renderWrStats();
+    if(currentTab==='report') renderWrData();
     if(isAdmin()) renderAccounts();
     setSync('ok', ((Date.now()-t0)/1000).toFixed(1)+'秒');
   }catch(e){
@@ -866,11 +978,12 @@ function daysSince(ts){
 //  客戶表單
 // ══════════════════════════════════════════════════════════════════
 window.openCustomerForm = function(id){
-  if(!ME.dealerId && !isAdmin()){
+  // 沒有 dealerId 且不是最高管理員 → 無法建立客戶
+  if(!id && !ME.dealerId && !isSuper()){
     showAlert('error','您的帳號尚未綁定經銷商編號，請聯繫管理員');
     return;
   }
-  if(isAdmin() && !dealers.length){
+  if(isSuper() && !dealers.length){
     showAlert('error','經銷商清單尚未載入，請先按重新整理');
     return;
   }
@@ -881,7 +994,8 @@ window.openCustomerForm = function(id){
   $('cm-del').style.display = c ? 'inline-flex' : 'none';
 
   // 管理員新增客戶時，需指定歸屬健管師
-  const needOwner = isAdmin() && !c;
+  // 僅最高管理員可指定客戶歸屬，其他角色一律建在自己名下
+  const needOwner = isSuper() && !c;
   $('cm-owner-wrap').style.display = needOwner ? 'flex' : 'none';
   if(needOwner){
     const opts = dealers
@@ -1029,7 +1143,7 @@ window.saveCustomer = async function(){
     did   = existing.did   || '';
     dname = existing.dname || '';
     team  = existing.team  || '';
-  }else if(isAdmin()){
+  }else if(isSuper()){
     const sel = $('cm-owner');
     did = sel.value;
     if(!did){ showAlert('error','請選擇這位客戶要歸屬的健管師'); return; }
@@ -1040,7 +1154,12 @@ window.saveCustomer = async function(){
     did   = ME.dealerId || '';
     dname = ME.dealerName || '';
     team  = ME.team || '';
-    if(!did){ showAlert('error','您的帳號尚未綁定經銷商編號，請聯繫管理員'); return; }
+    if(!did){
+      showAlert('error', isAdmin()
+        ? '您的管理員帳號未綁定經銷商編號，無法建立客戶'
+        : '您的帳號尚未綁定經銷商編號，請聯繫管理員');
+      return;
+    }
   }
 
   const data = {
@@ -1257,6 +1376,322 @@ async function updateMyStats(){
     s.purchase7dTotal  += (c.purchaseValue7days||0);
   });
   try{ await setDoc(doc(db,'dealerStats',ME.dealerId), s); }catch(e){}
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+//  週報系統
+// ══════════════════════════════════════════════════════════════════
+const M_LABELS = ['潛在名單','恩典卡','線上課程','小組','健康卡','B11'];
+let myReports  = [];
+let allReports = [];
+let statsScope = 'month';
+let weeksOpen  = false;
+
+// ── 週次工具（ISO 8601）──
+function curWeekStr(d){
+  d = d || new Date();
+  const t = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = (t.getDay() + 6) % 7;          // 週一=0
+  t.setDate(t.getDate() - day + 3);          // 移到該週的週四
+  const year = t.getFullYear();
+  const jan4 = new Date(year, 0, 4);
+  const jan4Day = (jan4.getDay() + 6) % 7;
+  const week1Mon = new Date(year, 0, 4 - jan4Day);
+  const w = Math.round((t - week1Mon) / (7 * 86400000)) + 1;
+  return year + '-W' + String(w).padStart(2,'0');
+}
+function normWeek(w){
+  const m = String(w).match(/^(\d{4})-W(\d{1,2})$/);
+  return m ? m[1]+'-W'+String(m[2]).padStart(2,'0') : String(w);
+}
+function weekMonday(w){
+  const m = String(w).match(/^(\d{4})-W(\d{1,2})$/);
+  if(!m) return null;
+  const year = +m[1], week = +m[2];
+  const jan4 = new Date(year, 0, 4);
+  const jan4Day = (jan4.getDay() + 6) % 7;
+  const week1Mon = new Date(year, 0, 4 - jan4Day);
+  return new Date(week1Mon.getTime() + (week-1)*7*86400000);
+}
+function weekRange(w){
+  const mon = weekMonday(w);
+  if(!mon) return '';
+  const sun = new Date(mon.getTime() + 6*86400000);
+  const f = d => (d.getMonth()+1)+'/'+d.getDate();
+  return f(mon)+'–'+f(sun);
+}
+function weekMonthKey(w){
+  const mon = weekMonday(w);
+  if(!mon) return '';
+  const thu = new Date(mon.getTime() + 3*86400000);
+  return thu.getFullYear()+'-'+String(thu.getMonth()+1).padStart(2,'0');
+}
+
+// ── 載入 ──
+async function loadReports(){
+  try{
+    let q;
+    if(isAdmin())            q = query(collection(db,'reports'));
+    else if(ME.role==='leader' && ME.team)
+                             q = query(collection(db,'reports'), where('team','==',ME.team));
+    else if(ME.dealerId)     q = query(collection(db,'reports'), where('did','==',ME.dealerId));
+    else { allReports=[]; myReports=[]; return; }
+
+    const snap = await getDocs(q);
+    allReports = snap.docs.map(d => ({ id:d.id, ...d.data(), week: normWeek(d.data().week) }));
+    myReports  = ME.dealerId ? allReports.filter(r => r.did === ME.dealerId) : [];
+  }catch(e){
+    allReports = []; myReports = [];
+  }
+}
+
+// ── 個人統計面板 ──
+function renderWrStats(){
+  const el = $('wr-stats');
+  if(!el) return;
+  if(!ME.dealerId){
+    el.innerHTML = `<div class="stats-panel">
+      <div class="stats-hd"><div class="stats-title">我的週報數據</div></div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);text-align:center;padding:10px 0;">
+        您的帳號尚未綁定經銷商編號</div></div>`;
+    return;
+  }
+  if(!myReports.length){
+    el.innerHTML = `<div class="stats-panel">
+      <div class="stats-hd"><div class="stats-title">我的週報數據</div></div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);text-align:center;padding:10px 0;">
+        尚無填報紀錄，請於下方開始填報</div></div>`;
+    return;
+  }
+
+  // 同週合併
+  const merged = {};
+  myReports.forEach(r => {
+    const w = r.week;
+    if(!merged[w]) merged[w] = { week:w, m:[0,0,0,0,0,0], count:0 };
+    (r.metrics||[]).forEach((v,i) => merged[w].m[i] += (parseInt(v)||0));
+    merged[w].count++;
+  });
+  const weeks = Object.values(merged).sort((a,b) => b.week.localeCompare(a.week));
+
+  const monthKey = new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0');
+  const scoped = statsScope==='month'
+    ? weeks.filter(w => weekMonthKey(w.week) === monthKey)
+    : weeks;
+
+  const totals = [0,0,0,0,0,0];
+  scoped.forEach(w => w.m.forEach((v,i) => totals[i] += v));
+  const subs = scoped.reduce((s,w) => s + w.count, 0);
+
+  const cw = curWeekStr();
+  const cwData = merged[cw];
+
+  const nums = m => M_LABELS.map((l,i) =>
+    m[i] > 0 ? `<span><strong>${m[i]}</strong> ${l}</span>`
+             : `<span style="opacity:.35;">0 ${l}</span>`).join('');
+  const row = w => `<div class="wk-row" ${w.week===cw?'style="border:1px solid rgba(201,168,76,.4);"':''}>
+      <div class="wk-label">${w.week.replace(/^\d{4}-/,'')}
+        <span style="display:block;font-size:9px;opacity:.6;font-weight:400;">${weekRange(w.week)}</span>
+      </div>
+      <div class="wk-nums">${nums(w.m)}</div>
+      ${w.count>1?`<span style="font-size:10px;color:rgba(255,255,255,.4);white-space:nowrap;">${w.count}次</span>`:''}
+    </div>`;
+
+  el.innerHTML = `<div class="stats-panel">
+    <div class="stats-hd">
+      <div class="stats-title">我的週報數據</div>
+      <div style="display:flex;gap:6px;">
+        <button class="scope-btn ${statsScope==='month'?'on':''}" data-scope="month">本月</button>
+        <button class="scope-btn ${statsScope==='all'?'on':''}" data-scope="all">全部</button>
+      </div>
+    </div>
+    <div class="stats-sub">${statsScope==='month'?'本月累計':'全部累計'} · ${scoped.length} 週 · ${subs} 次填報</div>
+    <div class="stats-nums">
+      ${M_LABELS.map((l,i)=>`<div class="snum-cell">
+        <div class="snum-v" ${totals[i]===0?'style="opacity:.4;"':''}>${totals[i]}</div>
+        <div class="snum-l">${l}</div></div>`).join('')}
+    </div>
+    <button class="weeks-toggle" id="wk-toggle">
+      ${weeksOpen ? '收起週明細 ▲' : '展開週明細（共 '+weeks.length+' 週）▼'}
+    </button>
+    <div class="weeks-detail ${weeksOpen?'open':''}">${weeks.map(row).join('')}</div>
+    ${!weeksOpen && weeks.length ? `<div style="margin-top:8px;">${row(weeks[0])}</div>` : ''}
+    ${cwData ? `<button class="clear-week-btn" id="wk-clear">🗑 清除本週（${cw.replace(/^\d{4}-/,'')}）我的填報　${cwData.count} 筆</button>` : ''}
+  </div>`;
+
+  el.querySelectorAll('[data-scope]').forEach(b => {
+    b.onclick = () => { statsScope = b.dataset.scope; renderWrStats(); };
+  });
+  const tg = $('wk-toggle');
+  if(tg) tg.onclick = () => { weeksOpen = !weeksOpen; renderWrStats(); };
+  const cl = $('wk-clear');
+  if(cl) cl.onclick = () => clearMyWeek(cw, cwData.count);
+}
+
+// ── 填報 ──
+window.wrClear = function(){
+  for(let i=0;i<6;i++) $('wr-m'+i).value = 0;
+};
+
+window.wrSubmit = async function(){
+  if(!ME.dealerId){ showAlert('error','您的帳號尚未綁定經銷商編號，無法填報','wr-alert'); return; }
+  const metrics = [];
+  for(let i=0;i<6;i++) metrics.push(parseInt($('wr-m'+i).value) || 0);
+  if(metrics.every(v => v === 0)){
+    if(!confirm('六個欄位都是 0，確定要送出嗎？')) return;
+  }
+  const btn = $('wr-submit-btn');
+  btn.disabled = true; btn.textContent = '送出中…';
+  try{
+    await addDoc(collection(db,'reports'), {
+      did: ME.dealerId,
+      dname: ME.dealerName || '',
+      team: ME.team || '',
+      week: curWeekStr(),
+      metrics,
+      createdAt: serverTimestamp()
+    });
+    showAlert('success','✓ 填報完成！','wr-alert');
+    wrClear();
+    await loadReports();
+    renderWrStats();
+    renderWrData();
+  }catch(e){
+    showAlert('error','送出失敗：'+esc(e.message||e),'wr-alert');
+  }finally{
+    btn.disabled = false; btn.textContent = '送出填報';
+  }
+};
+
+// ── 清除本週 ──
+async function clearMyWeek(week, count){
+  if(!confirm(
+    `確定清除「${ME.dealerName||'你'}」在 ${week} 的所有填報紀錄？\n\n`+
+    `共 ${count} 筆將被永久刪除，無法復原。\n（只會刪除你自己的資料）`
+  )) return;
+  try{
+    const targets = myReports.filter(r => r.week === week);
+    for(let i=0;i<targets.length;i+=400){
+      const b = writeBatch(db);
+      targets.slice(i,i+400).forEach(r => b.delete(doc(db,'reports',r.id)));
+      await b.commit();
+    }
+    showAlert('success', `✓ 已清除 ${targets.length} 筆本週填報`);
+    await loadReports();
+    renderWrStats();
+    renderWrData();
+  }catch(e){
+    showAlert('error','清除失敗：'+esc(e.message||e));
+  }
+}
+
+// ── 數據頁 ──
+function filterByPeriod(list, period){
+  if(period === 'all') return list;
+  if(period === 'week'){
+    const cw = curWeekStr();
+    return list.filter(r => r.week === cw);
+  }
+  const mk = new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0');
+  return list.filter(r => weekMonthKey(r.week) === mk);
+}
+
+window.renderWrData = function(){
+  const el = $('wr-data-out');
+  if(!el) return;
+  const period = $('wr-period').value;
+  const label  = {week:'本週', month:'本月', all:'全部時間'}[period];
+  const recs   = filterByPeriod(allReports, period);
+
+  if(!recs.length){
+    el.innerHTML = '<div class="empty">此期間沒有填報紀錄</div>';
+    return;
+  }
+
+  const sum = arr => {
+    const t = [0,0,0,0,0,0];
+    arr.forEach(r => (r.metrics||[]).forEach((v,i) => t[i] += (parseInt(v)||0)));
+    return t;
+  };
+  const total = sum(recs);
+
+  // 依人彙總
+  const byDealer = {};
+  recs.forEach(r => {
+    const k = r.did || '—';
+    if(!byDealer[k]) byDealer[k] = { name:r.dname||'—', team:r.team||'', recs:[] };
+    byDealer[k].recs.push(r);
+  });
+  const rows = Object.values(byDealer)
+    .map(d => ({ ...d, m: sum(d.recs) }))
+    .sort((a,b) => b.m.reduce((x,y)=>x+y,0) - a.m.reduce((x,y)=>x+y,0));
+
+  // 依週彙總
+  const byWeek = {};
+  recs.forEach(r => {
+    if(!byWeek[r.week]) byWeek[r.week] = [];
+    byWeek[r.week].push(r);
+  });
+  const weekRows = Object.entries(byWeek)
+    .map(([w,list]) => ({ week:w, m:sum(list), n:list.length }))
+    .sort((a,b) => b.week.localeCompare(a.week));
+
+  const scopeName = isAdmin() ? '全體' : (ME.role==='leader' ? (ME.team||'團隊') : '個人');
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-title">${scopeName}總計 · ${label}</div>
+      <div class="summary-band">
+        <div class="band-label">${recs.length} 筆填報</div>
+        <div class="summary-numbers">
+          ${M_LABELS.map((l,i)=>`<div class="snum"><div class="n">${total[i]}</div><div class="l">${l}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    ${rows.length > 1 ? `<div class="card">
+      <div class="card-title">成員表現</div>
+      <div style="overflow-x:auto;">
+        <table class="wtable">
+          <thead><tr><th>姓名</th><th>團隊</th>${M_LABELS.map(l=>`<th>${l}</th>`).join('')}<th>填報</th></tr></thead>
+          <tbody>${rows.map(d => `<tr>
+            <td style="font-weight:600;">${esc(d.name)}</td>
+            <td style="font-size:11px;color:var(--muted);">${esc(d.team||'—')}</td>
+            ${d.m.map(v=>`<td class="num-cell">${v}</td>`).join('')}
+            <td style="font-size:11px;color:var(--hint);">${d.recs.length}次</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>` : ''}
+
+    <div class="card">
+      <div class="card-title">週次明細</div>
+      <div style="overflow-x:auto;">
+        <table class="wtable">
+          <thead><tr><th>週次</th>${M_LABELS.map(l=>`<th>${l}</th>`).join('')}<th>筆數</th></tr></thead>
+          <tbody>${weekRows.map(w => `<tr>
+            <td><span class="week-badge">${esc(w.week)}</span>
+                <div style="font-size:10px;color:var(--hint);margin-top:2px;">${weekRange(w.week)}</div></td>
+            ${w.m.map(v=>`<td class="num-cell">${v}</td>`).join('')}
+            <td style="font-size:11px;color:var(--hint);">${w.n}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+};
+
+function initWrPage(){
+  $('wr-who').textContent  = ME.dealerName || ME.displayName || '—';
+  $('wr-week').textContent = curWeekStr() + '（' + weekRange(curWeekStr()) + '）';
+  document.querySelectorAll('[data-wr]').forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll('[data-wr]').forEach(x => x.classList.toggle('active', x===b));
+      $('wr-page-submit').classList.toggle('active', b.dataset.wr==='submit');
+      $('wr-page-data').classList.toggle('active',   b.dataset.wr==='data');
+      if(b.dataset.wr==='data') renderWrData();
+    };
+  });
 }
 
 // ══════════════ 客戶列表 ══════════════
