@@ -390,6 +390,51 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
   .metrics-grid{grid-template-columns:repeat(2,1fr);}
   .summary-numbers,.stats-nums{grid-template-columns:repeat(3,1fr);}
 }
+
+/* ══ Dashboard ══ */
+.dash-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.dash-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:10px;flex-wrap:wrap;}
+.dash-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:600;}
+.dash-sub{font-size:11.5px;color:var(--hint);margin-top:2px;}
+.privacy-note{background:var(--moss-pale);border:1.5px solid var(--moss3);border-radius:10px;
+              padding:10px 13px;font-size:12px;color:var(--moss2);margin-bottom:1rem;line-height:1.7;}
+
+/* 進度條 */
+.prog-item{margin-bottom:12px;}
+.prog-item:last-child{margin-bottom:0;}
+.prog-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.prog-name{font-size:13px;font-weight:500;}
+.prog-val{font-size:12px;color:var(--muted);}
+.prog-bar{height:7px;background:var(--cream);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;transition:width .4s ease;}
+.pf1{background:var(--moss2);} .pf2{background:var(--moss3);} .pf3{background:var(--gold);}
+
+/* 橫條圖 */
+.hbar{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.hbar:last-child{margin-bottom:0;}
+.hbar-l{font-size:11.5px;color:var(--muted);width:84px;text-align:right;flex-shrink:0;
+        overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hbar-t{flex:1;height:20px;background:var(--cream);border-radius:5px;overflow:hidden;}
+.hbar-f{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:7px;min-width:3px;transition:width .4s ease;}
+.hbar-x{font-size:10.5px;font-weight:700;color:#fff;}
+.hbar-n{font-size:11.5px;color:var(--hint);width:24px;text-align:right;flex-shrink:0;}
+
+/* 趨勢圖 */
+.trend{display:flex;align-items:flex-end;gap:4px;height:110px;padding:0 2px;}
+.trend-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;}
+.trend-bar{width:100%;background:var(--moss3);border-radius:4px 4px 0 0;min-height:2px;
+           transition:height .4s ease;position:relative;}
+.trend-bar:hover{background:var(--moss2);}
+.trend-v{font-size:10px;color:var(--muted);font-weight:600;}
+.trend-w{font-size:9px;color:var(--hint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+
+/* 百分比標籤 */
+.pct{font-size:11px;padding:2px 7px;border-radius:99px;font-weight:600;display:inline-block;}
+.pct.hi{background:#e8f4e0;color:#2a6e10;}
+.pct.md{background:var(--gold-pale);color:#7a5500;}
+.pct.lo{background:var(--cream);color:var(--muted);}
+
+@media(max-width:620px){ .dash-2col{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -553,6 +598,21 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
         </div>
       </div>
 
+      <!-- Dashboard -->
+      <div id="tab-dash" class="tab-panel" style="display:none">
+        <div class="dash-hd">
+          <div>
+            <div class="dash-title" id="dash-title">團隊儀表板</div>
+            <div class="dash-sub" id="dash-sub"></div>
+          </div>
+          <select id="dash-team" style="height:34px;border:1.5px solid var(--border2);border-radius:var(--r);padding:0 10px;font-size:13px;background:#fff;font-family:'Noto Sans TC',sans-serif;display:none;">
+            <option value="">全部團隊</option>
+          </select>
+        </div>
+        <div id="dash-privacy"></div>
+        <div id="dash-body"></div>
+      </div>
+
       <!-- 帳號管理 -->
       <div id="tab-accounts" class="tab-panel" style="display:none">
         <div class="card">
@@ -566,6 +626,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
         <div class="card">
           <div class="card-title">託管中的客戶 <span class="cnt" id="custody-count">0</span></div>
           <div id="custody-panel"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">操作紀錄（近 50 筆）
+            <button class="btn xs" onclick="loadLogs()">重新載入</button>
+          </div>
+          <div id="logs-panel"><div class="empty" style="padding:1.25rem;">點「重新載入」查看</div></div>
         </div>
       </div>
 
@@ -686,7 +752,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where,
-  getDocs, orderBy, writeBatch, serverTimestamp, addDoc, deleteDoc, enableIndexedDbPersistence
+  getDocs, orderBy, limit, writeBatch, serverTimestamp, addDoc, deleteDoc, enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ══════════════ Firebase ══════════════
@@ -862,6 +928,7 @@ function isSuper(){ return ME && ME.role==='superadmin'; }
 function renderTabs(){
   const tabs = [{k:'customers', l: isAdmin() ? '所有客戶' : '我的客戶'}];
   tabs.push({k:'report', l:'週報系統'});
+  if(isAdmin() || ME.role==='leader') tabs.push({k:'dash', l:'儀表板'});
   if(isAdmin()) tabs.push({k:'accounts', l:'帳號管理'});
   $('main-tabs').innerHTML = tabs.map(t =>
     `<button class="tab ${t.k===currentTab?'active':''}" data-tab="${t.k}">${t.l}</button>`
@@ -875,8 +942,10 @@ function switchTab(k){
   currentTab = k;
   $('tab-customers').style.display = k==='customers' ? 'block' : 'none';
   $('tab-report').style.display    = k==='report'    ? 'block' : 'none';
+  $('tab-dash').style.display      = k==='dash'      ? 'block' : 'none';
   $('tab-accounts').style.display  = k==='accounts'  ? 'block' : 'none';
   if(k==='report'){ renderWrStats(); renderWrData(); }
+  if(k==='dash') renderDashboard();
   $('main-tabs').querySelectorAll('.tab').forEach(b =>
     b.classList.toggle('active', b.dataset.tab===k));
 }
@@ -886,10 +955,11 @@ window.reloadAll = async function(){
   setSync('syncing');
   const t0 = Date.now();
   try{
-    await Promise.all([loadCustomers(), loadDealersTeams(), loadReports(), isAdmin()?loadUsers():Promise.resolve()]);
+    await Promise.all([loadCustomers(), loadDealersTeams(), loadReports(), loadDealerStats(), isAdmin()?loadUsers():Promise.resolve()]);
     renderCustomers();
     renderWrStats();
     if(currentTab==='report') renderWrData();
+    if(currentTab==='dash') renderDashboard();
     if(isAdmin()) renderAccounts();
     setSync('ok', ((Date.now()-t0)/1000).toFixed(1)+'秒');
   }catch(e){
@@ -1693,6 +1763,277 @@ function initWrPage(){
     };
   });
 }
+
+
+// ══════════════════════════════════════════════════════════════════
+//  Dashboard（團隊長／管理員）
+// ══════════════════════════════════════════════════════════════════
+let dealerStats = [];
+
+async function loadDealerStats(){
+  try{
+    let q;
+    if(isAdmin())                        q = query(collection(db,'dealerStats'));
+    else if(ME.role==='leader' && ME.team) q = query(collection(db,'dealerStats'), where('team','==',ME.team));
+    else { dealerStats = []; return; }
+    const snap = await getDocs(q);
+    dealerStats = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  }catch(e){ dealerStats = []; }
+}
+
+function pctCls(p){ return p >= 60 ? 'hi' : p >= 30 ? 'md' : 'lo'; }
+
+function mergeCounts(list, field){
+  const out = {};
+  list.forEach(s => Object.entries(s[field] || {}).forEach(([k,v]) => out[k] = (out[k]||0) + v));
+  return out;
+}
+
+function hbarList(counts, colors, limit){
+  const arr = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, limit || 8);
+  if(!arr.length) return '<div class="empty" style="padding:1rem;">尚無資料</div>';
+  const max = arr[0][1] || 1;
+  return arr.map(([k,v],i) => `
+    <div class="hbar">
+      <div class="hbar-l" title="${esc(k)}">${esc(k)}</div>
+      <div class="hbar-t"><div class="hbar-f" style="width:${Math.max(3,(v/max)*100)}%;background:${colors[i%colors.length]};">
+        ${v/max > .18 ? `<span class="hbar-x">${v}</span>` : ''}
+      </div></div>
+      <div class="hbar-n">${v}</div>
+    </div>`).join('');
+}
+
+function renderDashboard(){
+  const el = $('dash-body');
+  if(!el) return;
+
+  const isLead = ME.role === 'leader';
+  $('dash-title').textContent = isLead ? (ME.team || '團隊') + ' · 團隊儀表板' : '全體儀表板';
+
+  // 團隊篩選（僅管理員）
+  const teamSel = $('dash-team');
+  if(isAdmin()){
+    teamSel.style.display = 'block';
+    if(teamSel.options.length <= 1){
+      teamSel.innerHTML = '<option value="">全部團隊</option>' +
+        teams.map(t => `<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+      teamSel.onchange = renderDashboard;
+    }
+  }else{
+    teamSel.style.display = 'none';
+  }
+  const filterTeam = isAdmin() ? teamSel.value : (ME.team || '');
+
+  // 隱私說明（團隊長）
+  $('dash-privacy').innerHTML = isLead
+    ? `<div class="privacy-note">🔒 為保護客戶個資，團隊儀表板僅顯示統計數字，不含客戶姓名與聯絡方式。<br>
+       如需調整成員的客戶歸屬，請聯繫管理員。</div>`
+    : '';
+
+  // 篩選資料
+  let stats = dealerStats.filter(s => (s.customerCount||0) > 0 || s.dealerName);
+  if(filterTeam) stats = stats.filter(s => s.team === filterTeam);
+  stats = stats.filter(s => s.dealerId !== 'CUSTODY');
+
+  let reps = allReports;
+  if(filterTeam) reps = reps.filter(r => r.team === filterTeam);
+
+  const updated = stats
+    .map(s => s.updatedAt?.toMillis?.() || 0)
+    .reduce((a,b) => Math.max(a,b), 0);
+  $('dash-sub').textContent = updated
+    ? '統計更新於 ' + new Date(updated).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})
+    : '';
+
+  if(!stats.length){
+    el.innerHTML = '<div class="empty">此範圍尚無統計資料<br><span style="font-size:12px;">成員需先登入系統並操作客戶資料</span></div>';
+    return;
+  }
+
+  // ── 總覽數字 ──
+  const sum = f => stats.reduce((a,s) => a + (s[f]||0), 0);
+  const totalCus  = sum('customerCount');
+  const totalAll  = sum('allTasksCount');
+  const totalUrg  = sum('urgentCount');
+  const memberCnt = stats.filter(s => (s.customerCount||0) > 0).length;
+  const t1 = sum('task1Count'), t2 = sum('task2Count'), t3 = sum('task3Count');
+  const pct = n => totalCus ? Math.round(n/totalCus*100) : 0;
+
+  // ── GHOS 完成率 ──
+  const progs = [
+    {n:'7日產品使用', v:t1, c:'pf1'},
+    {n:'週二課程',    v:t2, c:'pf2'},
+    {n:'家庭日/ABC/小組', v:t3, c:'pf3'}
+  ].map(p => `<div class="prog-item">
+      <div class="prog-hd"><span class="prog-name">${p.n}</span>
+        <span class="prog-val">${p.v}/${totalCus} · ${pct(p.v)}%</span></div>
+      <div class="prog-bar"><div class="prog-fill ${p.c}" style="width:${pct(p.v)}%"></div></div>
+    </div>`).join('');
+
+  // ── 邀約狀態 ──
+  const invCounts = mergeCounts(stats, 'invitationCounts');
+  const invColors = {'已報名':'#3b6d11','考慮中':'#c8960c','拒絕':'#999','未聯繫':'#5b8fa8'};
+  const invOrder = ['已報名','考慮中','未聯繫','拒絕'];
+  const invMax = Math.max(1, ...Object.values(invCounts));
+  const invHtml = invOrder.filter(k => invCounts[k]).length
+    ? invOrder.filter(k => invCounts[k]).map(k => `
+        <div class="hbar">
+          <div class="hbar-l">${k}</div>
+          <div class="hbar-t"><div class="hbar-f" style="width:${Math.max(3,(invCounts[k]/invMax)*100)}%;background:${invColors[k]};">
+            ${invCounts[k]/invMax > .18 ? `<span class="hbar-x">${invCounts[k]}</span>` : ''}</div></div>
+          <div class="hbar-n">${invCounts[k]}</div>
+        </div>`).join('')
+    : '<div class="empty" style="padding:1rem;">尚無邀約紀錄</div>';
+
+  // ── 健康關注排行 ──
+  const healthCounts = mergeCounts(stats, 'healthCounts');
+  const greens = ['#1e3d30','#2d4a3e','#3d6b59','#4d8c6f','#5fa384','#c9a84c','#d4b56a','#dfc78f'];
+
+  // ── 成員表現 ──
+  const memberRows = [...stats]
+    .sort((a,b) => (b.customerCount||0) - (a.customerCount||0))
+    .map(s => {
+      const c = s.customerCount || 0;
+      const p = c ? Math.round((s.allTasksCount||0)/c*100) : 0;
+      const last = s.lastCustomerAt?.toMillis?.();
+      return `<tr>
+        <td style="font-weight:600;">${esc(s.dealerName||'—')}</td>
+        ${isAdmin() && !filterTeam ? `<td style="font-size:11px;color:var(--muted);">${esc(s.team||'—')}</td>` : ''}
+        <td class="num-cell">${c}</td>
+        <td class="num-cell">${s.task1Count||0}</td>
+        <td class="num-cell">${s.task2Count||0}</td>
+        <td class="num-cell">${s.task3Count||0}</td>
+        <td><span class="pct ${pctCls(p)}">${p}%</span></td>
+        <td class="num-cell" style="color:${(s.urgentCount||0)>0?'#c0392b':'var(--hint)'};">${s.urgentCount||0}</td>
+        <td style="font-size:11px;color:var(--hint);white-space:nowrap;">${last?new Date(last).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'}):'—'}</td>
+      </tr>`;
+    }).join('');
+
+  // ── 週報趨勢（近 8 週）──
+  const weekMap = {};
+  reps.forEach(r => {
+    if(!weekMap[r.week]) weekMap[r.week] = 0;
+    weekMap[r.week] += (r.metrics||[]).reduce((a,b) => a + (parseInt(b)||0), 0);
+  });
+  const trendWeeks = Object.entries(weekMap)
+    .sort((a,b) => a[0].localeCompare(b[0]))
+    .slice(-8);
+  const trendMax = Math.max(1, ...trendWeeks.map(w => w[1]));
+  const trendHtml = trendWeeks.length
+    ? `<div class="trend">${trendWeeks.map(([w,v]) => `
+        <div class="trend-col" title="${esc(w)}：${v}">
+          <div class="trend-v">${v}</div>
+          <div class="trend-bar" style="height:${Math.max(2,(v/trendMax)*78)}px;"></div>
+          <div class="trend-w">${esc(w.replace(/^\d{4}-/,''))}</div>
+        </div>`).join('')}</div>`
+    : '<div class="empty" style="padding:1rem;">尚無週報資料</div>';
+
+  // ── 團隊比較（僅管理員且未篩選團隊）──
+  let teamCompare = '';
+  if(isAdmin() && !filterTeam){
+    const byTeam = {};
+    dealerStats.filter(s => s.dealerId !== 'CUSTODY').forEach(s => {
+      const k = s.team || '（無團隊）';
+      if(!byTeam[k]) byTeam[k] = { name:k, members:0, cus:0, all:0, t1:0, urgent:0 };
+      byTeam[k].members++;
+      byTeam[k].cus    += (s.customerCount||0);
+      byTeam[k].all    += (s.allTasksCount||0);
+      byTeam[k].t1     += (s.task1Count||0);
+      byTeam[k].urgent += (s.urgentCount||0);
+    });
+    const rows = Object.values(byTeam).sort((a,b) => b.cus - a.cus).map(t => {
+      const p = t.cus ? Math.round(t.all/t.cus*100) : 0;
+      const repCnt = allReports.filter(r => (r.team||'（無團隊）') === t.name).length;
+      return `<tr>
+        <td style="font-weight:600;">${esc(t.name)}</td>
+        <td class="num-cell">${t.members}</td>
+        <td class="num-cell">${t.cus}</td>
+        <td class="num-cell">${t.t1}</td>
+        <td><span class="pct ${pctCls(p)}">${p}%</span></td>
+        <td class="num-cell" style="color:${t.urgent>0?'#c0392b':'var(--hint)'};">${t.urgent}</td>
+        <td class="num-cell">${repCnt}</td>
+      </tr>`;
+    }).join('');
+    teamCompare = `<div class="card">
+      <div class="card-title">各團隊比較</div>
+      <div style="overflow-x:auto;"><table class="wtable">
+        <thead><tr><th>團隊</th><th>成員</th><th>客戶</th><th>7日品</th><th>全通率</th><th>待跟進</th><th>填報</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+    </div>`;
+  }
+
+  el.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num" style="color:var(--moss2)">${memberCnt}<span class="stat-unit">位</span></div><div class="stat-label">活躍成員</div></div>
+      <div class="stat-card"><div class="stat-num">${totalCus}<span class="stat-unit">位</span></div><div class="stat-label">客戶總數</div></div>
+      <div class="stat-card"><div class="stat-num">${totalAll}<span class="stat-unit">位</span></div><div class="stat-label">GHOS全通</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:${totalUrg>0?'#c0392b':'var(--ink)'}">${totalUrg}<span class="stat-unit">位</span></div><div class="stat-label">待跟進</div></div>
+    </div>
+
+    <div class="dash-2col">
+      <div class="card" style="margin-bottom:0;"><div class="card-title">GHOS轉化點完成率</div>${progs}</div>
+      <div class="card" style="margin-bottom:0;"><div class="card-title">家庭日/ABC/小組 · 邀約狀態</div>${invHtml}</div>
+    </div>
+
+    <div class="dash-2col" style="margin-top:10px;">
+      <div class="card" style="margin-bottom:0;"><div class="card-title">健康關注排行（前8）</div>${hbarList(healthCounts, greens, 8)}</div>
+      <div class="card" style="margin-bottom:0;"><div class="card-title">週報總量趨勢（近8週）</div>${trendHtml}</div>
+    </div>
+
+    <div class="card" style="margin-top:10px;">
+      <div class="card-title">成員表現</div>
+      <div style="overflow-x:auto;"><table class="wtable">
+        <thead><tr>
+          <th>姓名</th>${isAdmin() && !filterTeam ? '<th>團隊</th>' : ''}
+          <th>客戶</th><th>7日品</th><th>課程</th><th>小組</th><th>全通率</th><th>待跟進</th><th>最後活動</th>
+        </tr></thead>
+        <tbody>${memberRows}</tbody></table></div>
+    </div>
+
+    ${teamCompare}`;
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+//  操作紀錄
+// ══════════════════════════════════════════════════════════════════
+window.loadLogs = async function(){
+  const el = $('logs-panel');
+  el.innerHTML = '<div class="empty" style="padding:1.25rem;">載入中…</div>';
+  try{
+    const snap = await getDocs(query(collection(db,'actionLogs'), orderBy('createdAt','desc'), limit(50)));
+    const logs = snap.docs.map(d => d.data());
+    if(!logs.length){
+      el.innerHTML = '<div class="empty" style="padding:1.25rem;">尚無操作紀錄</div>';
+      return;
+    }
+    el.innerHTML = logs.map(l => {
+      const t = l.createdAt?.toDate?.();
+      const time = t ? t.toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+      const who  = l.operatorEmail || l.operatorUid || '—';
+      const i    = l.targetInfo || {};
+      let desc, icon;
+      if(l.type === 'delete_customer'){
+        icon = '🗑';
+        desc = `刪除客戶「${esc(i.customerName||'—')}」（原屬 ${esc(i.dealerName||'—')}）`;
+      }else{
+        icon = '🔄';
+        desc = `將「${esc(i.fromName||'—')}」的 ${i.count||0} 位客戶轉給「${esc(i.toName||'—')}」`
+             + (i.reason ? `（${esc(i.reason)}）` : '');
+      }
+      return `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;">
+        <div style="font-size:15px;flex-shrink:0;">${icon}</div>
+        <div style="flex:1;min-width:0;">
+          <div>${desc}</div>
+          <div style="font-size:11px;color:var(--hint);margin-top:2px;">${time} · ${esc(who)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML = `<div class="alert error">載入失敗：${esc(e.message||e)}<br>
+      <span style="font-size:11px;">若顯示索引錯誤，請點錯誤訊息中的連結建立索引</span></div>`;
+  }
+};
 
 // ══════════════ 客戶列表 ══════════════
 function renderCustomers(){
