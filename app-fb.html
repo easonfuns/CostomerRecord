@@ -491,6 +491,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 
       <div class="fsec">
         <div class="fsec-title">基本資料</div>
+        <div class="field" id="cm-owner-wrap" style="display:none;">
+          <label>歸屬健管師 <span style="color:#c0392b;">*</span></label>
+          <select id="cm-owner"><option value="">— 請選擇 —</option></select>
+        </div>
         <div class="field"><label>客戶姓名／簡稱</label><input type="text" id="cm-cname" placeholder="輸入客戶名稱"></div>
         <div class="field-row">
           <div class="field"><label>聯絡電話</label><input type="tel" id="cm-phone" placeholder="09xx-xxx-xxx"></div>
@@ -866,11 +870,29 @@ window.openCustomerForm = function(id){
     showAlert('error','您的帳號尚未綁定經銷商編號，請聯繫管理員');
     return;
   }
+  if(isAdmin() && !dealers.length){
+    showAlert('error','經銷商清單尚未載入，請先按重新整理');
+    return;
+  }
   editingId = id || null;
   const c = id ? customers.find(x => x.id === id) : null;
 
   $('cm-title').textContent = c ? '編輯客戶' : '新增客戶';
   $('cm-del').style.display = c ? 'inline-flex' : 'none';
+
+  // 管理員新增客戶時，需指定歸屬健管師
+  const needOwner = isAdmin() && !c;
+  $('cm-owner-wrap').style.display = needOwner ? 'flex' : 'none';
+  if(needOwner){
+    const opts = dealers
+      .filter(d => !d.custody && d.active !== false)
+      .sort((a,b) => (a.team||'').localeCompare(b.team||'') || (a.name||'').localeCompare(b.name||''))
+      .map(d => `<option value="${esc(d.id)}" data-name="${esc(d.name)}" data-team="${esc(d.team||'')}">${esc(d.name)}（${esc(d.team||'無團隊')}）</option>`)
+      .join('');
+    $('cm-owner').innerHTML = '<option value="">— 請選擇 —</option>' + opts;
+    // 若管理員自己也有 dealerId，預設選自己
+    if(ME.dealerId) $('cm-owner').value = ME.dealerId;
+  }
   $('cm-date').textContent  = c ? (fmtDate(c.createdAt) || '—') : new Date().toLocaleDateString('zh-TW');
   $('cm-team').textContent  = c ? (c.team || '—') : (ME.team || '—');
   $('cm-dealer').textContent= c ? (c.dname || '—') : (ME.dealerName || '—');
@@ -1001,12 +1023,28 @@ window.saveCustomer = async function(){
   btn.disabled = true; btn.textContent = '儲存中…';
 
   const existing = editingId ? customers.find(x=>x.id===editingId) : null;
-  const did   = existing ? existing.did   : ME.dealerId;
-  const dname = existing ? existing.dname : (ME.dealerName || '');
-  const team  = existing ? existing.team  : (ME.team || '');
+  let did, dname, team;
+
+  if(existing){
+    did   = existing.did   || '';
+    dname = existing.dname || '';
+    team  = existing.team  || '';
+  }else if(isAdmin()){
+    const sel = $('cm-owner');
+    did = sel.value;
+    if(!did){ showAlert('error','請選擇這位客戶要歸屬的健管師'); return; }
+    const opt = sel.options[sel.selectedIndex];
+    dname = opt.dataset.name || '';
+    team  = opt.dataset.team || '';
+  }else{
+    did   = ME.dealerId || '';
+    dname = ME.dealerName || '';
+    team  = ME.team || '';
+    if(!did){ showAlert('error','您的帳號尚未綁定經銷商編號，請聯繫管理員'); return; }
+  }
 
   const data = {
-    did, dname, team, cname,
+    did: did || '', dname: dname || '', team: team || '', cname,
     saleDate:           inputToTs($('cm-saledate').value),
     task1: taskState[0], task2: taskState[1], task3: taskState[2],
     healthConcerns:     [...selConcerns],
