@@ -478,6 +478,30 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .dtag.free{background:var(--gold-pale);color:#7a5500;}
 .dtag.off{background:#fff0f0;color:#c0392b;}
 @media(max-width:560px){ .filter-bar .field{min-width:100%;} }
+
+/* ══ App 內建瀏覽器導引 ══ */
+.ib-steps{background:var(--cream);border:1.5px solid var(--border);border-radius:12px;
+          padding:14px 16px;font-size:13px;line-height:2;color:var(--muted);margin-bottom:1rem;}
+.ib-steps b{color:var(--ink);}
+.ib-steps ol{margin:8px 0 0 20px;padding:0;}
+.ib-steps li{margin-bottom:4px;}
+.ib-big{width:100%;height:52px;border:none;border-radius:14px;background:var(--moss2);color:#fff;
+        font-size:15px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s;}
+.ib-big:hover{background:var(--moss);}
+.ib-or{text-align:center;font-size:11px;color:var(--hint);letter-spacing:.1em;margin:14px 0;
+       display:flex;align-items:center;gap:10px;}
+.ib-or::before,.ib-or::after{content:'';flex:1;height:1px;background:var(--border);}
+.ib-copy{width:100%;height:44px;border:1.5px solid var(--border2);border-radius:12px;background:#fff;
+         color:var(--ink);font-size:13px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;
+         display:flex;align-items:center;justify-content:center;gap:7px;}
+.ib-copy:hover{background:var(--cream);}
+.ib-url{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;
+        font-size:11.5px;color:var(--muted);word-break:break-all;margin-top:10px;
+        font-family:ui-monospace,monospace;line-height:1.6;}
+.ib-warn{background:var(--gold-pale);border:1.5px solid #f0d080;border-radius:12px;
+         padding:14px 16px;font-size:13px;color:#7a5500;line-height:1.9;margin-bottom:1.25rem;}
+.ib-warn strong{display:block;font-size:14px;margin-bottom:4px;}
 </style>
 </head>
 <body>
@@ -486,6 +510,47 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 <div id="boot">
   <div class="boot-logo">🌿</div>
   <div class="boot-text">載入中…</div>
+</div>
+
+
+<!-- ══════════ App 內建瀏覽器導引 ══════════ -->
+<div id="screen-inapp" class="fullscreen" style="display:none">
+  <div class="fs-card">
+    <div class="fs-hero">
+      <div class="fs-mark">🌿</div>
+      <div class="fs-title">健康管家</div>
+      <div class="fs-sub">管理平台</div>
+    </div>
+    <div class="fs-body">
+      <div class="ib-warn">
+        <strong>⚠️ 請用手機瀏覽器開啟</strong>
+        目前是從 <span id="ib-appname">通訊軟體</span> 開啟的畫面，<br>
+        Google 登入需要在正式的瀏覽器中進行。
+      </div>
+
+      <button class="ib-big" id="ib-open-btn" onclick="openInBrowser()">
+        📱 用手機瀏覽器開啟
+      </button>
+
+      <div class="ib-or">如果上面按鈕沒反應</div>
+
+      <div class="ib-steps">
+        <b>手動開啟方式</b>
+        <ol id="ib-manual"></ol>
+      </div>
+
+      <button class="ib-copy" onclick="copyUrl()">
+        <span id="ib-copy-text">📋 複製網址</span>
+      </button>
+      <div class="ib-url" id="ib-url">—</div>
+
+      <div style="text-align:center;margin-top:1rem;">
+        <button class="btn sm" onclick="forceLogin()" style="color:var(--hint);border-color:var(--border);">
+          仍要在此嘗試登入
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════ 登入畫面 ══════════ -->
@@ -510,6 +575,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
       <div class="fs-hint">
         第一次使用請先登入<br>
         再由管理員為您開通權限
+      </div>
+      <div id="login-mobile-tip" style="display:none;text-align:center;font-size:11.5px;
+           color:var(--hint);margin-top:12px;line-height:1.8;padding:10px;
+           background:var(--cream);border-radius:10px;">
+        📱 點擊後會跳到 Google 登入頁面<br>完成後會自動回到本系統
       </div>
     </div>
   </div>
@@ -911,7 +981,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult,
+  signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where,
@@ -976,28 +1047,147 @@ function setSync(state, detail){
 }
 function showScreen(name){
   $('boot').style.display = 'none';
+  $('screen-inapp').style.display   = name==='inapp'   ? 'flex' : 'none';
   $('screen-login').style.display   = name==='login'   ? 'flex' : 'none';
   $('screen-pending').style.display = name==='pending' ? 'flex' : 'none';
   $('screen-app').style.display     = name==='app'     ? 'flex' : 'none';
 }
 
+// ══════════════ App 內建瀏覽器偵測 ══════════════
+const UA = navigator.userAgent || '';
+
+function detectInApp(){
+  if(/\bLine\//i.test(UA))            return { key:'line',      name:'LINE' };
+  if(/FBAN|FBAV|FB_IAB/i.test(UA))    return { key:'facebook',  name:'Facebook' };
+  if(/Instagram/i.test(UA))           return { key:'instagram', name:'Instagram' };
+  if(/MicroMessenger/i.test(UA))      return { key:'wechat',    name:'微信' };
+  if(/KAKAOTALK/i.test(UA))           return { key:'kakao',     name:'KakaoTalk' };
+  return null;
+}
+
+const isMobile = /Android|iPhone|iPad|iPod/i.test(UA);
+const isIOS    = /iPhone|iPad|iPod/i.test(UA);
+const inApp    = detectInApp();
+
+// 乾淨網址（去掉 openExternalBrowser 參數）
+function cleanUrl(){
+  const u = new URL(location.href);
+  u.searchParams.delete('openExternalBrowser');
+  u.hash = '';
+  return u.toString();
+}
+
+const MANUAL_STEPS = {
+  line:      ['點右上角的「⋯」或「≡」按鈕','選擇「在其他瀏覽器開啟」或「用預設瀏覽器開啟」'],
+  facebook:  ['點右上角的「⋯」按鈕','選擇「在瀏覽器中開啟」'],
+  instagram: ['點右上角的「⋯」按鈕','選擇「在瀏覽器中開啟」'],
+  wechat:    ['點右上角的「⋯」按鈕','選擇「在瀏覽器開啟」'],
+  kakao:     ['點右下角的選單','選擇「其他瀏覽器開啟」'],
+};
+
+function showInAppGuide(){
+  $('ib-appname').textContent = inApp.name;
+  $('ib-url').textContent     = cleanUrl();
+  const steps = MANUAL_STEPS[inApp.key] || ['點右上角的選單按鈕','選擇「在瀏覽器中開啟」'];
+  $('ib-manual').innerHTML = steps.map(s => `<li>${esc(s)}</li>`).join('')
+    + (isIOS ? '<li style="color:var(--hint);font-size:12px;">或複製網址後貼到 Safari</li>'
+             : '<li style="color:var(--hint);font-size:12px;">或複製網址後貼到 Chrome</li>');
+  showScreen('inapp');
+}
+
+window.openInBrowser = function(){
+  const url = cleanUrl();
+  if(inApp && inApp.key === 'line'){
+    // LINE 專用參數：強制用系統瀏覽器開啟
+    const u = new URL(url);
+    u.searchParams.set('openExternalBrowser','1');
+    location.href = u.toString();
+    return;
+  }
+  if(!isIOS){
+    // Android Intent，直接叫起系統瀏覽器
+    const noProto = url.replace(/^https?:\/\//,'');
+    location.href = 'intent://' + noProto + '#Intent;scheme=https;action=android.intent.action.VIEW;end';
+    return;
+  }
+  // iOS 其他 App：嘗試開新視窗，失敗就提示手動
+  window.open(url, '_blank');
+  setTimeout(() => {
+    showAlert('info','若沒有跳轉，請用下方「複製網址」再貼到 Safari','login-alert');
+  }, 800);
+};
+
+window.copyUrl = function(){
+  const url = cleanUrl();
+  const done = () => {
+    const t = $('ib-copy-text');
+    t.textContent = '✓ 已複製，請貼到瀏覽器';
+    setTimeout(() => t.textContent = '📋 複製網址', 2500);
+  };
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(fallbackCopy);
+  }else fallbackCopy();
+
+  function fallbackCopy(){
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){}
+    document.body.removeChild(ta);
+  }
+};
+
+window.forceLogin = function(){
+  showScreen('login');
+  showAlert('info','若登入失敗，請改用手機瀏覽器開啟本頁','login-alert');
+};
+
 // ══════════════ 登入 ══════════════
 window.doGoogleLogin = async function(){
   const btn = $('gbtn');
   btn.disabled = true;
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
   try{
-    await signInWithPopup(auth, new GoogleAuthProvider());
+    if(isMobile){
+      // 手機一律用轉址，避免彈出視窗被擋
+      sessionStorage.setItem('authPending','1');
+      await signInWithRedirect(auth, provider);
+      return;                       // 頁面會離開
+    }
+    await signInWithPopup(auth, provider);
   }catch(e){
+    // 桌機彈出視窗被擋 → 自動改用轉址
+    if(!isMobile && (e?.code === 'auth/popup-blocked' || e?.code === 'auth/popup-closed-by-user')){
+      try{
+        sessionStorage.setItem('authPending','1');
+        await signInWithRedirect(auth, provider);
+        return;
+      }catch(e2){ /* 落到下面統一處理 */ }
+    }
     btn.disabled = false;
-    const map = {
-      'auth/unauthorized-domain':'此網域尚未授權，請聯繫管理員',
-      'auth/popup-blocked':'瀏覽器擋住了登入視窗，請允許彈出視窗後再試',
-      'auth/popup-closed-by-user':'登入視窗被關閉，請再試一次',
-      'auth/operation-not-allowed':'Google 登入尚未啟用，請聯繫管理員'
-    };
-    showAlert('error', map[e.code] || esc(e.message||e), 'login-alert');
+    sessionStorage.removeItem('authPending');
+    handleAuthError(e);
   }
 };
+
+function handleAuthError(e){
+  const code = e?.code || '';
+  const map = {
+    'auth/unauthorized-domain'   : '此網域尚未授權，請聯繫管理員',
+    'auth/popup-blocked'         : '瀏覽器擋住了登入視窗，請改用手機瀏覽器開啟本頁',
+    'auth/popup-closed-by-user'  : '登入視窗被關閉，請再試一次',
+    'auth/operation-not-allowed' : 'Google 登入尚未啟用，請聯繫管理員',
+    'auth/cancelled-popup-request':'請再試一次',
+    'auth/network-request-failed': '網路連線不穩，請確認網路後再試',
+  };
+  let msg = map[code];
+  if(!msg && /disallowed_useragent|403/i.test(String(e?.message||''))){
+    msg = 'Google 不允許在 App 內建瀏覽器登入，請改用手機瀏覽器開啟本頁';
+  }
+  showAlert('error', msg || esc(e?.message || String(e)), 'login-alert');
+}
 
 window.doLogout = async function(){
   await signOut(auth);
@@ -1006,7 +1196,14 @@ window.doLogout = async function(){
 
 // ══════════════ 認證狀態 ══════════════
 onAuthStateChanged(auth, async (user) => {
-  if(!user){ showScreen('login'); return; }
+  if(!user){
+    // App 內建瀏覽器 → 先顯示導引畫面
+    if(inApp){ showInAppGuide(); return; }
+    const tip = $('login-mobile-tip');
+    if(tip && isMobile) tip.style.display = 'block';
+    showScreen('login');
+    return;
+  }
 
   MY_UID = user.uid;
   $('pend-avatar').innerHTML = avatarHtml(user.photoURL, user.displayName);
@@ -2161,6 +2358,19 @@ function renderDashboard(){
 // ══════════════════════════════════════════════════════════════════
 //  操作紀錄
 // ══════════════════════════════════════════════════════════════════
+// ══════════════ 處理轉址登入結果 ══════════════
+(async () => {
+  if(sessionStorage.getItem('authPending')){
+    try{
+      await getRedirectResult(auth);
+    }catch(e){
+      showAlert('error', (e?.message || '登入失敗'), 'login-alert');
+    }finally{
+      sessionStorage.removeItem('authPending');
+    }
+  }
+})();
+
 window.loadLogs = async function(){
   const el = $('logs-panel');
   el.innerHTML = '<div class="empty" style="padding:1.25rem;">載入中…</div>';
