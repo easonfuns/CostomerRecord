@@ -435,6 +435,49 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .pct.lo{background:var(--cream);color:var(--muted);}
 
 @media(max-width:620px){ .dash-2col{grid-template-columns:1fr;} }
+
+/* ══ 篩選列 ══ */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem;
+            padding:12px 14px;background:var(--warm);border:1.5px solid var(--border);border-radius:var(--r2);}
+.filter-bar .field{margin-bottom:0;min-width:130px;flex:1;}
+.filter-bar .field label{font-size:11px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;}
+.filter-bar select,.filter-bar input{height:36px;font-size:13px;}
+.filter-reset{height:36px;padding:0 12px;font-size:12px;}
+.filter-summary{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.filter-summary strong{color:var(--ink);font-weight:600;}
+
+/* ══ 批次選取 ══ */
+.bulk-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;
+          background:#fff5f5;border:1.5px solid #f5c6cb;border-radius:var(--r2);margin-bottom:10px;
+          gap:10px;flex-wrap:wrap;}
+.card-cb{width:20px;height:20px;border:2px solid var(--border2);border-radius:5px;flex-shrink:0;
+         display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+         color:#fff;transition:all .12s;margin-top:2px;cursor:pointer;}
+.card-cb.on{background:#c0392b;border-color:#c0392b;}
+.customer-card.selecting{cursor:pointer;}
+.customer-card.sel-on{border-color:#f5c6cb;background:#fff8f8;}
+.cc-top-wrap{display:flex;gap:11px;align-items:flex-start;}
+
+/* ══ 團隊管理 ══ */
+.chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--cream);
+      border:1.5px solid var(--border2);border-radius:99px;padding:5px 8px 5px 13px;font-size:13px;}
+.chip-x{border:none;background:none;cursor:pointer;color:var(--hint);font-size:15px;
+        line-height:1;padding:2px 4px;border-radius:5px;}
+.chip-x:hover{background:#fff0f0;color:#c0392b;}
+.chip-n{font-size:10.5px;color:var(--hint);}
+.inline-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;}
+.inline-row .field{flex:1;min-width:150px;margin-bottom:0;}
+.dealer-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--border);}
+.dealer-row:last-child{border-bottom:none;}
+.dealer-info{flex:1;min-width:0;}
+.dealer-name{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.dealer-meta{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.dtag{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:600;}
+.dtag.bound{background:#e8f4e0;color:#2a6e10;}
+.dtag.free{background:var(--gold-pale);color:#7a5500;}
+.dtag.off{background:#fff0f0;color:#c0392b;}
+@media(max-width:560px){ .filter-bar .field{min-width:100%;} }
 </style>
 </head>
 <body>
@@ -521,6 +564,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 
   <div class="quicklinks">
     <span class="ql-label">常用連結</span>
+    <a class="ql-btn" href="https://www.grace99.com.tw/" target="_blank" rel="noopener noreferrer">🌿 恩典久久<span class="ql-ext">↗</span></a>
     <a class="ql-btn" href="https://www.grace99.com.tw/order/" target="_blank" rel="noopener noreferrer">🛒 恩久下單系統<span class="ql-ext">↗</span></a>
     <a class="ql-btn" href="https://ig-hma.org/" target="_blank" rel="noopener noreferrer">🏛 健康管理協會<span class="ql-ext">↗</span></a>
     <a class="ql-btn" href="https://easonfuns.github.io/class/" target="_blank" rel="noopener noreferrer">📚 每周線上課程<span class="ql-ext">↗</span></a>
@@ -544,8 +588,48 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
         <div id="todo-panel"></div>
         <div class="list-bar">
           <div class="list-bar-title" id="list-title">我的客戶</div>
-          <button class="btn sm primary" onclick="openCustomerForm(null)">＋ 新增客戶</button>
+          <div style="display:flex;gap:7px;">
+            <button class="btn sm" id="btn-select-mode" onclick="toggleSelectMode()">選取</button>
+            <button class="btn sm primary" onclick="openCustomerForm(null)">＋ 新增客戶</button>
+          </div>
         </div>
+
+        <div class="filter-bar" id="filter-bar" style="display:none;">
+          <div class="field">
+            <label>搜尋</label>
+            <input type="text" id="f-search" placeholder="姓名／電話／LINE" oninput="renderCustomers()">
+          </div>
+          <div class="field" id="f-team-wrap">
+            <label>團隊</label>
+            <select id="f-team" onchange="onFilterTeamChange()"><option value="">全部團隊</option></select>
+          </div>
+          <div class="field" id="f-dealer-wrap">
+            <label>健管師</label>
+            <select id="f-dealer" onchange="renderCustomers()"><option value="">全部成員</option></select>
+          </div>
+          <div class="field">
+            <label>狀態</label>
+            <select id="f-status" onchange="renderCustomers()">
+              <option value="">全部</option>
+              <option value="urgent">需要跟進</option>
+              <option value="active">進行中</option>
+              <option value="done">已完成</option>
+              <option value="sleeping">沉睡中</option>
+              <option value="inquiry">客戶自填</option>
+            </select>
+          </div>
+          <button class="btn filter-reset" onclick="resetFilters()">清除</button>
+        </div>
+
+        <div class="bulk-bar" id="bulk-bar" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="btn sm" onclick="toggleSelectAll()" id="btn-sel-all">全選</button>
+            <span style="font-size:13px;color:var(--muted);">已選取 <strong id="bulk-count">0</strong> 筆</span>
+          </div>
+          <button class="btn sm danger" onclick="bulkDelete()">刪除選取</button>
+        </div>
+
+        <div class="filter-summary" id="filter-summary"></div>
         <div id="customer-list" class="customer-list"></div>
       </div>
 
@@ -627,6 +711,27 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
           <div class="card-title">託管中的客戶 <span class="cnt" id="custody-count">0</span></div>
           <div id="custody-panel"></div>
         </div>
+        <div class="card">
+          <div class="card-title">團隊管理</div>
+          <div class="inline-row">
+            <div class="field"><label>新增團隊</label>
+              <input type="text" id="new-team-name" placeholder="輸入團隊名稱">
+            </div>
+            <button class="btn" onclick="addTeam()">新增</button>
+          </div>
+          <div class="chip-row" id="team-chips"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">經銷商編號管理 <span class="cnt" id="dealer-count">0</span></div>
+          <div class="inline-row" style="margin-bottom:14px;">
+            <div class="field"><label>姓名</label><input type="text" id="new-dealer-name" placeholder="輸入姓名"></div>
+            <div class="field"><label>團隊</label><select id="new-dealer-team"><option value="">— 無團隊 —</option></select></div>
+            <button class="btn primary" onclick="addDealer()">新增經銷商</button>
+          </div>
+          <div id="dealer-list-panel"></div>
+        </div>
+
         <div class="card">
           <div class="card-title">操作紀錄（近 50 筆）
             <button class="btn xs" onclick="loadLogs()">重新載入</button>
@@ -974,6 +1079,7 @@ async function bootApp(user){
   initWrPage();
   showScreen('app');
   await reloadAll();
+  initFilters();
   updateMyStats();
 }
 
@@ -1018,7 +1124,7 @@ window.reloadAll = async function(){
     renderWrStats();
     if(currentTab==='report') renderWrData();
     if(currentTab==='dash') renderDashboard();
-    if(isAdmin()) renderAccounts();
+    if(isAdmin()){ renderAccounts(); renderTeamPanel(); renderDealerPanel(); if($('f-team')) fillDealerFilter($('f-team').value); }
     setSync('ok', ((Date.now()-t0)/1000).toFixed(1)+'秒');
   }catch(e){
     setSync('error');
@@ -2093,19 +2199,279 @@ window.loadLogs = async function(){
   }
 };
 
+
+// ══════════════════════════════════════════════════════════════════
+//  篩選 / 批次選取 / 團隊與經銷商管理
+// ══════════════════════════════════════════════════════════════════
+let selectMode = false;
+let selectedIds = new Set();
+
+// ── 篩選 ──
+function initFilters(){
+  const bar = $('filter-bar');
+  // 健管師客戶少，只給搜尋；管理員才顯示團隊/成員篩選
+  bar.style.display = 'flex';
+  $('f-team-wrap').style.display   = isAdmin() ? 'flex' : 'none';
+  $('f-dealer-wrap').style.display = isAdmin() ? 'flex' : 'none';
+  if(isAdmin()){
+    $('f-team').innerHTML = '<option value="">全部團隊</option>' +
+      teams.map(t => `<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+    fillDealerFilter('');
+  }
+}
+
+function fillDealerFilter(team){
+  const list = dealers
+    .filter(d => !d.custody && (!team || d.team === team))
+    .sort((a,b) => (a.name||'').localeCompare(b.name||''));
+  const cur = $('f-dealer').value;
+  $('f-dealer').innerHTML = '<option value="">全部成員</option>' +
+    list.map(d => {
+      const n = customers.filter(c => c.did === d.id).length;
+      return `<option value="${esc(d.id)}">${esc(d.name)}（${n}）</option>`;
+    }).join('') +
+    `<option value="CUSTODY">託管中（${customers.filter(c=>c.did==='CUSTODY').length}）</option>`;
+  if([...$('f-dealer').options].some(o => o.value === cur)) $('f-dealer').value = cur;
+}
+
+window.onFilterTeamChange = function(){
+  fillDealerFilter($('f-team').value);
+  renderCustomers();
+};
+
+window.resetFilters = function(){
+  $('f-search').value = '';
+  if(isAdmin()){ $('f-team').value = ''; fillDealerFilter(''); $('f-dealer').value = ''; }
+  $('f-status').value = '';
+  renderCustomers();
+};
+
+function applyFilters(list){
+  const kw = ($('f-search')?.value || '').trim().toLowerCase();
+  const team = isAdmin() ? ($('f-team')?.value || '') : '';
+  const did  = isAdmin() ? ($('f-dealer')?.value || '') : '';
+  const st   = $('f-status')?.value || '';
+
+  return list.filter(c => {
+    if(team && c.team !== team) return false;
+    if(did && String(c.did) !== did) return false;
+    if(st === 'inquiry'){ if(c.source !== 'inquiry') return false; }
+    else if(st && classify(c) !== st) return false;
+    if(kw){
+      const hay = [c.cname, c.contactPhone, c.contactLine, c.dname]
+        .filter(Boolean).join(' ').toLowerCase();
+      if(!hay.includes(kw)) return false;
+    }
+    return true;
+  });
+}
+
+// ── 批次選取 ──
+window.toggleSelectMode = function(){
+  selectMode = !selectMode;
+  selectedIds.clear();
+  $('btn-select-mode').textContent = selectMode ? '取消選取' : '選取';
+  $('btn-select-mode').classList.toggle('danger', selectMode);
+  $('bulk-bar').style.display = selectMode ? 'flex' : 'none';
+  renderCustomers();
+};
+
+window.toggleSelectAll = function(){
+  const visible = applyFilters(customers).map(c => c.id);
+  const allOn = visible.every(id => selectedIds.has(id));
+  if(allOn) visible.forEach(id => selectedIds.delete(id));
+  else visible.forEach(id => selectedIds.add(id));
+  renderCustomers();
+};
+
+function updateBulkBar(){
+  const n = selectedIds.size;
+  const el = $('bulk-count');
+  if(el) el.textContent = n;
+  const visible = applyFilters(customers).map(c => c.id);
+  const allOn = visible.length && visible.every(id => selectedIds.has(id));
+  const b = $('btn-sel-all');
+  if(b) b.textContent = allOn ? '取消全選' : '全選';
+}
+
+window.bulkDelete = async function(){
+  if(!selectedIds.size){ showAlert('error','請先選取要刪除的客戶'); return; }
+  const list = customers.filter(c => selectedIds.has(c.id));
+  if(!confirm(`確定刪除選取的 ${list.length} 位客戶？\n\n此操作無法復原。`)) return;
+  try{
+    for(let i=0; i<list.length; i+=400){
+      const b = writeBatch(db);
+      list.slice(i, i+400).forEach(c => b.delete(doc(db,'customers',c.id)));
+      await b.commit();
+    }
+    await addDoc(collection(db,'actionLogs'), {
+      type:'delete_customer',
+      operatorUid: MY_UID, operatorEmail: ME.email||'', operatorRole: ME.role,
+      targetInfo:{
+        customerName: `批次刪除 ${list.length} 位`,
+        dealerId: list[0]?.did || '', dealerName: list[0]?.dname || ''
+      },
+      createdAt: serverTimestamp()
+    });
+    selectedIds.clear();
+    selectMode = false;
+    $('btn-select-mode').textContent = '選取';
+    $('btn-select-mode').classList.remove('danger');
+    $('bulk-bar').style.display = 'none';
+    showAlert('success', `✓ 已刪除 ${list.length} 位客戶`);
+    await reloadAll();
+    await updateMyStats();
+  }catch(e){ showAlert('error','刪除失敗：'+esc(e.message||e)); }
+};
+
+// ── 團隊管理 ──
+window.addTeam = async function(){
+  const name = $('new-team-name').value.trim();
+  if(!name){ showAlert('error','請輸入團隊名稱'); return; }
+  if(teams.some(t => t.name === name)){ showAlert('error','此團隊已存在'); return; }
+  try{
+    await setDoc(doc(db,'teams',name), {
+      name, leaderUid: null, active: true, createdAt: serverTimestamp()
+    });
+    $('new-team-name').value = '';
+    showAlert('success','✓ 已新增團隊「'+esc(name)+'」');
+    await reloadAll();
+  }catch(e){ showAlert('error','新增失敗：'+esc(e.message||e)); }
+};
+
+window.removeTeam = async function(name){
+  const memberCnt = dealers.filter(d => d.team === name).length;
+  const cusCnt    = customers.filter(c => c.team === name).length;
+  if(memberCnt || cusCnt){
+    showAlert('error', `「${esc(name)}」底下還有 ${memberCnt} 位成員、${cusCnt} 位客戶，請先調整歸屬再刪除`);
+    return;
+  }
+  if(!confirm(`確定移除團隊「${name}」？`)) return;
+  try{
+    await deleteDoc(doc(db,'teams',name));
+    showAlert('success','✓ 已移除團隊');
+    await reloadAll();
+  }catch(e){ showAlert('error','移除失敗：'+esc(e.message||e)); }
+};
+
+function renderTeamPanel(){
+  const el = $('team-chips');
+  if(!el) return;
+  el.innerHTML = teams.length ? teams.map(t => {
+    const m = dealers.filter(d => d.team === t.name).length;
+    const c = customers.filter(x => x.team === t.name).length;
+    return `<div class="chip">
+      <span>${esc(t.name)}</span>
+      <span class="chip-n">${m}人 · ${c}客戶</span>
+      <button class="chip-x" data-rmteam="${esc(t.name)}" title="移除">×</button>
+    </div>`;
+  }).join('') : '<span style="font-size:13px;color:var(--hint);">尚無團隊</span>';
+  el.querySelectorAll('[data-rmteam]').forEach(b => {
+    b.onclick = () => removeTeam(b.dataset.rmteam);
+  });
+  // 新增經銷商的團隊下拉
+  const sel = $('new-dealer-team');
+  if(sel) sel.innerHTML = '<option value="">— 無團隊 —</option>' +
+    teams.map(t => `<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+}
+
+// ── 經銷商管理 ──
+window.addDealer = async function(){
+  const name = $('new-dealer-name').value.trim();
+  const team = $('new-dealer-team').value;
+  if(!name){ showAlert('error','請輸入姓名'); return; }
+  if(dealers.some(d => d.name === name && !d.custody)){
+    if(!confirm(`已經有一位「${name}」，確定還要新增嗎？`)) return;
+  }
+  try{
+    const id = Date.now().toString();
+    await setDoc(doc(db,'dealers',id), {
+      name, team, active: true, boundUid: null, custody: false,
+      createdAt: serverTimestamp()
+    });
+    await setDoc(doc(db,'dealerStats',id), {
+      dealerId:id, dealerName:name, team,
+      customerCount:0, task1Count:0, task2Count:0, task3Count:0,
+      allTasksCount:0, urgentCount:0, invitationCounts:{}, healthCounts:{},
+      purchaseDayTotal:0, purchase7dTotal:0, updatedAt: serverTimestamp()
+    });
+    $('new-dealer-name').value = '';
+    showAlert('success','✓ 已新增經銷商「'+esc(name)+'」，可在待開通申請中綁定 Google 帳號');
+    await reloadAll();
+  }catch(e){ showAlert('error','新增失敗：'+esc(e.message||e)); }
+};
+
+window.removeDealer = async function(id){
+  const d = dealers.find(x => x.id === id);
+  if(!d) return;
+  const cnt = customers.filter(c => c.did === id).length;
+  const bound = allUsers.find(u => u.dealerId === id);
+  if(cnt){ showAlert('error', `「${esc(d.name)}」名下還有 ${cnt} 位客戶，請先轉移再刪除`); return; }
+  if(bound){ showAlert('error', `「${esc(d.name)}」已綁定帳號 ${esc(bound.email)}，請先解除綁定`); return; }
+  if(!confirm(`確定移除經銷商編號「${d.name}」？`)) return;
+  try{
+    const b = writeBatch(db);
+    b.delete(doc(db,'dealers',id));
+    b.delete(doc(db,'dealerStats',id));
+    await b.commit();
+    showAlert('success','✓ 已移除');
+    await reloadAll();
+  }catch(e){ showAlert('error','移除失敗：'+esc(e.message||e)); }
+};
+
+function renderDealerPanel(){
+  const el = $('dealer-list-panel');
+  if(!el) return;
+  const list = dealers.filter(d => !d.custody)
+    .sort((a,b) => (a.team||'zzz').localeCompare(b.team||'zzz') || (a.name||'').localeCompare(b.name||''));
+  $('dealer-count').textContent = list.length;
+
+  el.innerHTML = list.length ? list.map(d => {
+    const cnt = customers.filter(c => c.did === d.id).length;
+    const u   = allUsers.find(x => x.dealerId === d.id);
+    let tag;
+    if(d.active === false) tag = '<span class="dtag off">已停用</span>';
+    else if(u)             tag = `<span class="dtag bound">已綁定</span>`;
+    else                   tag = '<span class="dtag free">未綁定</span>';
+    return `<div class="dealer-row">
+      <div class="dealer-info">
+        <div class="dealer-name">${esc(d.name)} ${tag}</div>
+        <div class="dealer-meta">${esc(d.team||'無團隊')} · 客戶 ${cnt} 位 · ID ${esc(String(d.id).slice(-5))}
+          ${u?' · '+esc(u.email):''}</div>
+      </div>
+      <button class="btn xs danger" data-rmdealer="${esc(d.id)}">移除</button>
+    </div>`;
+  }).join('') : '<div class="empty" style="padding:1.25rem;">尚無經銷商</div>';
+
+  el.querySelectorAll('[data-rmdealer]').forEach(b => {
+    b.onclick = () => removeDealer(b.dataset.rmdealer);
+  });
+}
+
 // ══════════════ 客戶列表 ══════════════
 function renderCustomers(){
-  const total = customers.length;
-  const t1 = customers.filter(c=>c.task1).length;
-  const t2 = customers.filter(c=>c.task2).length;
-  const t3 = customers.filter(c=>c.task3).length;
+  const shown = applyFilters(customers);
+
+  // 統計以「篩選後」為準
+  const t1 = shown.filter(c=>c.task1).length;
+  const t2 = shown.filter(c=>c.task2).length;
+  const t3 = shown.filter(c=>c.task3).length;
   $('my-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-num" style="color:var(--moss2)">${total}<span class="stat-unit">位</span></div><div class="stat-label">客戶總數</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--moss2)">${shown.length}<span class="stat-unit">位</span></div><div class="stat-label">客戶總數</div></div>
     <div class="stat-card"><div class="stat-num">${t1}<span class="stat-unit">位</span></div><div class="stat-label">7日產品</div></div>
     <div class="stat-card"><div class="stat-num">${t2}<span class="stat-unit">位</span></div><div class="stat-label">週二課程</div></div>
     <div class="stat-card"><div class="stat-num">${t3}<span class="stat-unit">位</span></div><div class="stat-label">小組活動</div></div>`;
 
   renderTodos();
+
+  // 篩選摘要
+  const fs = $('filter-summary');
+  if(fs){
+    fs.textContent = (shown.length !== customers.length)
+      ? `符合條件 ${shown.length} 位，共 ${customers.length} 位`
+      : '';
+  }
+  updateBulkBar();
 
   const list = $('customer-list');
   if(!customers.length){
@@ -2114,20 +2480,24 @@ function renderCustomers(){
     }</div>`;
     return;
   }
+  if(!shown.length){
+    list.innerHTML = '<div class="empty">沒有符合篩選條件的客戶<br><span style="font-size:12px;">試著調整或清除篩選條件</span></div>';
+    return;
+  }
 
   const byUpdated = arr => [...arr].sort((a,b) =>
     (b.updatedAt?.toMillis?.()||0) - (a.updatedAt?.toMillis?.()||0));
 
-  // 管理員：不分組，平鋪
-  if(isAdmin()){
-    list.innerHTML = byUpdated(customers).map(c => customerCard(c)).join('');
+  // 選取模式或管理員：不分組平鋪
+  if(selectMode || isAdmin()){
+    list.innerHTML = byUpdated(shown).map(c => customerCard(c)).join('');
     bindCardEvents();
     return;
   }
 
   // 健管師：四組分類
   const groups = { urgent:[], active:[], done:[], sleeping:[] };
-  customers.forEach(c => groups[classify(c)].push(c));
+  shown.forEach(c => groups[classify(c)].push(c));
 
   list.innerHTML = Object.keys(GROUP_META)
     .sort((a,b) => GROUP_META[a].o - GROUP_META[b].o)
@@ -2150,7 +2520,7 @@ function renderCustomers(){
 }
 
 function customerCard(c){
-  const quick = !isAdmin();
+  const quick = !isAdmin() && !selectMode;
   const tasks = [
     {l:'7日產品', d:c.task1, n:1},
     {l:'週二課程', d:c.task2, n:2},
@@ -2180,18 +2550,27 @@ function customerCard(c){
   if(c.contactPhone) meta.push('📞 '+esc(c.contactPhone));
   if(c.contactLine)  meta.push('💬 '+esc(c.contactLine));
 
-  return `<div class="customer-card" data-open="${c.id}">
-    <div class="cc-top">
-      <div>
-        <div class="cc-name">${esc(c.cname||'(未命名)')}
-          ${c.source==='inquiry'?'<span class="tag-inquiry">客戶自填</span>':''}
+  const on = selectedIds.has(c.id);
+  const cb = selectMode
+    ? `<div class="card-cb ${on?'on':''}" data-cb="${c.id}">${on?'✓':''}</div>` : '';
+
+  return `<div class="customer-card ${selectMode?'selecting':''} ${on?'sel-on':''}" data-open="${c.id}">
+    <div class="cc-top-wrap">
+      ${cb}
+      <div style="flex:1;min-width:0;">
+        <div class="cc-top">
+          <div>
+            <div class="cc-name">${esc(c.cname||'(未命名)')}
+              ${c.source==='inquiry'?'<span class="tag-inquiry">客戶自填</span>':''}
+            </div>
+            ${meta.length?`<div class="cc-meta">${meta.join(' · ')}</div>`:''}
+          </div>
+          ${invHtml}
         </div>
-        ${meta.length?`<div class="cc-meta">${meta.join(' · ')}</div>`:''}
+        <div class="cc-tasks">${taskHtml}</div>
+        ${hs?`<div class="cc-tags">${hs}${more}</div>`:''}
       </div>
-      ${invHtml}
     </div>
-    <div class="cc-tasks">${taskHtml}</div>
-    ${hs?`<div class="cc-tags">${hs}${more}</div>`:''}
   </div>`;
 }
 
@@ -2200,6 +2579,12 @@ function bindCardEvents(){
   list.querySelectorAll('[data-open]').forEach(card => {
     card.onclick = e => {
       if(e.target.closest('[data-qt]') || e.target.closest('[data-qi]')) return;
+      if(selectMode){
+        const id = card.dataset.open;
+        if(selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id);
+        renderCustomers();
+        return;
+      }
       openCustomerForm(card.dataset.open);
     };
   });
@@ -2322,6 +2707,10 @@ function renderAccounts(){
       <div style="padding:12px;background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;">
         <div style="font-size:13px;font-weight:600;margin-bottom:8px;">
           原屬：${esc(from)} · ${list.length} 位客戶
+          ${(() => {
+            const owner = allUsers.find(x => x.dealerName === from && x.status === 'active');
+            return owner ? `<span style="font-size:11px;font-weight:400;color:var(--moss3);margin-left:6px;">（該帳號已恢復，可直接選他歸還）</span>` : '';
+          })()}
         </div>
         <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
           <div class="field" style="flex:1;min-width:180px;margin:0;">
@@ -2627,14 +3016,62 @@ window.disableUser = async function(uid){
 };
 
 window.enableUser = async function(uid){
-  const u = allUsers.find(x=>x.uid===uid);
-  if(!confirm(`確定恢復「${u?.dealerName||u?.email}」的帳號？\n\n注意：原本的客戶仍在託管中，需另外指派回去。`)) return;
+  const u = allUsers.find(x => x.uid === uid);
+  if(!u) return;
+
+  // 找出當初從這位健管師轉入託管的客戶
+  const inCustody = customers.filter(c =>
+    c.did === CUSTODY_ID && c.custodyFrom && String(c.custodyFrom) === String(u.dealerId));
+
+  let restore = false;
+  if(inCustody.length){
+    restore = confirm(
+      `恢復「${u.dealerName||u.email}」的帳號\n\n`+
+      `發現 ${inCustody.length} 位客戶當初因停用轉入託管。\n\n`+
+      `按「確定」＝ 一併還給他\n`+
+      `按「取消」＝ 只恢復帳號，客戶留在託管由你手動指派`
+    );
+  }else{
+    if(!confirm(`確定恢復「${u.dealerName||u.email}」的帳號？`)) return;
+  }
+
   try{
+    // 帳號恢復
     const b = writeBatch(db);
     b.update(doc(db,'users',uid), { status:'active' });
     if(u.dealerId) b.update(doc(db,'dealers',u.dealerId), { active:true, boundUid:uid });
     await b.commit();
-    showAlert('success','✓ 已恢復帳號');
+
+    // 客戶歸還
+    if(restore && inCustody.length){
+      for(let i=0; i<inCustody.length; i+=400){
+        const bb = writeBatch(db);
+        inCustody.slice(i, i+400).forEach(c => bb.update(doc(db,'customers',c.id), {
+          did: u.dealerId,
+          dname: u.dealerName || '',
+          team: u.team || '',
+          custodyFrom: null,
+          custodyFromName: null,
+          updatedAt: serverTimestamp()
+        }));
+        await bb.commit();
+      }
+      await addDoc(collection(db,'actionLogs'), {
+        type:'transfer_customers',
+        operatorUid: MY_UID, operatorEmail: ME.email||'', operatorRole: ME.role,
+        targetInfo:{
+          fromDealerId: CUSTODY_ID, fromName:'託管中',
+          toDealerId: u.dealerId||'', toName: u.dealerName||'',
+          count: inCustody.length, reason:'帳號恢復，客戶歸還'
+        },
+        createdAt: serverTimestamp()
+      });
+      showAlert('success', `✓ 已恢復帳號，${inCustody.length} 位客戶已歸還`);
+    }else{
+      showAlert('success', inCustody.length
+        ? `✓ 已恢復帳號（${inCustody.length} 位客戶仍在託管，可手動指派）`
+        : '✓ 已恢復帳號');
+    }
     await reloadAll();
   }catch(e){ showAlert('error','操作失敗：'+esc(e.message||e)); }
 };
