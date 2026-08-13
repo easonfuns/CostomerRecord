@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>健康管家 · 帳號檢查工具</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --moss:#1e3d30;--moss2:#2d4a3e;--moss3:#3d6b59;--moss-pale:#eef5f0;
+  --gold:#c9a84c;--gold-pale:#fdf3d6;
+  --cream:#f8f5ef;--warm:#fdfbf7;
+  --ink:#1a1a18;--muted:#6b6b66;--hint:#a8a8a2;
+  --border:#e8e4dc;--border2:#d0cbc0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem 1rem;}
+.wrap{width:100%;max-width:520px;}
+.card{background:var(--warm);border-radius:20px;overflow:hidden;box-shadow:0 6px 24px rgba(30,61,48,.12);}
+.hero{background:var(--moss);padding:2rem 1.5rem 2.5rem;text-align:center;position:relative;}
+.hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:var(--warm);clip-path:ellipse(55% 100% at 50% 100%);pointer-events:none;}
+.hero-mark{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;}
+.hero-title{font-family:'Noto Serif TC',serif;font-size:19px;font-weight:600;color:#fff;letter-spacing:.06em;margin-bottom:3px;}
+.hero-sub{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.1em;}
+.body{padding:1.75rem 1.5rem 2rem;}
+.btn{width:100%;height:48px;border:none;border-radius:12px;background:var(--moss2);color:#fff;font-size:15px;font-weight:600;font-family:'Noto Sans TC',sans-serif;cursor:pointer;letter-spacing:.03em;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:9px;}
+.btn:hover:not(:disabled){background:var(--moss);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--border2);margin-top:9px;}
+.btn.ghost:hover{background:var(--cream);}
+.gicon{width:19px;height:19px;background:#fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4285F4;}
+.profile{display:flex;align-items:center;gap:12px;padding:14px;background:var(--moss-pale);border:1.5px solid var(--moss3);border-radius:12px;margin-bottom:1.25rem;}
+.avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--moss);font-size:17px;overflow:hidden;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.pname{font-size:15px;font-weight:600;}
+.pmail{font-size:12px;color:var(--muted);margin-top:1px;word-break:break-all;}
+.field{margin-bottom:1rem;}
+.flabel{font-size:11px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.uid-box{display:flex;gap:8px;}
+.uid-val{flex:1;background:#fff;border:1.5px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:13px;word-break:break-all;line-height:1.5;user-select:all;}
+.copy-btn{flex-shrink:0;width:52px;border:1.5px solid var(--border2);border-radius:10px;background:#fff;cursor:pointer;font-size:12px;font-family:'Noto Sans TC',sans-serif;color:var(--muted);transition:all .15s;}
+.copy-btn:hover{border-color:var(--moss3);color:var(--moss2);}
+.copy-btn.ok{background:var(--moss2);border-color:var(--moss2);color:#fff;}
+.status{padding:14px;border-radius:12px;font-size:13px;line-height:1.7;margin-bottom:1rem;}
+.status.ok{background:#e8f4e0;border:1.5px solid #9fd87e;color:#2a6e10;}
+.status.pending{background:var(--gold-pale);border:1.5px solid #f0d080;color:#7a5500;}
+.status.none{background:#fff5f5;border:1.5px solid #f5c6cb;color:#8a3a3a;}
+.status strong{font-weight:700;}
+.steps{background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;font-size:12.5px;line-height:1.9;color:var(--muted);}
+.steps b{color:var(--ink);}
+.steps ol{margin:6px 0 0 18px;}
+.steps code{background:#fff;border:1px solid var(--border2);border-radius:4px;padding:1px 5px;font-family:ui-monospace,monospace;font-size:11.5px;color:var(--moss2);}
+.err{background:#fff5f5;border:1.5px solid #f5c6cb;color:#8a3a3a;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.7;margin-bottom:1rem;}
+.hint{font-size:11.5px;color:var(--hint);text-align:center;margin-top:14px;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="hero">
+      <div class="hero-mark">🌿</div>
+      <div class="hero-title">帳號檢查工具</div>
+      <div class="hero-sub">GET YOUR UID</div>
+    </div>
+    <div class="body" id="body">
+      <div id="err"></div>
+      <button class="btn" id="login-btn" onclick="doLogin()">
+        <span class="gicon">G</span>用 Google 登入
+      </button>
+      <div class="hint">登入後會顯示你的 uid<br>用來在 Firebase Console 建立管理員帳號</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBrD0VNBFMXcuUwdHo3EEgkN8W5qClnolE",
+  authDomain: "health-steward.firebaseapp.com",
+  projectId: "health-steward",
+  storageBucket: "health-steward.firebasestorage.app",
+  messagingSenderId: "500769843652",
+  appId: "1:500769843652:web:145b7ebaea1ed231b45c91"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const bodyEl = document.getElementById('body');
+
+window.doLogin = async function () {
+  document.getElementById('err').innerHTML = '';
+  const btn = document.getElementById('login-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '登入中…'; }
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch (e) {
+    showError(e);
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span class="gicon">G</span>用 Google 登入'; }
+  }
+};
+
+window.doLogout = async function () {
+  await signOut(auth);
+  location.reload();
+};
+
+window.copyUid = function (uid, btn) {
+  navigator.clipboard.writeText(uid).then(() => {
+    btn.textContent = '已複製';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('ok'); }, 2000);
+  });
+};
+
+function showError(e) {
+  const map = {
+    'auth/unauthorized-domain': '這個網域尚未授權。<br>請到 Firebase Console → Authentication → Settings → 已授權網域，加入目前的網址。',
+    'auth/popup-blocked': '瀏覽器擋住了彈出視窗，請允許後再試一次。',
+    'auth/popup-closed-by-user': '登入視窗被關閉了，請再試一次。',
+    'auth/operation-not-allowed': 'Google 登入尚未啟用。<br>請到 Firebase Console → Authentication → Sign-in method 啟用 Google。'
+  };
+  const msg = map[e.code] || (e.message || String(e));
+  document.getElementById('err').innerHTML = '<div class="err">' + msg + '</div>';
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+
+  // 嘗試讀取自己的 users 文件
+  let profile = null, readErr = null;
+  try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (snap.exists()) profile = snap.data();
+  } catch (e) {
+    readErr = e;
+  }
+
+  const initial = (user.displayName || user.email || '?')[0].toUpperCase();
+  const avatarHtml = user.photoURL
+    ? `<img src="${user.photoURL}" alt="">`
+    : initial;
+
+  let statusHtml;
+  if (readErr) {
+    statusHtml = `<div class="status none">
+      <strong>⚠ 無法讀取權限資料</strong><br>
+      ${readErr.code === 'permission-denied'
+        ? '安全規則已生效，但你還沒有 users 文件。這是正常的，請照下方步驟建立。'
+        : (readErr.message || readErr)}
+    </div>`;
+  } else if (!profile) {
+    statusHtml = `<div class="status none">
+      <strong>尚未建立權限資料</strong><br>
+      Firestore 裡還沒有你的 <code>users</code> 文件，請照下方步驟建立。
+    </div>`;
+  } else if (profile.role === 'superadmin' && profile.status === 'active') {
+    statusHtml = `<div class="status ok">
+      <strong>✓ 你已是最高管理員（superadmin）</strong><br>
+      設定完成，可以進行下一步了。
+    </div>`;
+  } else if (profile.status === 'active') {
+    statusHtml = `<div class="status ok">
+      <strong>✓ 帳號已開通</strong><br>
+      角色：${profile.role}　團隊：${profile.team || '（無）'}
+    </div>`;
+  } else {
+    statusHtml = `<div class="status pending">
+      <strong>⏳ 等待開通</strong><br>
+      目前狀態：${profile.status}　角色：${profile.role}
+    </div>`;
+  }
+
+  const needSetup = !profile || profile.role !== 'superadmin';
+
+  bodyEl.innerHTML = `
+    <div class="profile">
+      <div class="avatar">${avatarHtml}</div>
+      <div>
+        <div class="pname">${user.displayName || '（未提供名稱）'}</div>
+        <div class="pmail">${user.email}</div>
+      </div>
+    </div>
+
+    ${statusHtml}
+
+    <div class="field">
+      <div class="flabel">你的 UID</div>
+      <div class="uid-box">
+        <div class="uid-val" id="uid-val">${user.uid}</div>
+        <button class="copy-btn" onclick="copyUid('${user.uid}', this)">複製</button>
+      </div>
+    </div>
+
+    ${needSetup ? `
+    <div class="steps">
+      <b>建立最高管理員的步驟</b>
+      <ol>
+        <li>開啟 Firebase Console → Firestore Database → 資料</li>
+        <li>點「開始集合」，集合 ID 填 <code>users</code></li>
+        <li>文件 ID 貼上方的 UID</li>
+        <li>新增以下欄位（型別都選 string）：
+          <br><code>email</code> → ${user.email}
+          <br><code>displayName</code> → ${user.displayName || '你的名字'}
+          <br><code>role</code> → <code>superadmin</code>
+          <br><code>status</code> → <code>active</code>
+          <br><code>dealerName</code> → 你的顯示名稱
+          <br><code>team</code> → 留空或填團隊名
+        </li>
+        <li>儲存後回到此頁面按「重新檢查」</li>
+      </ol>
+    </div>` : ''}
+
+    <button class="btn ghost" onclick="location.reload()">重新檢查</button>
+    <button class="btn ghost" onclick="doLogout()">登出</button>
+  `;
+});
+</script>
+</body>
+</html>
