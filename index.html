@@ -1640,19 +1640,28 @@ async function wr_api(data){
   return res.json();
 }
 
-function wr_setSyncStatus(s){
+function wr_setSyncStatus(s, detail){
   const dot=document.getElementById('wr-sync-dot'),txt=document.getElementById('wr-sync-text');
   if(!dot)return;
   dot.className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
-  txt.textContent=s==='syncing'?'同步中...':s==='error'?'同步失敗':'資料已同步';
+  if(s==='syncing'){ txt.textContent='同步中...'; }
+  else if(s==='error'){ txt.textContent='同步失敗'; }
+  else {
+    const timeStr = wr_lastFetch ? wr_lastFetch.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : '';
+    txt.textContent = '已同步 ' + timeStr + (detail ? ' · '+detail : '');
+  }
 }
 
+let wr_lastFetch = null;
 async function wr_loadFromSheet(){
   wr_setSyncStatus('syncing');
+  const t0 = Date.now();
   try{
     const data=await wr_api({action:'getAll'});
     wr_dealers=data.dealers||[]; wr_teams=data.teams||[]; wr_reports=data.reports||[];
-    wr_setSyncStatus('ok');
+    wr_lastFetch = new Date();
+    const elapsed = ((Date.now()-t0)/1000).toFixed(1);
+    wr_setSyncStatus('ok', data._cached ? '快取 · '+elapsed+'秒' : elapsed+'秒');
     wr_refreshSubmitDropdown(); wr_refreshDashDropdowns();
     if(wr_adminUnlocked) wr_refreshAdmin();
   }catch(e){wr_setSyncStatus('error');wr_showAlert('wr-submit-alert','error','連線失敗，請按重新整理再試');}
@@ -1735,6 +1744,8 @@ async function wr_submitReport(){
     wr_showAlert('wr-submit-alert','success','✓ 填報完成！數據已儲存到雲端');
     wr_clearSubmit();
     wr_reports.push({did,dname:dealer.name,team:dealer.team||'',week,m});
+    // 後端已清快取，稍後自動重新載入以取得最新完整資料
+    setTimeout(()=>{ if(wr_dashUnlocked) wr_loadFromSheet(); }, 1500);
   }catch(e){wr_showAlert('wr-submit-alert','error','送出失敗，請再試一次');}
   finally{btn.disabled=false;btn.textContent='送出填報';}
 }
