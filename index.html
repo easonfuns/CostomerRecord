@@ -291,6 +291,64 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .il-sub{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.1em;}
 .il-body{background:var(--warm);border-radius:0 0 20px 20px;padding:1.5rem;box-shadow:var(--shadow2);position:relative;z-index:1;}
 
+
+/* ── PERSONAL STATS (週報數據) ── */
+.stats-panel{background:linear-gradient(135deg,var(--moss) 0%,var(--moss2) 100%);border-radius:16px;padding:1.25rem 1.375rem;margin-bottom:1rem;color:#fff;}
+.stats-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.stats-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+.stats-period{font-size:11px;color:var(--gold);font-weight:600;}
+.stats-nums{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+.snum-cell{text-align:center;padding:8px 4px;background:rgba(255,255,255,.07);border-radius:9px;}
+.snum-v{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;color:#fff;line-height:1.1;}
+.snum-l{font-size:9px;color:rgba(255,255,255,.5);margin-top:3px;line-height:1.2;}
+.weeks-toggle{width:100%;margin-top:12px;padding:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;color:rgba(255,255,255,.7);font-size:12px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;}
+.weeks-toggle:hover{background:rgba(255,255,255,.14);color:#fff;}
+.weeks-detail{margin-top:10px;display:none;}
+.weeks-detail.open{display:block;}
+.wk-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px;margin-bottom:5px;font-size:12px;}
+.wk-row:last-child{margin-bottom:0;}
+.wk-label{color:var(--gold);font-weight:600;min-width:72px;font-size:11px;}
+.wk-nums{display:flex;gap:9px;flex-wrap:wrap;color:rgba(255,255,255,.75);font-size:11px;}
+.wk-nums span strong{color:#fff;font-weight:600;}
+
+/* ── TODO PANEL ── */
+.todo-panel{background:#fff;border:1.5px solid var(--gold);border-radius:16px;padding:1.125rem 1.25rem;margin-bottom:1rem;}
+.todo-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.todo-title{font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;}
+.todo-count{font-size:11px;background:var(--gold);color:#fff;padding:2px 9px;border-radius:99px;font-weight:700;}
+.todo-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--cream);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:all .15s;border:1.5px solid transparent;}
+.todo-item:last-child{margin-bottom:0;}
+.todo-item:hover{border-color:var(--gold);background:var(--gold-pale);}
+.todo-icon{font-size:15px;flex-shrink:0;line-height:1.3;}
+.todo-body{flex:1;min-width:0;}
+.todo-name{font-size:13px;font-weight:600;color:var(--ink);}
+.todo-desc{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.todo-dismiss{border:none;background:none;color:var(--hint);font-size:16px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;border-radius:5px;}
+.todo-dismiss:hover{background:rgba(0,0,0,.06);color:var(--muted);}
+.todo-empty{text-align:center;padding:1.25rem;color:var(--hint);font-size:13px;}
+.todo-more{text-align:center;font-size:11px;color:var(--hint);margin-top:8px;}
+
+/* ── CUSTOMER GROUPS ── */
+.cgroup{margin-bottom:1.125rem;}
+.cgroup:last-child{margin-bottom:0;}
+.cgroup-hd{display:flex;align-items:center;gap:8px;margin-bottom:9px;cursor:pointer;user-select:none;padding:2px 0;}
+.cgroup-icon{font-size:14px;}
+.cgroup-title{font-size:13px;font-weight:700;color:var(--ink);}
+.cgroup-count{font-size:11px;color:var(--hint);background:var(--cream);padding:2px 8px;border-radius:99px;font-weight:600;}
+.cgroup-arrow{margin-left:auto;font-size:11px;color:var(--hint);transition:transform .2s;}
+.cgroup.collapsed .cgroup-arrow{transform:rotate(-90deg);}
+.cgroup-body{display:flex;flex-direction:column;gap:8px;}
+.cgroup.collapsed .cgroup-body{display:none;}
+
+/* ── QUICK ACTIONS ON CARD ── */
+.quick-tasks{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.qtask{font-size:11px;padding:4px 11px;border-radius:99px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all .12s;user-select:none;}
+.qtask.done{background:#e8f4e0;color:#2a6e10;border-color:#9fd87e;}
+.qtask.todo{background:var(--cream);color:var(--hint);border-color:var(--border);}
+.qtask:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.qtask.saving{opacity:.5;pointer-events:none;}
+.quick-inv{font-size:11px;padding:3px 9px;border-radius:99px;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
+.quick-inv:focus{outline:none;border-color:var(--moss2);}
 </style>
 </head>
 <body>
@@ -365,6 +423,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 
           <!-- dealer view -->
           <div id="view-dealer" style="display:none">
+            <div id="personal-stats"></div>
+            <div id="todo-panel"></div>
             <div id="needs-pw-banner" class="needs-pw-banner" style="display:none">
               <div class="needs-pw-text">⚠️ 請先設定密碼，才能新增客戶資料</div>
               <button class="btn sm primary" onclick="openSetMyPassword()">立即設定</button>
@@ -399,7 +459,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
             <div id="team-dashboard-section" style="display:none">
               <div class="filter-row"><select id="tdash-period" onchange="renderTeamDashboard()"><option value="all">全部時間</option><option value="month">本月</option><option value="week">本週</option></select></div>
               <div class="dash-summary" id="tdash-summary"></div>
-              <div class="dash-2col"><div class="card" style="margin-bottom:0"><div class="card-title">三階段任務完成率</div><div id="tdash-tasks"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">家庭日邀約狀態</div><div id="tdash-fday"></div></div></div>
+              <div class="dash-2col"><div class="card" style="margin-bottom:0"><div class="card-title">GHOS轉化點完成率</div><div id="tdash-tasks"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">家庭日邀約狀態</div><div id="tdash-fday"></div></div></div>
               <div class="dash-2col" style="margin-top:10px;"><div class="card" style="margin-bottom:0"><div class="card-title">健康關注排行（前8）</div><div id="tdash-health"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">成員表現</div><div id="tdash-members"></div></div></div>
             </div>
           </div>
@@ -418,7 +478,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
             <div id="admin-dashboard" style="display:none">
               <div class="filter-row"><select id="dash-period" onchange="renderDashboard()"><option value="all">全部時間</option><option value="month">本月</option><option value="week">本週</option></select><select id="dash-team" onchange="renderDashboard()"><option value="">全部團隊</option></select></div>
               <div class="dash-summary" id="dash-summary"></div>
-              <div class="dash-2col"><div class="card" style="margin-bottom:0"><div class="card-title">三階段任務完成率</div><div id="dash-tasks"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">家庭日邀約狀態</div><div id="dash-fday"></div></div></div>
+              <div class="dash-2col"><div class="card" style="margin-bottom:0"><div class="card-title">GHOS轉化點完成率</div><div id="dash-tasks"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">家庭日邀約狀態</div><div id="dash-fday"></div></div></div>
               <div class="dash-2col" style="margin-top:10px;"><div class="card" style="margin-bottom:0"><div class="card-title">健康關注排行（前8）</div><div id="dash-health"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">各團隊表現</div><div id="dash-teams"></div></div></div>
             </div>
             <div id="admin-passwords" style="display:none">
@@ -539,7 +599,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
       </div>
       <div class="fsec"><div class="fsec-title">恩典卡</div>
         <div class="field"><label>購買時間</label><input type="date" id="f-sale-date"></div>
-        <div class="slabel">三階段任務</div>
+        <div class="slabel">GHOS轉化點</div>
         <div class="task-check-list">
           <div class="task-check-item" id="tk1" onclick="toggleTask(0)"><div class="task-box" id="tb1"></div><div><div class="task-label-main">7日產品使用</div><div class="task-label-sub">客戶持續使用產品滿7天</div></div></div>
           <div class="task-check-item" id="tk2" onclick="toggleTask(1)"><div class="task-box" id="tb2"></div><div><div class="task-label-main">週二課程</div><div class="task-label-sub">完成週二線上課程邀約</div></div></div>
@@ -777,6 +837,11 @@ function enterApp() {
   document.getElementById('ub-team').textContent=(currentRole==='dealer'&&currentTeam)?currentTeam:'';
   const banner=document.getElementById('needs-pw-banner');
   if(banner) banner.style.display=(currentRole==='dealer'&&currentNeedsPassword)?'flex':'none';
+  // 健管師專屬：載入週報數據與待辦
+  if(currentRole==='dealer'){
+    loadDealerReports();
+    renderTodoPanel();
+  }
   if(currentRole==='dealer'){
     const last5=String(currentId).slice(-5);
     document.getElementById('ub-id').textContent='我的 ID：'+last5;
@@ -827,10 +892,22 @@ function invClass(s) {
 
 function customerCard(c, showDealer) {
   const hcs=(c.health_concerns||[]).filter(h=>h!=='其他');
-  const tasks=[{l:'7日產品',done:c.task1},{l:'週二課程',done:c.task2},{l:'家庭日',done:c.task3}];
-  const taskPills=tasks.map(t=>`<span class="task-pill ${t.done?'done':'todo'}">${t.done?'✓':'·'} ${t.l}</span>`).join('');
+  const tasks=[{l:'7日產品',done:c.task1,n:1},{l:'週二課程',done:c.task2,n:2},{l:'家庭日',done:c.task3,n:3}];
+  // 健管師可直接點擊切換；其他角色只顯示
+  const canQuickEdit = (currentRole==='dealer' && !selectMode);
+  const taskPills = canQuickEdit
+    ? tasks.map(t=>`<span class="qtask ${t.done?'done':'todo'}" onclick="quickToggleTask('${c.cid}',${t.n},event)" title="點擊切換">${t.done?'✓':'·'} ${t.l}</span>`).join('')
+    : tasks.map(t=>`<span class="task-pill ${t.done?'done':'todo'}">${t.done?'✓':'·'} ${t.l}</span>`).join('');
   const hTags=hcs.map(h=>`<span class="htag">${h}</span>`).join('');
-  const invTag=c.invitation_status?`<span class="inv-tag ${invClass(c.invitation_status)}">${c.invitation_status}</span>`:'';
+  const invTag = (currentRole==='dealer' && !selectMode)
+    ? `<select class="quick-inv" onclick="event.stopPropagation()" onchange="quickSetInvitation('${c.cid}',this.value,event)">
+        <option value="" ${!c.invitation_status?'selected':''}>邀約狀態</option>
+        <option value="已報名" ${c.invitation_status==='已報名'?'selected':''}>已報名</option>
+        <option value="考慮中" ${c.invitation_status==='考慮中'?'selected':''}>考慮中</option>
+        <option value="拒絕" ${c.invitation_status==='拒絕'?'selected':''}>拒絕</option>
+        <option value="未聯繫" ${c.invitation_status==='未聯繫'?'selected':''}>未聯繫</option>
+      </select>`
+    : (c.invitation_status?`<span class="inv-tag ${invClass(c.invitation_status)}">${c.invitation_status}</span>`:'');
   const dealerBadge=showDealer?`<span class="tag blue">${c.dname}${c.team?' · '+c.team:''}</span>`:'';
   const saleStr=c.sale_date?`恩典卡 ${fmtDate(c.sale_date)}`:'';
   const fdayStr=c.attended_family_day==='是'&&c.family_day_date?`家庭日 ${fmtDate(c.family_day_date)}`:'';
@@ -857,7 +934,7 @@ function customerCard(c, showDealer) {
         </div>
         <div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">${invTag}</div>
       </div>
-      <div class="ccard-tasks">${taskPills}</div>
+      <div class="${canQuickEdit?'quick-tasks':'ccard-tasks'}">${taskPills}</div>
     </div>`;
   }
   const canClick=currentRole==='dealer'||currentRole==='admin';
@@ -876,7 +953,7 @@ function customerCard(c, showDealer) {
       </div>
       <div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">${invTag}</div>
     </div>
-    <div class="ccard-tasks">${taskPills}</div>
+    <div class="${canQuickEdit?'quick-tasks':'ccard-tasks'}">${taskPills}</div>
     ${(hTags||qBadge)?`<div class="ccard-bottom">${hTags}${qBadge}</div>`:''}
   </div>`;
 }
@@ -1235,6 +1312,7 @@ async function saveCustomer() {
         customers.push({...customer,cid:res.cid,created_at:now,updated_at:now});
       }
       closeCustomerForm();
+      if(currentRole==='dealer') renderTodoPanel();
       showAlert('main-alert','success',editingCid?'✓ 客戶資料已更新':'✓ 客戶已新增');
       if (currentRole==='dealer') renderDealerView();
       if (currentRole==='admin')  renderAdminList();
@@ -1813,6 +1891,367 @@ function wr_init(){
   document.getElementById('wr-header-week').textContent='當前週次：'+cw;
   wr_checkSavedPasswords();
   wr_loadFromSheet();
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════
+//  健管師個人後台功能
+// ══════════════════════════════════════════════════════════════════════════
+
+let dealerReports = [];        // 該健管師的週報資料
+let weeksExpanded = false;     // 週明細展開狀態
+let dismissedTodos = new Set(); // 今日已關閉的提醒
+
+// ── 載入個人週報資料 ────────────────────────────────────────────────────
+async function loadDealerReports() {
+  if (currentRole !== 'dealer' || !currentId) return;
+  try {
+    const res = await fetch(WR_API, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({ action:'getAll' })
+    });
+    const data = await res.json();
+    const all = data.reports || [];
+    dealerReports = all.filter(r => String(r.did) === String(currentId));
+    renderPersonalStats();
+  } catch(e) {
+    dealerReports = [];
+  }
+}
+
+// ── 個人週報統計面板 ────────────────────────────────────────────────────
+function renderPersonalStats() {
+  const el = document.getElementById('personal-stats');
+  if (!el || currentRole !== 'dealer') return;
+
+  const LABELS = ['潛在名單','恩典卡','線上課程','家庭日','健康卡','B11'];
+
+  // 本月累計
+  const now = new Date();
+  const thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  const monthRecs = dealerReports.filter(r => {
+    const p = String(r.week).split('-W');
+    if (p.length < 2) return false;
+    const d = new Date(parseInt(p[0]), 0, 1 + (parseInt(p[1])-1)*7);
+    return (d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0')) === thisMonth;
+  });
+  const monthTotals = [0,0,0,0,0,0];
+  monthRecs.forEach(r => (r.m||[]).forEach((v,i) => monthTotals[i] += (parseInt(v)||0)));
+
+  // 週明細（新到舊）
+  const sortedWeeks = [...dealerReports].sort((a,b) => String(b.week).localeCompare(String(a.week)));
+
+  if (dealerReports.length === 0) {
+    el.innerHTML = `<div class="stats-panel">
+      <div class="stats-hd">
+        <div class="stats-title">我的週報數據</div>
+        <div class="stats-period">尚無紀錄</div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);text-align:center;padding:8px 0;">
+        右滑到「週報系統」開始填報
+      </div>
+    </div>`;
+    return;
+  }
+
+  const latest = sortedWeeks[0];
+  const latestNums = LABELS.map((l,i) =>
+    `<span><strong>${(latest.m||[])[i]||0}</strong> ${l}</span>`
+  ).join('');
+
+  const weekRows = sortedWeeks.map(r => {
+    const nums = LABELS.map((l,i) =>
+      `<span><strong>${(r.m||[])[i]||0}</strong> ${l}</span>`
+    ).join('');
+    return `<div class="wk-row">
+      <div class="wk-label">${r.week}</div>
+      <div class="wk-nums">${nums}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div class="stats-panel">
+    <div class="stats-hd">
+      <div class="stats-title">我的週報數據</div>
+      <div class="stats-period">本月累計 · ${monthRecs.length} 次填報</div>
+    </div>
+    <div class="stats-nums">
+      ${LABELS.map((l,i) => `
+        <div class="snum-cell">
+          <div class="snum-v">${monthTotals[i]}</div>
+          <div class="snum-l">${l}</div>
+        </div>`).join('')}
+    </div>
+    <button class="weeks-toggle" onclick="toggleWeeksDetail()">
+      <span id="wk-toggle-text">${weeksExpanded ? '收起週明細 ▲' : '展開週明細（共 '+sortedWeeks.length+' 週）▼'}</span>
+    </button>
+    <div class="weeks-detail ${weeksExpanded?'open':''}" id="weeks-detail">
+      ${weekRows}
+    </div>
+    ${!weeksExpanded ? `<div class="wk-row" style="margin-top:8px;">
+      <div class="wk-label">${latest.week}</div>
+      <div class="wk-nums">${latestNums}</div>
+    </div>` : ''}
+  </div>`;
+}
+
+function toggleWeeksDetail() {
+  weeksExpanded = !weeksExpanded;
+  renderPersonalStats();
+}
+
+// ── 待辦提醒 ────────────────────────────────────────────────────────────
+function daysBetween(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return null;
+  return Math.floor((Date.now() - d.getTime()) / 86400000);
+}
+
+function computeTodos() {
+  const todos = [];
+
+  customers.forEach(c => {
+    const key = String(c.cid);
+    if (dismissedTodos.has(key)) return;
+
+    // ① 客戶自填申請 > 2 天未聯絡（尚未填恩典卡購買日 = 尚未成交/聯絡）
+    if (c.source === 'inquiry' && !c.sale_date) {
+      const days = daysBetween(c.created_at);
+      if (days !== null && days >= 2) {
+        todos.push({
+          cid: c.cid,
+          icon: '📞',
+          name: c.cname || '(未命名)',
+          desc: `客戶自填申請 ${days} 天了，還沒聯絡`,
+          priority: 1
+        });
+        return; // 一位客戶只顯示一則最優先的提醒
+      }
+    }
+
+    // ② 恩典卡購買 > 7 天，第一階段未完成
+    if (c.sale_date && !c.task1) {
+      const days = daysBetween(c.sale_date);
+      if (days !== null && days >= 7) {
+        todos.push({
+          cid: c.cid,
+          icon: '⏰',
+          name: c.cname || '(未命名)',
+          desc: `恩典卡第 ${days} 天，確認產品使用了嗎`,
+          priority: 2
+        });
+        return;
+      }
+    }
+
+    // ③ 家庭日「考慮中」> 5 天未更新
+    if (c.invitation_status === '考慮中') {
+      const days = daysBetween(c.updated_at);
+      if (days !== null && days >= 5) {
+        todos.push({
+          cid: c.cid,
+          icon: '💭',
+          name: c.cname || '(未命名)',
+          desc: `家庭日考慮中 ${days} 天沒更新了，再問一次`,
+          priority: 3
+        });
+      }
+    }
+  });
+
+  todos.sort((a,b) => a.priority - b.priority);
+  return todos;
+}
+
+function renderTodoPanel() {
+  const el = document.getElementById('todo-panel');
+  if (!el || currentRole !== 'dealer') return;
+
+  const todos = computeTodos();
+
+  if (todos.length === 0) {
+    el.innerHTML = `<div class="todo-panel" style="border-color:var(--border);">
+      <div class="todo-empty">✓ 今天沒有待追蹤的客戶</div>
+    </div>`;
+    return;
+  }
+
+  const shown = todos.slice(0, 5);
+  const items = shown.map(t => `
+    <div class="todo-item" onclick="openCustomerForm('${t.cid}')">
+      <div class="todo-icon">${t.icon}</div>
+      <div class="todo-body">
+        <div class="todo-name">${t.name}</div>
+        <div class="todo-desc">${t.desc}</div>
+      </div>
+      <button class="todo-dismiss" onclick="event.stopPropagation();dismissTodo('${t.cid}')" title="今天不再顯示">✕</button>
+    </div>`).join('');
+
+  el.innerHTML = `<div class="todo-panel">
+    <div class="todo-hd">
+      <div class="todo-title">今天該做的事 <span class="todo-count">${todos.length}</span></div>
+    </div>
+    ${items}
+    ${todos.length > 5 ? `<div class="todo-more">還有 ${todos.length-5} 筆待處理</div>` : ''}
+  </div>`;
+}
+
+function dismissTodo(cid) {
+  dismissedTodos.add(String(cid));
+  renderTodoPanel();
+}
+
+// ── 客戶自動分類 ────────────────────────────────────────────────────────
+let collapsedGroups = new Set();
+
+function classifyCustomer(c) {
+  // 需要跟進：有待辦條件的
+  if (c.source === 'inquiry' && !c.sale_date) {
+    const d = daysBetween(c.created_at);
+    if (d !== null && d >= 2) return 'urgent';
+  }
+  if (c.sale_date && !c.task1) {
+    const d = daysBetween(c.sale_date);
+    if (d !== null && d >= 7) return 'urgent';
+  }
+  if (c.invitation_status === '考慮中') {
+    const d = daysBetween(c.updated_at);
+    if (d !== null && d >= 5) return 'urgent';
+  }
+
+  // 已完成：GHOS轉化點全通
+  if (c.task1 && c.task2 && c.task3) return 'done';
+
+  // 沉睡：超過 30 天沒更新
+  const upd = daysBetween(c.updated_at);
+  if (upd !== null && upd >= 30) return 'sleeping';
+
+  // 其餘為進行中
+  return 'active';
+}
+
+const GROUP_META = {
+  urgent:   { icon:'🔥', title:'需要跟進', order:1 },
+  active:   { icon:'🌱', title:'進行中',   order:2 },
+  done:     { icon:'✅', title:'已完成',   order:3 },
+  sleeping: { icon:'😴', title:'沉睡中',   order:4 },
+};
+
+function renderDealerView() {
+  const el = document.getElementById('dealer-list');
+  if (!el) return;
+
+  if (customers.length === 0) {
+    el.innerHTML = '<div class="empty">尚無客戶紀錄<br><span style="font-size:12px;">點擊「新增客戶」開始追蹤</span></div>';
+    return;
+  }
+
+  // 選取模式：不分組，維持原本列表
+  if (selectMode) {
+    el.innerHTML = sorted(customers).map(c => customerCard(c,false)).join('');
+    return;
+  }
+
+  // 分組
+  const groups = { urgent:[], active:[], done:[], sleeping:[] };
+  customers.forEach(c => groups[classifyCustomer(c)].push(c));
+
+  const html = Object.keys(GROUP_META)
+    .sort((a,b) => GROUP_META[a].order - GROUP_META[b].order)
+    .filter(k => groups[k].length > 0)
+    .map(k => {
+      const meta = GROUP_META[k];
+      const isCollapsed = collapsedGroups.has(k);
+      const cards = sorted(groups[k]).map(c => customerCard(c,false)).join('');
+      return `<div class="cgroup ${isCollapsed?'collapsed':''}" id="cg-${k}">
+        <div class="cgroup-hd" onclick="toggleGroup('${k}')">
+          <span class="cgroup-icon">${meta.icon}</span>
+          <span class="cgroup-title">${meta.title}</span>
+          <span class="cgroup-count">${groups[k].length}</span>
+          <span class="cgroup-arrow">▼</span>
+        </div>
+        <div class="cgroup-body">${cards}</div>
+      </div>`;
+    }).join('');
+
+  el.innerHTML = html;
+}
+
+function toggleGroup(key) {
+  if (collapsedGroups.has(key)) collapsedGroups.delete(key);
+  else collapsedGroups.add(key);
+  renderDealerView();
+}
+
+// ── 卡片快速動作 ────────────────────────────────────────────────────────
+async function quickToggleTask(cid, taskNum, ev) {
+  if (ev) ev.stopPropagation();
+  if (currentNeedsPassword) { openSetMyPassword(); return; }
+
+  const c = customers.find(x => String(x.cid) === String(cid));
+  if (!c) return;
+
+  const key = 'task' + taskNum;
+  const newVal = !c[key];
+
+  // 樂觀更新：先改畫面
+  c[key] = newVal;
+  renderDealerView();
+  renderTodoPanel();
+
+  try {
+    const res = await api({
+      action:'saveCustomer',
+      did: currentId,
+      password: currentPw,
+      customer: {
+        ...c,
+        task1: c.task1, task2: c.task2, task3: c.task3
+      }
+    });
+    if (!res.ok) {
+      c[key] = !newVal;   // 失敗就還原
+      renderDealerView();
+      showAlert('main-alert','error', res.error==='needsPassword'?'請先設定密碼':'更新失敗');
+    }
+  } catch(e) {
+    c[key] = !newVal;
+    renderDealerView();
+    showAlert('main-alert','error','連線失敗');
+  }
+}
+
+async function quickSetInvitation(cid, val, ev) {
+  if (ev) ev.stopPropagation();
+  if (currentNeedsPassword) { openSetMyPassword(); return; }
+
+  const c = customers.find(x => String(x.cid) === String(cid));
+  if (!c) return;
+
+  const old = c.invitation_status;
+  c.invitation_status = val;
+  c.updated_at = new Date().toISOString();
+  renderDealerView();
+  renderTodoPanel();
+
+  try {
+    const res = await api({
+      action:'saveCustomer',
+      did: currentId,
+      password: currentPw,
+      customer: { ...c }
+    });
+    if (!res.ok) {
+      c.invitation_status = old;
+      renderDealerView();
+      showAlert('main-alert','error','更新失敗');
+    }
+  } catch(e) {
+    c.invitation_status = old;
+    renderDealerView();
+    showAlert('main-alert','error','連線失敗');
+  }
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────
