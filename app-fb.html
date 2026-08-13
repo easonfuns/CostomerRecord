@@ -745,6 +745,64 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
   </div>
 </div>
 
+
+<!-- ══════════ 編輯帳號 Modal ══════════ -->
+<div id="edit-user-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeEditUser()">
+  <div class="modal" style="max-width:480px;" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div class="modal-title">編輯帳號</div>
+      <button class="modal-close" onclick="closeEditUser()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:1.25rem 1.5rem;">
+      <div id="eu-alert"></div>
+
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--cream);
+                  border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:1.25rem;">
+        <div class="acc-avatar" id="eu-avatar" style="width:42px;height:42px;">-</div>
+        <div style="min-width:0;">
+          <div style="font-size:14px;font-weight:600;" id="eu-gname">—</div>
+          <div style="font-size:11.5px;color:var(--muted);word-break:break-all;" id="eu-email">—</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>顯示名稱</label>
+        <input type="text" id="eu-name" placeholder="系統內顯示的名字">
+      </div>
+
+      <div class="field">
+        <label>所屬團隊</label>
+        <select id="eu-team"><option value="">— 無團隊 —</option></select>
+      </div>
+
+      <div class="field">
+        <label>角色</label>
+        <select id="eu-role">
+          <option value="dealer">健管師</option>
+          <option value="leader">團隊長</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>綁定經銷商編號</label>
+        <select id="eu-dealer"><option value="">— 未綁定 —</option></select>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;line-height:1.6;">
+          ⚠️ 變更綁定會影響此帳號能看到哪些客戶，非必要請勿更動
+        </div>
+      </div>
+
+      <div class="field">
+        <label>備註</label>
+        <input type="text" id="eu-note" placeholder="選填">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeEditUser()">取消</button>
+      <button class="btn primary" id="eu-save" onclick="saveEditUser()">儲存</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -2348,25 +2406,168 @@ window.setRole = async function(uid, role){
   }catch(e){ showAlert('error','更新失敗：'+esc(e.message||e)); }
 };
 
-window.editUser = async function(uid){
-  const u = allUsers.find(x=>x.uid===uid);
+let editingUid = null;
+
+window.editUser = function(uid){
+  const u = allUsers.find(x => x.uid === uid);
   if(!u) return;
-  const newName = prompt('顯示名稱：', u.dealerName || '');
-  if(newName===null) return;
-  const teamNames = teams.map(t=>t.name);
-  const newTeam = prompt('團隊（留空表示無團隊）\n可用：'+teamNames.join('、'), u.team || '');
-  if(newTeam===null) return;
-  if(newTeam && !teamNames.includes(newTeam)){
-    showAlert('error','找不到團隊「'+esc(newTeam)+'」'); return;
+  editingUid = uid;
+
+  $('eu-avatar').innerHTML = avatarHtml(u.photoURL, u.dealerName || u.displayName);
+  $('eu-gname').textContent = u.displayName || '（未提供名稱）';
+  $('eu-email').textContent = u.email || '—';
+  $('eu-name').value = u.dealerName || '';
+  $('eu-note').value = u.note || '';
+
+  // 團隊下拉
+  $('eu-team').innerHTML = '<option value="">— 無團隊 —</option>' +
+    teams.map(t => `<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+  $('eu-team').value = u.team || '';
+
+  // 角色下拉（最高管理員可設一般管理員）
+  let roleOpts = '<option value="dealer">健管師</option><option value="leader">團隊長</option>';
+  if(isSuper() && u.role !== 'superadmin') roleOpts += '<option value="admin">管理員</option>';
+  if(u.role === 'superadmin') roleOpts = '<option value="superadmin">最高管理員</option>';
+  $('eu-role').innerHTML = roleOpts;
+  $('eu-role').value = u.role;
+  $('eu-role').disabled = (u.role === 'superadmin');
+
+  // 經銷商下拉（顯示客戶數，已被別人綁定的標註）
+  const dOpts = dealers
+    .filter(d => !d.custody)
+    .sort((a,b) => (a.team||'').localeCompare(b.team||'') || (a.name||'').localeCompare(b.name||''))
+    .map(d => {
+      const cnt = customers.filter(c => c.did === d.id).length;
+      const takenBy = allUsers.find(x => x.dealerId === d.id && x.uid !== uid && x.status !== 'disabled');
+      const mark = takenBy ? ` · 已綁 ${takenBy.dealerName||takenBy.email}` : '';
+      return `<option value="${esc(d.id)}" ${takenBy?'disabled':''}>${esc(d.name)}（${esc(d.team||'無團隊')}・${cnt} 位客戶）${mark}</option>`;
+    }).join('');
+  $('eu-dealer').innerHTML = '<option value="">— 未綁定 —</option>' + dOpts;
+  $('eu-dealer').value = u.dealerId || '';
+
+  $('eu-alert').innerHTML = '';
+  $('edit-user-modal').style.display = 'flex';
+};
+
+window.closeEditUser = function(){
+  $('edit-user-modal').style.display = 'none';
+  editingUid = null;
+};
+
+window.saveEditUser = async function(){
+  if(!editingUid) return;
+  const u = allUsers.find(x => x.uid === editingUid);
+  if(!u) return;
+
+  const newName   = $('eu-name').value.trim();
+  const newTeam   = $('eu-team').value;
+  const newRole   = $('eu-role').value;
+  const newDealer = $('eu-dealer').value;
+  const newNote   = $('eu-note').value.trim();
+
+  if(!newName){ showAlert('error','請填寫顯示名稱','eu-alert'); return; }
+
+  // 一般管理員不得產生 admin / superadmin
+  if(!isSuper() && (newRole === 'admin' || newRole === 'superadmin')){
+    showAlert('error','只有最高管理員可以指派管理員權限','eu-alert'); return;
   }
+
+  const teamChanged   = (u.team || '') !== newTeam;
+  const dealerChanged = (u.dealerId || '') !== newDealer;
+  const cusCount      = customers.filter(c => c.did === u.dealerId).length;
+
+  // 變更團隊時，名下客戶的 team 欄位要一起更新
+  if(teamChanged && cusCount > 0){
+    if(!confirm(
+      `將「${newName}」的團隊從「${u.team||'無團隊'}」改為「${newTeam||'無團隊'}」\n\n`+
+      `名下 ${cusCount} 位客戶的團隊標記也會一併更新。\n確定要繼續嗎？`
+    )) return;
+  }
+  if(dealerChanged){
+    if(!confirm(
+      `⚠️ 變更綁定的經銷商編號\n\n`+
+      `原本：${u.dealerId || '未綁定'}（${cusCount} 位客戶）\n`+
+      `改為：${newDealer || '未綁定'}\n\n`+
+      `變更後此帳號將看到新編號底下的客戶，原客戶不會跟著移動。\n確定要繼續嗎？`
+    )) return;
+  }
+
+  const btn = $('eu-save');
+  btn.disabled = true; btn.textContent = '儲存中…';
+
   try{
-    await updateDoc(doc(db,'users',uid), {
-      dealerName: newName.trim(),
-      team: newTeam.trim() || null
+    const batch = writeBatch(db);
+
+    batch.update(doc(db,'users',editingUid), {
+      dealerName: newName,
+      team: newTeam || null,
+      role: newRole,
+      dealerId: newDealer || null,
+      note: newNote
     });
-    showAlert('success','✓ 已更新');
+
+    // 經銷商綁定關係
+    if(dealerChanged){
+      if(u.dealerId) batch.update(doc(db,'dealers',u.dealerId), { boundUid: null });
+      if(newDealer)  batch.update(doc(db,'dealers',newDealer),  { boundUid: editingUid });
+    }
+
+    // 經銷商主檔的團隊也同步
+    const targetDealer = newDealer || u.dealerId;
+    if(targetDealer && teamChanged){
+      batch.update(doc(db,'dealers',targetDealer), { team: newTeam || '' });
+    }
+    if(targetDealer && newName !== (u.dealerName||'')){
+      batch.update(doc(db,'dealers',targetDealer), { name: newName });
+    }
+
+    // 團隊長指派
+    const oldTeamDoc = teams.find(t => t.name === u.team);
+    const newTeamDoc = teams.find(t => t.name === newTeam);
+    if(oldTeamDoc && oldTeamDoc.leaderUid === editingUid && (teamChanged || newRole !== 'leader')){
+      batch.update(doc(db,'teams',oldTeamDoc.id), { leaderUid: null });
+    }
+    if(newRole === 'leader' && newTeamDoc){
+      batch.update(doc(db,'teams',newTeamDoc.id), { leaderUid: editingUid });
+    }
+
+    await batch.commit();
+
+    // 名下客戶的 team / dname 同步（分批）
+    const mine = customers.filter(c => c.did === (newDealer || u.dealerId));
+    if(mine.length && (teamChanged || newName !== (u.dealerName||''))){
+      for(let i=0; i<mine.length; i+=400){
+        const b = writeBatch(db);
+        mine.slice(i, i+400).forEach(c => b.update(doc(db,'customers',c.id), {
+          team: newTeam || '',
+          dname: newName,
+          updatedAt: serverTimestamp()
+        }));
+        await b.commit();
+      }
+    }
+
+    // 統計快照同步
+    if(newDealer || u.dealerId){
+      const sid = newDealer || u.dealerId;
+      const st = dealerStats.find(s => s.id === sid);
+      if(st){
+        await updateDoc(doc(db,'dealerStats',sid), {
+          dealerName: newName,
+          team: newTeam || '',
+          updatedAt: serverTimestamp()
+        }).catch(()=>{});
+      }
+    }
+
+    closeEditUser();
+    showAlert('success','✓ 已更新帳號設定');
     await reloadAll();
-  }catch(e){ showAlert('error','更新失敗：'+esc(e.message||e)); }
+  }catch(e){
+    showAlert('error','儲存失敗：'+esc(e.message||e),'eu-alert');
+  }finally{
+    btn.disabled = false; btn.textContent = '儲存';
+  }
 };
 
 // 停用 → 客戶自動託管
