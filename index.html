@@ -672,6 +672,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
           <div class="task-check-item" id="tk2" onclick="toggleTask(1)"><div class="task-box" id="tb2"></div><div><div class="task-label-main">週二課程</div><div class="task-label-sub">完成週二線上課程邀約</div></div></div>
           <div class="task-check-item" id="tk3" onclick="toggleTask(2)"><div class="task-box" id="tb3"></div><div><div class="task-label-main">家庭日/ABC/氣血水小組</div><div class="task-label-sub">參加任一活動即可</div></div></div>
         </div>
+        <div class="sdiv"></div>
+        <div class="field"><label>7日產品使用回饋</label><textarea id="f-feedback7" placeholder="記錄客戶使用產品 7 日後的狀況與回饋…" style="min-height:70px;"></textarea></div>
       </div>
       <div class="fsec"><div class="fsec-title">家庭日/ABC/氣血水小組</div>
         <div class="field"><label>邀約狀態</label><select id="f-inv"><option value="">— 選擇狀態 —</option><option value="已報名">已報名</option><option value="考慮中">考慮中</option><option value="拒絕">拒絕</option><option value="未聯繫">未聯繫</option></select></div>
@@ -1298,6 +1300,7 @@ function clearForm() {
   document.getElementById('f-val-day').value='';
   document.getElementById('f-val-7days').value='';
   document.getElementById('f-fday-feedback').value='';
+  document.getElementById('f-feedback7').value='';
   document.getElementById('f-reason').value='';
   document.getElementById('f-other').value='';
   document.getElementById('f-notes').value='';
@@ -1355,6 +1358,7 @@ async function openCustomerForm(cid) {
     document.getElementById('f-val-day').value=c.purchase_value_day||'';
     document.getElementById('f-val-7days').value=c.purchase_value_7days||'';
     document.getElementById('f-fday-feedback').value=c.family_day_feedback||'';
+    document.getElementById('f-feedback7').value=c.feedback_7day||'';
     document.getElementById('f-reason').value=c.reason_not_attended||'';
     document.getElementById('f-notes').value=c.notes||'';
     (c.questions||[]).forEach(q=>addQuestion(q));
@@ -1408,6 +1412,7 @@ async function saveCustomer() {
     purchase_value_day:   document.getElementById('f-val-day').value,
     purchase_value_7days: document.getElementById('f-val-7days').value,
     family_day_feedback:  document.getElementById('f-fday-feedback').value,
+    feedback_7day:        document.getElementById('f-feedback7').value,
     questions:            getQuestions(),
     notes:                document.getElementById('f-notes').value,
     contact_phone:        document.getElementById('f-phone').value,
