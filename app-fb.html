@@ -233,6 +233,106 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
   .acc-row{flex-wrap:wrap;}
   .acc-actions{width:100%;justify-content:flex-start;}
 }
+
+/* ══ 待辦提醒 ══ */
+.todo-panel{background:#fff;border:1.5px solid var(--gold);border-radius:var(--r2);padding:1.125rem 1.25rem;margin-bottom:1rem;}
+.todo-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.todo-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.todo-count{font-size:11px;background:var(--gold);color:#fff;padding:2px 9px;border-radius:99px;font-weight:700;}
+.todo-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--cream);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:all .15s;border:1.5px solid transparent;}
+.todo-item:last-child{margin-bottom:0;}
+.todo-item:hover{border-color:var(--gold);background:var(--gold-pale);}
+.todo-icon{font-size:15px;flex-shrink:0;line-height:1.3;}
+.todo-body{flex:1;min-width:0;}
+.todo-name{font-size:13px;font-weight:600;}
+.todo-desc{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.todo-dismiss{border:none;background:none;color:var(--hint);font-size:16px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;border-radius:5px;}
+.todo-dismiss:hover{background:rgba(0,0,0,.06);color:var(--muted);}
+.todo-empty{text-align:center;padding:1.25rem;color:var(--hint);font-size:13px;}
+.todo-more{text-align:center;font-size:11px;color:var(--hint);margin-top:8px;}
+
+/* ══ 客戶分組 ══ */
+.cgroup{margin-bottom:1.125rem;}
+.cgroup:last-child{margin-bottom:0;}
+.cgroup-hd{display:flex;align-items:center;gap:8px;margin-bottom:9px;cursor:pointer;user-select:none;padding:2px 0;}
+.cgroup-icon{font-size:14px;}
+.cgroup-title{font-size:13px;font-weight:700;}
+.cgroup-count{font-size:11px;color:var(--hint);background:var(--cream);padding:2px 8px;border-radius:99px;font-weight:600;}
+.cgroup-arrow{margin-left:auto;font-size:11px;color:var(--hint);transition:transform .2s;}
+.cgroup.collapsed .cgroup-arrow{transform:rotate(-90deg);}
+.cgroup-body{display:flex;flex-direction:column;gap:8px;}
+.cgroup.collapsed .cgroup-body{display:none;}
+
+/* ══ 快速動作 ══ */
+.qtask{font-size:11px;padding:4px 11px;border-radius:99px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all .12s;user-select:none;}
+.qtask.done{background:#e8f4e0;color:#2a6e10;border-color:#9fd87e;}
+.qtask.todo{background:var(--cream);color:var(--hint);border-color:var(--border);}
+.qtask:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.quick-inv{font-size:11px;padding:3px 9px;border-radius:99px;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
+.quick-inv:focus{outline:none;border-color:var(--moss2);}
+
+/* ══ Modal ══ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;overflow-y:auto;}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:620px;position:relative;margin:auto;overflow:hidden;}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem 1rem;border-bottom:1.5px solid var(--border);}
+.modal-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:600;}
+.modal-close{border:none;background:none;font-size:22px;cursor:pointer;color:var(--hint);padding:2px 6px;border-radius:6px;line-height:1;}
+.modal-close:hover{background:var(--cream);color:var(--ink);}
+.modal-body{padding:0 1.5rem;max-height:68vh;overflow-y:auto;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;padding:1rem 1.5rem;border-top:1.5px solid var(--border);background:var(--cream);}
+.auto-info-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:1rem 1.5rem;background:var(--cream);border-bottom:1.5px solid var(--border);}
+.ai-label{font-size:10px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.ai-val{font-size:13px;font-weight:600;color:var(--muted);}
+
+/* ══ 表單區塊 ══ */
+.fsec{padding:1rem 0;}
+.fsec+.fsec{border-top:1px solid var(--border);}
+.fsec-title{font-size:11px;font-weight:700;color:var(--moss2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.fsec-title::before{content:'';display:inline-block;width:3px;height:13px;background:var(--moss2);border-radius:2px;}
+.slabel{font-size:11px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.sdiv{height:1px;background:var(--border);margin:14px 0;}
+.field textarea{padding:10px 12px;resize:vertical;min-height:80px;}
+.field textarea:focus{outline:none;border-color:var(--moss2);box-shadow:0 0 0 3px rgba(45,74,62,.09);}
+
+/* ══ 任務勾選 ══ */
+.task-check-list{display:flex;flex-direction:column;gap:7px;}
+.task-check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--cream);border-radius:var(--r);border:1.5px solid var(--border);cursor:pointer;transition:all .12s;user-select:none;}
+.task-check-item.checked{background:var(--moss-pale);border-color:var(--moss3);}
+.task-box{width:20px;height:20px;border:2px solid var(--border2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:all .12s;}
+.task-check-item.checked .task-box{background:var(--moss2);border-color:var(--moss2);color:#fff;}
+.task-label-main{font-size:14px;font-weight:500;}
+.task-label-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+
+/* ══ 健康關注 ══ */
+.concern-group-title{font-size:11px;font-weight:700;color:var(--moss2);margin-bottom:6px;letter-spacing:.04em;}
+.concerns-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;}
+.concern-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--cream);border-radius:var(--r);border:1.5px solid transparent;cursor:pointer;transition:all .12s;user-select:none;}
+.concern-item:hover{border-color:var(--moss3);}
+.concern-item.selected{background:var(--moss-pale);border-color:var(--moss2);}
+.concern-ck{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transition:all .12s;}
+.concern-item.selected .concern-ck{background:var(--moss2);border-color:var(--moss2);color:#fff;}
+.concern-label{font-size:13px;line-height:1.3;}
+
+/* ══ Radio ══ */
+.radio-group{display:flex;gap:8px;flex-wrap:wrap;}
+.radio-btn{padding:7px 18px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:'Noto Sans TC',sans-serif;transition:all .12s;}
+.radio-btn.selected{border-color:var(--moss2);background:var(--moss-pale);color:var(--moss2);}
+.cond-panel{background:var(--cream);border-radius:var(--r);padding:12px;margin-top:10px;border:1.5px solid var(--border);}
+
+/* ══ 提問 ══ */
+.questions-wrap{display:flex;flex-direction:column;gap:7px;margin-bottom:8px;}
+.question-item{display:flex;gap:8px;align-items:center;}
+.question-input{flex:1;height:36px;border:1.5px solid var(--border2);border-radius:var(--r);padding:0 12px;font-size:13px;font-family:'Noto Sans TC',sans-serif;background:#fff;}
+.question-input:focus{outline:none;border-color:var(--moss2);}
+.question-del{width:28px;height:28px;border:none;background:none;cursor:pointer;color:var(--hint);font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+.question-del:hover{background:#fff0f0;color:#c0392b;}
+.btn.dashed{border-style:dashed;border-color:var(--border2);color:var(--muted);background:var(--cream);}
+.btn.dashed:hover{border-color:var(--moss3);color:var(--moss2);}
+.inquiry-panel{background:var(--gold-pale);border:1.5px solid #f0d080;border-radius:var(--r);padding:12px 14px;margin:1rem 0 0;}
+
+/* ══ 列表列 ══ */
+.list-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:10px;flex-wrap:wrap;}
+.list-bar-title{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:600;}
 </style>
 </head>
 <body>
@@ -339,6 +439,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
       <!-- 我的客戶 -->
       <div id="tab-customers" class="tab-panel">
         <div class="stat-grid" id="my-stats"></div>
+        <div id="todo-panel"></div>
+        <div class="list-bar">
+          <div class="list-bar-title" id="list-title">我的客戶</div>
+          <button class="btn sm primary" onclick="openCustomerForm(null)">＋ 新增客戶</button>
+        </div>
         <div id="customer-list" class="customer-list"></div>
       </div>
 
@@ -362,6 +467,108 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
   </div>
 </div>
 
+
+<!-- ══════════ 客戶編輯 Modal ══════════ -->
+<div id="cust-modal" class="overlay" style="display:none" onclick="if(event.target===this)closeCustomerForm()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div class="modal-title" id="cm-title">新增客戶</div>
+      <button class="modal-close" onclick="closeCustomerForm()">✕</button>
+    </div>
+    <div class="auto-info-bar">
+      <div><div class="ai-label">填寫日期</div><div class="ai-val" id="cm-date">-</div></div>
+      <div><div class="ai-label">團隊</div><div class="ai-val" id="cm-team">-</div></div>
+      <div><div class="ai-label">健管師</div><div class="ai-val" id="cm-dealer">-</div></div>
+    </div>
+    <div class="modal-body">
+      <div id="cm-inquiry" class="inquiry-panel" style="display:none;margin-bottom:0;">
+        <div style="font-size:11px;font-weight:700;color:#7a5500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">📋 客戶自填資訊</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:13px;">
+          <div><span style="color:var(--hint);">偏好聯絡時間：</span><span id="cm-ictime" style="font-weight:600;"></span></div>
+          <div><span style="color:var(--hint);">想了解：</span><span id="cm-icprod" style="font-weight:600;"></span></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">基本資料</div>
+        <div class="field"><label>客戶姓名／簡稱</label><input type="text" id="cm-cname" placeholder="輸入客戶名稱"></div>
+        <div class="field-row">
+          <div class="field"><label>聯絡電話</label><input type="tel" id="cm-phone" placeholder="09xx-xxx-xxx"></div>
+          <div class="field"><label>LINE ID</label><input type="text" id="cm-line" placeholder="輸入 LINE ID"></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">恩典卡</div>
+        <div class="field"><label>購買時間</label><input type="date" id="cm-saledate"></div>
+        <div class="slabel">GHOS轉化點</div>
+        <div class="task-check-list">
+          <div class="task-check-item" id="cm-tk1" onclick="toggleTask(0)"><div class="task-box" id="cm-tb1"></div><div><div class="task-label-main">7日產品使用</div><div class="task-label-sub">客戶持續使用產品滿7天</div></div></div>
+          <div class="task-check-item" id="cm-tk2" onclick="toggleTask(1)"><div class="task-box" id="cm-tb2"></div><div><div class="task-label-main">週二課程</div><div class="task-label-sub">完成週二線上課程邀約</div></div></div>
+          <div class="task-check-item" id="cm-tk3" onclick="toggleTask(2)"><div class="task-box" id="cm-tb3"></div><div><div class="task-label-main">家庭日/ABC/氣血水小組</div><div class="task-label-sub">參加任一活動即可</div></div></div>
+        </div>
+        <div class="sdiv"></div>
+        <div class="field"><label>7日產品使用回饋</label><textarea id="cm-fb7" placeholder="記錄客戶使用產品 7 日後的狀況與回饋…" style="min-height:70px;"></textarea></div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">家庭日/ABC/氣血水小組</div>
+        <div class="field"><label>邀約狀態</label>
+          <select id="cm-inv">
+            <option value="">— 選擇狀態 —</option>
+            <option value="已報名">已報名</option>
+            <option value="考慮中">考慮中</option>
+            <option value="拒絕">拒絕</option>
+            <option value="未聯繫">未聯繫</option>
+          </select>
+        </div>
+        <div class="field"><label>是否已參加</label>
+          <div class="radio-group">
+            <button class="radio-btn" id="cm-rd-y" onclick="selectAttended('是')">是</button>
+            <button class="radio-btn" id="cm-rd-n" onclick="selectAttended('否')">否</button>
+            <button class="radio-btn" id="cm-rd-na" onclick="selectAttended('')">未填</button>
+          </div>
+        </div>
+        <div id="cm-panel-yes" style="display:none;" class="cond-panel">
+          <div class="field"><label>實際參加時間</label><input type="date" id="cm-fdate"></div>
+          <div class="field-row">
+            <div class="field"><label>當日購買產品價值（元）</label><input type="number" id="cm-vday" placeholder="0" min="0"></div>
+            <div class="field"><label>7天內購買產品價值（元）</label><input type="number" id="cm-v7d" placeholder="0" min="0"></div>
+          </div>
+          <div class="field"><label>回饋／感受</label><textarea id="cm-ffb" placeholder="記錄客戶參加活動後的回饋…"></textarea></div>
+        </div>
+        <div id="cm-panel-no" style="display:none;" class="cond-panel">
+          <div class="field"><label>未參加原因</label><textarea id="cm-reason" placeholder="記錄未參加原因…" style="min-height:60px;"></textarea></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">身體狀況與資訊</div>
+        <div id="cm-concerns"></div>
+        <div id="cm-other-wrap" style="display:none;margin-top:8px;">
+          <div class="field"><label>其他（請說明）</label><input type="text" id="cm-other" placeholder="輸入其他健康關注"></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">產品使用時提問</div>
+        <div class="questions-wrap" id="cm-questions"></div>
+        <button class="btn dashed sm full" onclick="addQuestion('')">＋ 新增問題</button>
+      </div>
+
+      <div class="fsec" style="padding-bottom:1.25rem;">
+        <div class="fsec-title">備註</div>
+        <div class="field"><textarea id="cm-notes" placeholder="其他備註…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn danger sm" id="cm-del" onclick="deleteCustomer()" style="display:none">刪除客戶</button>
+      <button class="btn" onclick="closeCustomerForm()">取消</button>
+      <button class="btn primary" id="cm-save" onclick="saveCustomer()">儲存</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -369,7 +576,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where,
-  getDocs, orderBy, writeBatch, serverTimestamp, addDoc, enableIndexedDbPersistence
+  getDocs, orderBy, writeBatch, serverTimestamp, addDoc, deleteDoc, enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ══════════════ Firebase ══════════════
@@ -528,9 +735,11 @@ async function bootApp(user){
   $('hd-team').textContent = ME.team || '';
   $('hd-role').textContent = roleLabel(ME.role);
 
+  $('list-title').textContent = isAdmin() ? '所有客戶' : '我的客戶';
   renderTabs();
   showScreen('app');
   await reloadAll();
+  updateMyStats();
 }
 
 function roleLabel(r){
@@ -600,9 +809,420 @@ async function loadUsers(){
   allUsers = snap.docs.map(d => ({ uid:d.id, ...d.data() }));
 }
 
+
+// ══════════════════════════════════════════════════════════════════
+//  健康關注分類（38 項）
+// ══════════════════════════════════════════════════════════════════
+const CONCERN_GROUPS = [
+  { g:'心血管系統',   items:['心悸','胸悶胸痛','血壓異常','血脂異常','四肢冰冷水腫'] },
+  { g:'呼吸系統',     items:['容易喘','慢性咳嗽','過敏性鼻炎','睡眠呼吸中止'] },
+  { g:'消化系統',     items:['排便不順','腹脹','食慾不佳','胃酸逆流'] },
+  { g:'神經系統',     items:['頭痛頭暈','記憶力減退','失眠','情緒焦慮'] },
+  { g:'骨骼肌肉系統', items:['關節疼痛','肩頸僵硬','腰背痠痛','肌少無力'] },
+  { g:'內分泌與代謝', items:['血糖異常','體重控制困難','甲狀腺相關症狀','更年期症狀'] },
+  { g:'生殖泌尿系統', items:['經期不適','頻尿','性功能相關'] },
+  { g:'免疫系統',     items:['容易感冒','傷口復原慢','過敏體質'] },
+  { g:'生活型態',     items:['久坐少動','缺乏運動習慣','外食頻繁','熬夜／作息不規律','長時間用眼／用電腦','工作壓力大','三餐不定時','重口味飲食'] },
+  { g:'病史背景',     items:['三高家族史'] },
+  { g:'其他',         items:['其他'] },
+];
+const ALL_CONCERNS = CONCERN_GROUPS.flatMap(g => g.items);
+
+// ══════════════════════════════════════════════════════════════════
+//  表單狀態
+// ══════════════════════════════════════════════════════════════════
+let editingId   = null;
+let taskState   = [false,false,false];
+let selConcerns = new Set();
+let attendState = '';
+let dismissedTodos = new Set();
+let collapsedGroups = new Set();
+
+// ── 日期工具 ──
+function tsToInput(ts){
+  if(!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if(isNaN(d.getTime())) return '';
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function inputToTs(v){
+  if(!v) return null;
+  const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m) return null;
+  return new Date(+m[1], +m[2]-1, +m[3]);
+}
+function daysSince(ts){
+  if(!ts) return null;
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if(isNaN(d.getTime())) return null;
+  return Math.floor((Date.now() - d.getTime()) / 86400000);
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  客戶表單
+// ══════════════════════════════════════════════════════════════════
+window.openCustomerForm = function(id){
+  if(!ME.dealerId && !isAdmin()){
+    showAlert('error','您的帳號尚未綁定經銷商編號，請聯繫管理員');
+    return;
+  }
+  editingId = id || null;
+  const c = id ? customers.find(x => x.id === id) : null;
+
+  $('cm-title').textContent = c ? '編輯客戶' : '新增客戶';
+  $('cm-del').style.display = c ? 'inline-flex' : 'none';
+  $('cm-date').textContent  = c ? (fmtDate(c.createdAt) || '—') : new Date().toLocaleDateString('zh-TW');
+  $('cm-team').textContent  = c ? (c.team || '—') : (ME.team || '—');
+  $('cm-dealer').textContent= c ? (c.dname || '—') : (ME.dealerName || '—');
+
+  // 基本欄位
+  $('cm-cname').value    = c?.cname || '';
+  $('cm-phone').value    = c?.contactPhone || '';
+  $('cm-line').value     = c?.contactLine || '';
+  $('cm-saledate').value = tsToInput(c?.saleDate);
+  $('cm-fb7').value      = c?.feedback7day || '';
+  $('cm-inv').value      = c?.invitationStatus || '';
+  $('cm-fdate').value    = tsToInput(c?.familyDayDate);
+  $('cm-vday').value     = c?.purchaseValueDay || '';
+  $('cm-v7d').value      = c?.purchaseValue7days || '';
+  $('cm-ffb').value      = c?.familyDayFeedback || '';
+  $('cm-reason').value   = c?.reasonNotAttended || '';
+  $('cm-notes').value    = c?.notes || '';
+  $('cm-other').value    = c?.healthOther || '';
+
+  // 任務
+  taskState = [!!c?.task1, !!c?.task2, !!c?.task3];
+  renderTaskState();
+
+  // 是否參加
+  attendState = c?.attendedFamilyDay || '';
+  renderAttend();
+
+  // 健康關注
+  selConcerns = new Set(c?.healthConcerns || []);
+  buildConcernsGrid();
+
+  // 提問
+  $('cm-questions').innerHTML = '';
+  (c?.questions || []).forEach(q => addQuestion(q));
+
+  // 客戶自填資訊
+  const showInq = c && c.source === 'inquiry' && (c.contactTime || (c.inquiryProducts||[]).length);
+  $('cm-inquiry').style.display = showInq ? 'block' : 'none';
+  if(showInq){
+    $('cm-ictime').textContent = c.contactTime || '—';
+    $('cm-icprod').textContent = (c.inquiryProducts||[]).join('、') || '—';
+  }
+
+  $('cust-modal').style.display = 'flex';
+};
+
+window.closeCustomerForm = function(){
+  $('cust-modal').style.display = 'none';
+  editingId = null;
+};
+
+window.toggleTask = function(i){
+  taskState[i] = !taskState[i];
+  renderTaskState();
+};
+function renderTaskState(){
+  for(let i=0;i<3;i++){
+    const item = $('cm-tk'+(i+1)), box = $('cm-tb'+(i+1));
+    if(!item) continue;
+    item.classList.toggle('checked', taskState[i]);
+    box.textContent = taskState[i] ? '✓' : '';
+  }
+}
+
+window.selectAttended = function(v){
+  attendState = v;
+  renderAttend();
+};
+function renderAttend(){
+  $('cm-rd-y').classList.toggle('selected',  attendState==='是');
+  $('cm-rd-n').classList.toggle('selected',  attendState==='否');
+  $('cm-rd-na').classList.toggle('selected', attendState==='');
+  $('cm-panel-yes').style.display = attendState==='是' ? 'block' : 'none';
+  $('cm-panel-no').style.display  = attendState==='否' ? 'block' : 'none';
+}
+
+function buildConcernsGrid(){
+  let idx = 0, out = '';
+  CONCERN_GROUPS.forEach(g => {
+    out += `<div class="concern-group-title">${esc(g.g)}</div><div class="concerns-grid">`;
+    g.items.forEach(item => {
+      const i = idx++;
+      const on = selConcerns.has(item);
+      out += `<div class="concern-item ${on?'selected':''}" id="cn-${i}" data-v="${esc(item)}">
+        <div class="concern-ck" id="cnk-${i}">${on?'✓':''}</div>
+        <div class="concern-label">${esc(item)}</div>
+      </div>`;
+    });
+    out += '</div>';
+  });
+  const box = $('cm-concerns');
+  box.innerHTML = out;
+  box.querySelectorAll('.concern-item').forEach(el => {
+    el.onclick = () => toggleConcern(el.dataset.v, el);
+  });
+  $('cm-other-wrap').style.display = selConcerns.has('其他') ? 'block' : 'none';
+}
+function toggleConcern(v, el){
+  if(selConcerns.has(v)){ selConcerns.delete(v); el.classList.remove('selected'); el.querySelector('.concern-ck').textContent=''; }
+  else { selConcerns.add(v); el.classList.add('selected'); el.querySelector('.concern-ck').textContent='✓'; }
+  $('cm-other-wrap').style.display = selConcerns.has('其他') ? 'block' : 'none';
+}
+
+window.addQuestion = function(val){
+  const wrap = $('cm-questions');
+  const div  = document.createElement('div');
+  div.className = 'question-item';
+  div.innerHTML = `<input type="text" class="question-input" placeholder="輸入客戶提問…">
+                   <button class="question-del" title="刪除">✕</button>`;
+  div.querySelector('input').value = val || '';
+  div.querySelector('.question-del').onclick = () => div.remove();
+  wrap.appendChild(div);
+  if(!val) div.querySelector('input').focus();
+};
+function getQuestions(){
+  return [...$('cm-questions').querySelectorAll('.question-input')]
+    .map(i => i.value.trim()).filter(Boolean);
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  儲存 / 刪除
+// ══════════════════════════════════════════════════════════════════
+window.saveCustomer = async function(){
+  const cname = $('cm-cname').value.trim();
+  if(!cname){ showAlert('error','請輸入客戶姓名'); return; }
+
+  const btn = $('cm-save');
+  btn.disabled = true; btn.textContent = '儲存中…';
+
+  const existing = editingId ? customers.find(x=>x.id===editingId) : null;
+  const did   = existing ? existing.did   : ME.dealerId;
+  const dname = existing ? existing.dname : (ME.dealerName || '');
+  const team  = existing ? existing.team  : (ME.team || '');
+
+  const data = {
+    did, dname, team, cname,
+    saleDate:           inputToTs($('cm-saledate').value),
+    task1: taskState[0], task2: taskState[1], task3: taskState[2],
+    healthConcerns:     [...selConcerns],
+    healthOther:        $('cm-other').value.trim(),
+    feedback7day:       $('cm-fb7').value.trim(),
+    attendedFamilyDay:  attendState,
+    invitationStatus:   $('cm-inv').value,
+    reasonNotAttended:  $('cm-reason').value.trim(),
+    familyDayDate:      inputToTs($('cm-fdate').value),
+    purchaseValueDay:   parseInt($('cm-vday').value) || 0,
+    purchaseValue7days: parseInt($('cm-v7d').value) || 0,
+    familyDayFeedback:  $('cm-ffb').value.trim(),
+    questions:          getQuestions(),
+    notes:              $('cm-notes').value.trim(),
+    contactPhone:       $('cm-phone').value.trim(),
+    contactLine:        $('cm-line').value.trim(),
+    updatedAt:          serverTimestamp()
+  };
+
+  try{
+    if(editingId){
+      await updateDoc(doc(db,'customers',editingId), data);
+    }else{
+      data.contactTime = ''; data.inquiryProducts = []; data.source = '';
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db,'customers'), data);
+    }
+    closeCustomerForm();
+    showAlert('success', editingId ? '✓ 已更新客戶資料' : '✓ 已新增客戶');
+    await reloadAll();
+    await updateMyStats();
+  }catch(e){
+    showAlert('error','儲存失敗：'+esc(e.message||e));
+  }finally{
+    btn.disabled = false; btn.textContent = '儲存';
+  }
+};
+
+window.deleteCustomer = async function(){
+  if(!editingId) return;
+  const c = customers.find(x => x.id === editingId);
+  if(!confirm(`確定刪除客戶「${c?.cname||''}」？\n\n此操作無法復原。`)) return;
+  try{
+    await deleteDoc(doc(db,'customers',editingId));
+    await addDoc(collection(db,'actionLogs'), {
+      type:'delete_customer',
+      operatorUid: MY_UID, operatorEmail: ME.email||'', operatorRole: ME.role,
+      targetInfo:{ customerName: c?.cname||'', dealerId: c?.did||'', dealerName: c?.dname||'' },
+      createdAt: serverTimestamp()
+    });
+    closeCustomerForm();
+    showAlert('success','✓ 已刪除客戶');
+    await reloadAll();
+    await updateMyStats();
+  }catch(e){
+    showAlert('error','刪除失敗：'+esc(e.message||e));
+  }
+};
+
+// ══════════════════════════════════════════════════════════════════
+//  快速動作
+// ══════════════════════════════════════════════════════════════════
+window.quickToggleTask = async function(id, n, ev){
+  if(ev) ev.stopPropagation();
+  const c = customers.find(x => x.id === id);
+  if(!c) return;
+  const key = 'task'+n;
+  const nv  = !c[key];
+  c[key] = nv;
+  renderCustomers();
+  try{
+    await updateDoc(doc(db,'customers',id), { [key]: nv, updatedAt: serverTimestamp() });
+    updateMyStats();
+  }catch(e){
+    c[key] = !nv; renderCustomers();
+    showAlert('error','更新失敗：'+esc(e.message||e));
+  }
+};
+
+window.quickSetInv = async function(id, val, ev){
+  if(ev) ev.stopPropagation();
+  const c = customers.find(x => x.id === id);
+  if(!c) return;
+  const old = c.invitationStatus;
+  c.invitationStatus = val;
+  renderCustomers();
+  try{
+    await updateDoc(doc(db,'customers',id), { invitationStatus: val, updatedAt: serverTimestamp() });
+    updateMyStats();
+  }catch(e){
+    c.invitationStatus = old; renderCustomers();
+    showAlert('error','更新失敗：'+esc(e.message||e));
+  }
+};
+
+// ══════════════════════════════════════════════════════════════════
+//  待辦提醒
+// ══════════════════════════════════════════════════════════════════
+function computeTodos(){
+  const out = [];
+  customers.forEach(c => {
+    if(dismissedTodos.has(c.id)) return;
+    if(c.source === 'inquiry' && !c.saleDate){
+      const d = daysSince(c.createdAt);
+      if(d !== null && d >= 2){
+        out.push({ id:c.id, icon:'📞', name:c.cname||'(未命名)',
+                   desc:`客戶自填申請 ${d} 天了，還沒聯絡`, p:1 });
+        return;
+      }
+    }
+    if(c.saleDate && !c.task1){
+      const d = daysSince(c.saleDate);
+      if(d !== null && d >= 7){
+        out.push({ id:c.id, icon:'⏰', name:c.cname||'(未命名)',
+                   desc:`恩典卡第 ${d} 天，確認產品使用了嗎`, p:2 });
+      }
+    }
+  });
+  return out.sort((a,b) => a.p - b.p);
+}
+
+function renderTodos(){
+  const el = $('todo-panel');
+  if(!el) return;
+  if(isAdmin()){ el.innerHTML=''; return; }
+
+  const todos = computeTodos();
+  if(!todos.length){
+    el.innerHTML = `<div class="todo-panel" style="border-color:var(--border);">
+      <div class="todo-empty">✓ 今天沒有待追蹤的客戶</div></div>`;
+    return;
+  }
+  const shown = todos.slice(0,5);
+  el.innerHTML = `<div class="todo-panel">
+    <div class="todo-hd"><div class="todo-title">今天該做的事 <span class="todo-count">${todos.length}</span></div></div>
+    ${shown.map(t => `
+      <div class="todo-item" data-id="${t.id}">
+        <div class="todo-icon">${t.icon}</div>
+        <div class="todo-body">
+          <div class="todo-name">${esc(t.name)}</div>
+          <div class="todo-desc">${esc(t.desc)}</div>
+        </div>
+        <button class="todo-dismiss" data-dismiss="${t.id}" title="今天不再顯示">✕</button>
+      </div>`).join('')}
+    ${todos.length>5?`<div class="todo-more">還有 ${todos.length-5} 筆待處理</div>`:''}
+  </div>`;
+
+  el.querySelectorAll('.todo-item').forEach(it => {
+    it.onclick = e => {
+      if(e.target.dataset.dismiss) return;
+      openCustomerForm(it.dataset.id);
+    };
+  });
+  el.querySelectorAll('.todo-dismiss').forEach(b => {
+    b.onclick = e => { e.stopPropagation(); dismissedTodos.add(b.dataset.dismiss); renderTodos(); };
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  客戶分類
+// ══════════════════════════════════════════════════════════════════
+function classify(c){
+  if(c.source==='inquiry' && !c.saleDate){
+    const d = daysSince(c.createdAt);
+    if(d !== null && d >= 2) return 'urgent';
+  }
+  if(c.saleDate && !c.task1){
+    const d = daysSince(c.saleDate);
+    if(d !== null && d >= 7) return 'urgent';
+  }
+  if(c.task1 && c.task2 && c.task3) return 'done';
+  const u = daysSince(c.updatedAt);
+  if(u !== null && u >= 30) return 'sleeping';
+  return 'active';
+}
+const GROUP_META = {
+  urgent:   { icon:'🔥', title:'需要跟進', o:1 },
+  active:   { icon:'🌱', title:'進行中',   o:2 },
+  done:     { icon:'✅', title:'已完成',   o:3 },
+  sleeping: { icon:'😴', title:'沉睡中',   o:4 },
+};
+window.toggleGroup = function(k){
+  if(collapsedGroups.has(k)) collapsedGroups.delete(k);
+  else collapsedGroups.add(k);
+  renderCustomers();
+};
+
+// ══════════════════════════════════════════════════════════════════
+//  dealerStats 維護
+// ══════════════════════════════════════════════════════════════════
+async function updateMyStats(){
+  if(!ME.dealerId || isAdmin()) return;
+  const mine = customers.filter(c => c.did === ME.dealerId);
+  const s = {
+    dealerId: ME.dealerId, dealerName: ME.dealerName||'', team: ME.team||'',
+    customerCount: mine.length,
+    task1Count: mine.filter(c=>c.task1).length,
+    task2Count: mine.filter(c=>c.task2).length,
+    task3Count: mine.filter(c=>c.task3).length,
+    allTasksCount: mine.filter(c=>c.task1&&c.task2&&c.task3).length,
+    urgentCount: mine.filter(c=>classify(c)==='urgent').length,
+    invitationCounts: {}, healthCounts: {},
+    purchaseDayTotal: 0, purchase7dTotal: 0,
+    updatedAt: serverTimestamp()
+  };
+  mine.forEach(c => {
+    if(c.invitationStatus) s.invitationCounts[c.invitationStatus] = (s.invitationCounts[c.invitationStatus]||0)+1;
+    (c.healthConcerns||[]).forEach(h => s.healthCounts[h] = (s.healthCounts[h]||0)+1);
+    s.purchaseDayTotal += (c.purchaseValueDay||0);
+    s.purchase7dTotal  += (c.purchaseValue7days||0);
+  });
+  try{ await setDoc(doc(db,'dealerStats',ME.dealerId), s); }catch(e){}
+}
+
 // ══════════════ 客戶列表 ══════════════
 function renderCustomers(){
-  // 統計
   const total = customers.length;
   const t1 = customers.filter(c=>c.task1).length;
   const t2 = customers.filter(c=>c.task2).length;
@@ -613,53 +1233,114 @@ function renderCustomers(){
     <div class="stat-card"><div class="stat-num">${t2}<span class="stat-unit">位</span></div><div class="stat-label">週二課程</div></div>
     <div class="stat-card"><div class="stat-num">${t3}<span class="stat-unit">位</span></div><div class="stat-label">小組活動</div></div>`;
 
+  renderTodos();
+
   const list = $('customer-list');
   if(!customers.length){
-    list.innerHTML = `<div class="empty">尚無客戶紀錄${ME.dealerId?'':'<br><span style="font-size:12px;">您的帳號尚未綁定經銷商編號</span>'}</div>`;
+    list.innerHTML = `<div class="empty">尚無客戶紀錄${
+      (!ME.dealerId && !isAdmin()) ? '<br><span style="font-size:12px;">您的帳號尚未綁定經銷商編號</span>' : ''
+    }</div>`;
     return;
   }
 
-  const sorted = [...customers].sort((a,b) => {
-    const av = a.updatedAt?.toMillis?.() || 0;
-    const bv = b.updatedAt?.toMillis?.() || 0;
-    return bv - av;
-  });
+  const byUpdated = arr => [...arr].sort((a,b) =>
+    (b.updatedAt?.toMillis?.()||0) - (a.updatedAt?.toMillis?.()||0));
 
-  list.innerHTML = sorted.map(c => {
-    const tasks = [
-      {l:'7日產品', d:c.task1},
-      {l:'週二課程', d:c.task2},
-      {l:'小組活動', d:c.task3}
-    ].map(t => `<span class="task-pill ${t.d?'done':'todo'}">${t.d?'✓':'·'} ${t.l}</span>`).join('');
+  // 管理員：不分組，平鋪
+  if(isAdmin()){
+    list.innerHTML = byUpdated(customers).map(c => customerCard(c)).join('');
+    bindCardEvents();
+    return;
+  }
 
-    const hs = (c.healthConcerns||[]).slice(0,4)
-      .map(h=>`<span class="htag">${esc(h)}</span>`).join('');
-    const more = (c.healthConcerns||[]).length > 4
-      ? `<span class="htag">+${c.healthConcerns.length-4}</span>` : '';
+  // 健管師：四組分類
+  const groups = { urgent:[], active:[], done:[], sleeping:[] };
+  customers.forEach(c => groups[classify(c)].push(c));
 
-    const invCls = {'已報名':'booked','考慮中':'maybe','拒絕':'refused'}[c.invitationStatus] || 'none';
-    const inv = c.invitationStatus
-      ? `<span class="inv-tag ${invCls}">${esc(c.invitationStatus)}</span>` : '';
-
-    const meta = [];
-    if(isAdmin() && c.dname) meta.push(esc(c.dname));
-    if(c.saleDate) meta.push('恩典卡 '+fmtDate(c.saleDate));
-    if(c.contactPhone) meta.push('📞 '+esc(c.contactPhone));
-
-    return `<div class="customer-card">
-      <div class="cc-top">
-        <div>
-          <div class="cc-name">${esc(c.cname||'(未命名)')}
-            ${c.source==='inquiry'?'<span class="tag-inquiry">客戶自填</span>':''}
-          </div>
-          ${meta.length?`<div class="cc-meta">${meta.join(' · ')}</div>`:''}
+  list.innerHTML = Object.keys(GROUP_META)
+    .sort((a,b) => GROUP_META[a].o - GROUP_META[b].o)
+    .filter(k => groups[k].length)
+    .map(k => {
+      const m = GROUP_META[k];
+      const col = collapsedGroups.has(k);
+      return `<div class="cgroup ${col?'collapsed':''}">
+        <div class="cgroup-hd" data-group="${k}">
+          <span class="cgroup-icon">${m.icon}</span>
+          <span class="cgroup-title">${m.title}</span>
+          <span class="cgroup-count">${groups[k].length}</span>
+          <span class="cgroup-arrow">▼</span>
         </div>
-        ${inv}
+        <div class="cgroup-body">${byUpdated(groups[k]).map(c => customerCard(c)).join('')}</div>
+      </div>`;
+    }).join('');
+
+  bindCardEvents();
+}
+
+function customerCard(c){
+  const quick = !isAdmin();
+  const tasks = [
+    {l:'7日產品', d:c.task1, n:1},
+    {l:'週二課程', d:c.task2, n:2},
+    {l:'小組活動', d:c.task3, n:3}
+  ];
+  const taskHtml = quick
+    ? tasks.map(t => `<span class="qtask ${t.d?'done':'todo'}" data-qt="${c.id}" data-n="${t.n}" title="點擊切換">${t.d?'✓':'·'} ${t.l}</span>`).join('')
+    : tasks.map(t => `<span class="task-pill ${t.d?'done':'todo'}">${t.d?'✓':'·'} ${t.l}</span>`).join('');
+
+  const invCls = {'已報名':'booked','考慮中':'maybe','拒絕':'refused'}[c.invitationStatus] || 'none';
+  const invHtml = quick
+    ? `<select class="quick-inv" data-qi="${c.id}">
+        <option value=""      ${!c.invitationStatus?'selected':''}>邀約狀態</option>
+        <option value="已報名" ${c.invitationStatus==='已報名'?'selected':''}>已報名</option>
+        <option value="考慮中" ${c.invitationStatus==='考慮中'?'selected':''}>考慮中</option>
+        <option value="拒絕"   ${c.invitationStatus==='拒絕'?'selected':''}>拒絕</option>
+        <option value="未聯繫" ${c.invitationStatus==='未聯繫'?'selected':''}>未聯繫</option>
+      </select>`
+    : (c.invitationStatus ? `<span class="inv-tag ${invCls}">${esc(c.invitationStatus)}</span>` : '');
+
+  const hs = (c.healthConcerns||[]).slice(0,4).map(h=>`<span class="htag">${esc(h)}</span>`).join('');
+  const more = (c.healthConcerns||[]).length > 4 ? `<span class="htag">+${c.healthConcerns.length-4}</span>` : '';
+
+  const meta = [];
+  if(isAdmin() && c.dname) meta.push(esc(c.dname));
+  if(c.saleDate) meta.push('恩典卡 '+fmtDate(c.saleDate));
+  if(c.contactPhone) meta.push('📞 '+esc(c.contactPhone));
+  if(c.contactLine)  meta.push('💬 '+esc(c.contactLine));
+
+  return `<div class="customer-card" data-open="${c.id}">
+    <div class="cc-top">
+      <div>
+        <div class="cc-name">${esc(c.cname||'(未命名)')}
+          ${c.source==='inquiry'?'<span class="tag-inquiry">客戶自填</span>':''}
+        </div>
+        ${meta.length?`<div class="cc-meta">${meta.join(' · ')}</div>`:''}
       </div>
-      <div class="cc-tasks">${tasks}</div>
-      ${hs?`<div class="cc-tags">${hs}${more}</div>`:''}
-    </div>`;
-  }).join('');
+      ${invHtml}
+    </div>
+    <div class="cc-tasks">${taskHtml}</div>
+    ${hs?`<div class="cc-tags">${hs}${more}</div>`:''}
+  </div>`;
+}
+
+function bindCardEvents(){
+  const list = $('customer-list');
+  list.querySelectorAll('[data-open]').forEach(card => {
+    card.onclick = e => {
+      if(e.target.closest('[data-qt]') || e.target.closest('[data-qi]')) return;
+      openCustomerForm(card.dataset.open);
+    };
+  });
+  list.querySelectorAll('[data-qt]').forEach(el => {
+    el.onclick = e => { e.stopPropagation(); quickToggleTask(el.dataset.qt, +el.dataset.n, e); };
+  });
+  list.querySelectorAll('[data-qi]').forEach(el => {
+    el.onclick    = e => e.stopPropagation();
+    el.onchange   = e => { e.stopPropagation(); quickSetInv(el.dataset.qi, el.value, e); };
+  });
+  list.querySelectorAll('[data-group]').forEach(el => {
+    el.onclick = () => toggleGroup(el.dataset.group);
+  });
 }
 
 // ══════════════ 帳號管理 ══════════════
