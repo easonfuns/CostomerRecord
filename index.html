@@ -1903,8 +1903,20 @@ let weeksExpanded = false;     // 週明細展開狀態
 let dismissedTodos = new Set(); // 今日已關閉的提醒
 
 // ── 載入個人週報資料 ────────────────────────────────────────────────────
+let dealerReportsError = null;
+
 async function loadDealerReports() {
   if (currentRole !== 'dealer' || !currentId) return;
+
+  // 先顯示載入中
+  const el = document.getElementById('personal-stats');
+  if (el) el.innerHTML = `<div class="stats-panel">
+    <div class="stats-hd">
+      <div class="stats-title">我的週報數據</div>
+      <div class="stats-period">載入中…</div>
+    </div>
+  </div>`;
+
   try {
     const res = await fetch(WR_API, {
       method:'POST',
@@ -1914,9 +1926,12 @@ async function loadDealerReports() {
     const data = await res.json();
     const all = data.reports || [];
     dealerReports = all.filter(r => String(r.did) === String(currentId));
+    dealerReportsError = null;
     renderPersonalStats();
   } catch(e) {
     dealerReports = [];
+    dealerReportsError = e.message || '連線失敗';
+    renderPersonalStats();
   }
 }
 
@@ -1942,6 +1957,20 @@ function renderPersonalStats() {
   // 週明細（新到舊）
   const sortedWeeks = [...dealerReports].sort((a,b) => String(b.week).localeCompare(String(a.week)));
 
+  if (dealerReportsError) {
+    el.innerHTML = `<div class="stats-panel">
+      <div class="stats-hd">
+        <div class="stats-title">我的週報數據</div>
+        <div class="stats-period" style="color:#f0a0a0;">載入失敗</div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.55);text-align:center;padding:6px 0 10px;">
+        ${dealerReportsError}
+      </div>
+      <button class="weeks-toggle" onclick="loadDealerReports()">重新載入</button>
+    </div>`;
+    return;
+  }
+
   if (dealerReports.length === 0) {
     el.innerHTML = `<div class="stats-panel">
       <div class="stats-hd">
@@ -1951,6 +1980,7 @@ function renderPersonalStats() {
       <div style="font-size:12px;color:rgba(255,255,255,.5);text-align:center;padding:8px 0;">
         右滑到「週報系統」開始填報
       </div>
+      <button class="weeks-toggle" onclick="loadDealerReports()">重新載入</button>
     </div>`;
     return;
   }
