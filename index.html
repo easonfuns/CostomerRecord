@@ -459,7 +459,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
             <div id="team-dashboard-section" style="display:none">
               <div class="filter-row"><select id="tdash-period" onchange="renderTeamDashboard()"><option value="all">全部時間</option><option value="month">本月</option><option value="week">本週</option></select></div>
               <div class="dash-summary" id="tdash-summary"></div>
-              <div class="dash-2col"><div class="card" style="margin-bottom:0"><div class="card-title">GHOS轉化點完成率</div><div id="tdash-tasks"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">家庭日邀約狀態</div><div id="tdash-fday"></div></div></div>
+              <div class="dash-2col"><div class="card" style="margin-bottom:0"><div class="card-title">GHOS轉化點完成率</div><div id="tdash-tasks"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">家庭日/ABC/氣血水小組 · 邀約狀態</div><div id="tdash-fday"></div></div></div>
               <div class="dash-2col" style="margin-top:10px;"><div class="card" style="margin-bottom:0"><div class="card-title">健康關注排行（前8）</div><div id="tdash-health"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">成員表現</div><div id="tdash-members"></div></div></div>
             </div>
           </div>
@@ -478,7 +478,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
             <div id="admin-dashboard" style="display:none">
               <div class="filter-row"><select id="dash-period" onchange="renderDashboard()"><option value="all">全部時間</option><option value="month">本月</option><option value="week">本週</option></select><select id="dash-team" onchange="renderDashboard()"><option value="">全部團隊</option></select></div>
               <div class="dash-summary" id="dash-summary"></div>
-              <div class="dash-2col"><div class="card" style="margin-bottom:0"><div class="card-title">GHOS轉化點完成率</div><div id="dash-tasks"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">家庭日邀約狀態</div><div id="dash-fday"></div></div></div>
+              <div class="dash-2col"><div class="card" style="margin-bottom:0"><div class="card-title">GHOS轉化點完成率</div><div id="dash-tasks"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">家庭日/ABC/氣血水小組 · 邀約狀態</div><div id="dash-fday"></div></div></div>
               <div class="dash-2col" style="margin-top:10px;"><div class="card" style="margin-bottom:0"><div class="card-title">健康關注排行（前8）</div><div id="dash-health"></div></div><div class="card" style="margin-bottom:0"><div class="card-title">各團隊表現</div><div id="dash-teams"></div></div></div>
             </div>
             <div id="admin-passwords" style="display:none">
@@ -516,7 +516,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
               <div class="metric-cell"><label>新開發<br>潛在名單（人）</label><input class="metric-input" type="number" id="wr-f1" min="0" value="0"></div>
               <div class="metric-cell"><label>恩典卡<br>售出（張）</label><input class="metric-input" type="number" id="wr-f2" min="0" value="0"></div>
               <div class="metric-cell"><label>線上課程<br>邀請（人）</label><input class="metric-input" type="number" id="wr-f3" min="0" value="0"></div>
-              <div class="metric-cell"><label>家庭日<br>成功邀約（人）</label><input class="metric-input" type="number" id="wr-f4" min="0" value="0"></div>
+              <div class="metric-cell"><label>家庭日/ABC/小組<br>成功邀約（人）</label><input class="metric-input" type="number" id="wr-f4" min="0" value="0"></div>
               <div class="metric-cell"><label>健康卡<br>售出（張）</label><input class="metric-input" type="number" id="wr-f5" min="0" value="0"></div>
               <div class="metric-cell"><label>帶領<br>加入B11（人）</label><input class="metric-input" type="number" id="wr-f6" min="0" value="0"></div>
             </div>
@@ -571,7 +571,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
             </div>
             <div class="card"><div class="card-title">經銷商名單</div><div class="person-list" id="wr-a-dealer-list"><div class="empty-state">尚無資料</div></div></div>
             <div class="card"><div class="card-title">歷史填報紀錄</div>
-              <div style="overflow-x:auto;"><table class="member-table"><thead><tr><th>週次</th><th>姓名</th><th>團隊</th><th>潛在名單</th><th>恩典卡</th><th>線上課程</th><th>家庭日</th><th>健康卡</th><th>B11</th></tr></thead><tbody id="wr-hist-body"></tbody></table></div>
+              <div style="overflow-x:auto;"><table class="member-table"><thead><tr><th>週次</th><th>姓名</th><th>團隊</th><th>潛在名單</th><th>恩典卡</th><th>線上課程</th><th>小組</th><th>健康卡</th><th>B11</th></tr></thead><tbody id="wr-hist-body"></tbody></table></div>
             </div>
           </div>
         </div>
@@ -603,13 +603,13 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
         <div class="task-check-list">
           <div class="task-check-item" id="tk1" onclick="toggleTask(0)"><div class="task-box" id="tb1"></div><div><div class="task-label-main">7日產品使用</div><div class="task-label-sub">客戶持續使用產品滿7天</div></div></div>
           <div class="task-check-item" id="tk2" onclick="toggleTask(1)"><div class="task-box" id="tb2"></div><div><div class="task-label-main">週二課程</div><div class="task-label-sub">完成週二線上課程邀約</div></div></div>
-          <div class="task-check-item" id="tk3" onclick="toggleTask(2)"><div class="task-box" id="tb3"></div><div><div class="task-label-main">家庭日</div><div class="task-label-sub">參加家庭日活動</div></div></div>
+          <div class="task-check-item" id="tk3" onclick="toggleTask(2)"><div class="task-box" id="tb3"></div><div><div class="task-label-main">家庭日/ABC/氣血水小組</div><div class="task-label-sub">參加任一活動即可</div></div></div>
         </div>
       </div>
-      <div class="fsec"><div class="fsec-title">家庭日</div>
+      <div class="fsec"><div class="fsec-title">家庭日/ABC/氣血水小組</div>
         <div class="field"><label>邀約狀態</label><select id="f-inv"><option value="">— 選擇狀態 —</option><option value="已報名">已報名</option><option value="考慮中">考慮中</option><option value="拒絕">拒絕</option><option value="未聯繫">未聯繫</option></select></div>
-        <div class="field"><label>是否已參加家庭日</label><div class="radio-group"><button class="radio-btn" id="rd-yes" onclick="selectAttended('是')">是</button><button class="radio-btn" id="rd-no" onclick="selectAttended('否')">否</button><button class="radio-btn" id="rd-na" onclick="selectAttended('')">未填</button></div></div>
-        <div id="panel-attended" style="display:none;" class="cond-panel"><div class="field"><label>實際參加時間</label><input type="date" id="f-fday-date"></div><div class="field-row"><div class="field"><label>當日購買產品價值（元）</label><input type="number" id="f-val-day" placeholder="0" min="0"></div><div class="field"><label>7天內購買產品價值（元）</label><input type="number" id="f-val-7days" placeholder="0" min="0"></div></div><div class="field"><label>回饋／感受</label><textarea id="f-fday-feedback" placeholder="記錄客戶參加家庭日後的回饋…"></textarea></div></div>
+        <div class="field"><label>是否已參加</label><div class="radio-group"><button class="radio-btn" id="rd-yes" onclick="selectAttended('是')">是</button><button class="radio-btn" id="rd-no" onclick="selectAttended('否')">否</button><button class="radio-btn" id="rd-na" onclick="selectAttended('')">未填</button></div></div>
+        <div id="panel-attended" style="display:none;" class="cond-panel"><div class="field"><label>實際參加時間</label><input type="date" id="f-fday-date"></div><div class="field-row"><div class="field"><label>當日購買產品價值（元）</label><input type="number" id="f-val-day" placeholder="0" min="0"></div><div class="field"><label>7天內購買產品價值（元）</label><input type="number" id="f-val-7days" placeholder="0" min="0"></div></div><div class="field"><label>回饋／感受</label><textarea id="f-fday-feedback" placeholder="記錄客戶參加活動後的回饋…"></textarea></div></div>
         <div id="panel-notattended" style="display:none;" class="cond-panel"><div class="field"><label>未參加原因</label><textarea id="f-reason" placeholder="記錄未參加原因…" style="min-height:60px;"></textarea></div></div>
       </div>
       <div class="fsec"><div class="fsec-title">身體狀況與資訊</div>
@@ -892,7 +892,7 @@ function invClass(s) {
 
 function customerCard(c, showDealer) {
   const hcs=(c.health_concerns||[]).filter(h=>h!=='其他');
-  const tasks=[{l:'7日產品',done:c.task1,n:1},{l:'週二課程',done:c.task2,n:2},{l:'家庭日',done:c.task3,n:3}];
+  const tasks=[{l:'7日產品',done:c.task1,n:1},{l:'週二課程',done:c.task2,n:2},{l:'家庭日/ABC/小組',done:c.task3,n:3}];
   // 健管師可直接點擊切換；其他角色只顯示
   const canQuickEdit = (currentRole==='dealer' && !selectMode);
   const taskPills = canQuickEdit
@@ -910,7 +910,7 @@ function customerCard(c, showDealer) {
     : (c.invitation_status?`<span class="inv-tag ${invClass(c.invitation_status)}">${c.invitation_status}</span>`:'');
   const dealerBadge=showDealer?`<span class="tag blue">${c.dname}${c.team?' · '+c.team:''}</span>`:'';
   const saleStr=c.sale_date?`恩典卡 ${fmtDate(c.sale_date)}`:'';
-  const fdayStr=c.attended_family_day==='是'&&c.family_day_date?`家庭日 ${fmtDate(c.family_day_date)}`:'';
+  const fdayStr=c.attended_family_day==='是'&&c.family_day_date?`家庭日/ABC/小組 ${fmtDate(c.family_day_date)}`:'';
   const _qs=Array.isArray(c.questions)?c.questions:[];
   const qBadge=_qs.length>0?`<span class="tag gray">提問 ${_qs.length} 條</span>`:'';
   const isInquiry=c.source==='inquiry';
@@ -1405,7 +1405,7 @@ function renderDashboard() {
   // Summary
   document.getElementById('dash-summary').innerHTML=[
     {n:total,      u:'人',l:'總客戶數'},
-    {n:attended,   u:'人',l:'家庭日到場'},
+    {n:attended,   u:'人',l:'活動到場'},
     {n:fmt(dayVal),u:'',  l:'當日購買總計'},
     {n:fmt(val7d), u:'',  l:'7日內購買總計'},
   ].map(s=>`<div class="stat-card">
@@ -1421,7 +1421,7 @@ function renderDashboard() {
   document.getElementById('dash-tasks').innerHTML=[
     {n:'7日產品使用',v:t1,p:pct(t1),c:'c1'},
     {n:'週二課程',   v:t2,p:pct(t2),c:'c2'},
-    {n:'家庭日任務', v:t3,p:pct(t3),c:'c3'},
+    {n:'家庭日/ABC/小組', v:t3,p:pct(t3),c:'c3'},
   ].map(t=>`<div class="prog-item">
     <div class="prog-hd"><span class="prog-name">${t.n}</span><span class="prog-val">${t.v}/${total} &nbsp;${t.p}%</span></div>
     <div class="prog-bar"><div class="prog-fill ${t.c}" style="width:${t.p}%"></div></div>
@@ -1472,7 +1472,7 @@ function renderDashboard() {
   const pb=(n,d)=>{const p=d>0?Math.round(n/d*100):0;const cl=p>=60?'hi':p>=30?'md':'lo';return `<span class="pct ${cl}">${p}%</span>`;};
   document.getElementById('dash-teams').innerHTML=Object.keys(ts).length>0?
     `<table class="team-table"><thead><tr>
-      <th>團隊</th><th>客戶</th><th>7日品</th><th>課程</th><th>家庭日</th><th>到場</th>
+      <th>團隊</th><th>客戶</th><th>7日品</th><th>課程</th><th>小組</th><th>到場</th>
     </tr></thead><tbody>`+
     Object.entries(ts).sort((a,b)=>b[1].n-a[1].n).map(([t,s])=>`<tr>
       <td style="font-weight:500;">${t}</td><td>${s.n}</td>
@@ -1510,7 +1510,7 @@ function renderTeamDashboard() {
   // Summary
   document.getElementById('tdash-summary').innerHTML=[
     {n:total,      u:'人',l:'總客戶數'},
-    {n:attended,   u:'人',l:'家庭日到場'},
+    {n:attended,   u:'人',l:'活動到場'},
     {n:fmt(dayVal),u:'',  l:'當日購買總計'},
     {n:fmt(val7d), u:'',  l:'7日內購買總計'},
   ].map(s=>`<div class="stat-card">
@@ -1526,7 +1526,7 @@ function renderTeamDashboard() {
   document.getElementById('tdash-tasks').innerHTML=[
     {n:'7日產品使用',v:t1,p:pct(t1),c:'c1'},
     {n:'週二課程',   v:t2,p:pct(t2),c:'c2'},
-    {n:'家庭日任務', v:t3,p:pct(t3),c:'c3'},
+    {n:'家庭日/ABC/小組', v:t3,p:pct(t3),c:'c3'},
   ].map(t=>`<div class="prog-item">
     <div class="prog-hd"><span class="prog-name">${t.n}</span><span class="prog-val">${t.v}/${total} &nbsp;${t.p}%</span></div>
     <div class="prog-bar"><div class="prog-fill ${t.c}" style="width:${t.p}%"></div></div>
@@ -1577,7 +1577,7 @@ function renderTeamDashboard() {
   const pb=(n,d)=>{const p=d>0?Math.round(n/d*100):0;const cl=p>=60?'hi':p>=30?'md':'lo';return `<span class="pct ${cl}">${p}%</span>`;};
   document.getElementById('tdash-members').innerHTML=Object.keys(ms).length>0?
     `<table class="team-table"><thead><tr>
-      <th>成員</th><th>客戶</th><th>7日品</th><th>課程</th><th>家庭日</th><th>到場</th>
+      <th>成員</th><th>客戶</th><th>7日品</th><th>課程</th><th>小組</th><th>到場</th>
     </tr></thead><tbody>`+
     Object.entries(ms).sort((a,b)=>b[1].n-a[1].n).map(([nm,s])=>`<tr>
       <td style="font-weight:500;">${nm}</td><td>${s.n}</td>
@@ -1695,8 +1695,8 @@ function showAlert(id,type,msg){
 const WR_API = 'https://script.google.com/macros/s/AKfycby7zOHM4D17C8Ri6k_kfAQcA1LgSi31yQeiTPpc_t1iAIR19S7sUTWHEG0cugYz2bCY/exec';
 const WR_PW_DASH  = 'Grace99';
 const WR_PW_ADMIN = '5092';
-const WR_MSHORT   = ['潛在名單','恩典卡','線上課程','家庭日','健康卡','B11'];
-const WR_MLABEL   = ['新開發潛在名單','恩典卡售出','線上課程邀請','家庭日成功邀約','健康卡售出','帶領加入B11'];
+const WR_MSHORT   = ['潛在名單','恩典卡','線上課程','小組','健康卡','B11'];
+const WR_MLABEL   = ['新開發潛在名單','恩典卡售出','線上課程邀請','家庭日/ABC/小組邀約','健康卡售出','帶領加入B11'];
 const WR_MK       = ['wr-f1','wr-f2','wr-f3','wr-f4','wr-f5','wr-f6'];
 
 let wr_dealers=[], wr_teams=[], wr_reports=[];
@@ -1925,7 +1925,7 @@ function renderPersonalStats() {
   const el = document.getElementById('personal-stats');
   if (!el || currentRole !== 'dealer') return;
 
-  const LABELS = ['潛在名單','恩典卡','線上課程','家庭日','健康卡','B11'];
+  const LABELS = ['潛在名單','恩典卡','線上課程','小組','健康卡','B11'];
 
   // 本月累計
   const now = new Date();
@@ -2045,19 +2045,6 @@ function computeTodos() {
       }
     }
 
-    // ③ 家庭日「考慮中」> 5 天未更新
-    if (c.invitation_status === '考慮中') {
-      const days = daysBetween(c.updated_at);
-      if (days !== null && days >= 5) {
-        todos.push({
-          cid: c.cid,
-          icon: '💭',
-          name: c.cname || '(未命名)',
-          desc: `家庭日考慮中 ${days} 天沒更新了，再問一次`,
-          priority: 3
-        });
-      }
-    }
   });
 
   todos.sort((a,b) => a.priority - b.priority);
@@ -2115,11 +2102,7 @@ function classifyCustomer(c) {
     const d = daysBetween(c.sale_date);
     if (d !== null && d >= 7) return 'urgent';
   }
-  if (c.invitation_status === '考慮中') {
-    const d = daysBetween(c.updated_at);
-    if (d !== null && d >= 5) return 'urgent';
-  }
-
+  
   // 已完成：GHOS轉化點全通
   if (c.task1 && c.task2 && c.task3) return 'done';
 
