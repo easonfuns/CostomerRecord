@@ -455,6 +455,14 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
         <div class="panel-inner">
           <div id="main-alert" class="main-alert-wrap"></div>
 
+          <!-- 顧客資料同步狀態列 -->
+          <div class="sync-bar" style="margin-bottom:12px;">
+            <div><span class="sync-dot" id="ct-sync-dot"></span><span id="ct-sync-text">準備中…</span></div>
+            <button class="btn sm" onclick="refreshCustomers()" title="重新載入客戶資料">
+              <span id="ct-refresh-icon">↻</span> 重新整理
+            </button>
+          </div>
+
           <!-- dealer view -->
           <div id="view-dealer" style="display:none">
             <div id="personal-stats"></div>
@@ -735,13 +743,90 @@ let attendedVal='';
 let setPwTarget=null;
 
 // ── API ────────────────────────────────────────────────────────────────────────
-async function api(data) {
-  const res = await fetch(API, {
-    method:'POST',
-    headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify(data)
-  });
-  return res.json();
+// 帶逾時與自動重試的 API 呼叫
+async function api(data, opts) {
+  opts = opts || {};
+  const maxRetries = opts.retries !== undefined ? opts.retries : 2;
+  const timeoutMs  = opts.timeout || 25000;
+  let lastErr = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    if (attempt > 0) {
+      ctSetSyncStatus('syncing', '重試中 ' + attempt + '/' + maxRetries);
+      await new Promise(r => setTimeout(r, attempt * 1000));
+    }
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(API, {
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(data),
+        signal: ctrl.signal,
+        redirect: 'follow'
+      });
+      clearTimeout(timer);
+      if (!res.ok) { lastErr = new Error('伺服器回應 ' + res.status); continue; }
+      const text = await res.text();
+      if (text.trim().startsWith('<')) { lastErr = new Error('伺服器忙碌中，請稍後再試'); continue; }
+      try { return JSON.parse(text); }
+      catch(e) { lastErr = new Error('資料格式錯誤'); continue; }
+    } catch(e) {
+      clearTimeout(timer);
+      lastErr = (e.name === 'AbortError')
+        ? new Error('連線逾時（超過 ' + (timeoutMs/1000) + ' 秒）')
+        : e;
+    }
+  }
+  throw lastErr || new Error('連線失敗');
+}
+
+// ── 顧客資料同步狀態 ──────────────────────────────────────────────────
+let ctLastFetch = null;
+
+function ctSetSyncStatus(s, detail) {
+  let label;
+  if (s === 'syncing')      label = detail || '同步中...';
+  else if (s === 'error')   label = detail || '同步失敗';
+  else {
+    const t = ctLastFetch ? ctLastFetch.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : '';
+    label = '已同步 ' + t + (detail ? ' · ' + detail : '');
+  }
+  const dot = document.getElementById('ct-sync-dot');
+  const txt = document.getElementById('ct-sync-text');
+  if (dot) dot.className = 'sync-dot' + (s==='syncing'?' syncing':s==='error'?' error':'');
+  if (txt) txt.textContent = label;
+  const icon = document.getElementById('ct-refresh-icon');
+  if (icon) icon.style.animation = (s==='syncing') ? 'spin 1s linear infinite' : '';
+}
+
+// ── 手動重新整理顧客資料 ──────────────────────────────────────────────
+async function refreshCustomers() {
+  if (!currentRole) return;
+  ctSetSyncStatus('syncing');
+  const t0 = Date.now();
+  try {
+    const res = await api({ action:'getCustomers', type:currentRole, id:currentId, password:currentPw });
+    if (res.ok) {
+      customers = res.customers || [];
+      currentNeedsPassword = !!res.needsPassword;
+      ctLastFetch = new Date();
+      const elapsed = ((Date.now()-t0)/1000).toFixed(1);
+      ctSetSyncStatus('ok', elapsed + '秒');
+      // 重新繪製當前角色的畫面
+      if (currentRole === 'dealer') { renderDealerView(); renderTodoPanel(); }
+      if (currentRole === 'team')   renderTeamView();
+      if (currentRole === 'admin')  renderAdminList();
+      // 健管師同時刷新週報數據
+      if (currentRole === 'dealer') loadDealerReports();
+    } else {
+      ctSetSyncStatus('error', res.error || '載入失敗');
+    }
+  } catch(e) {
+    ctSetSyncStatus('error', e.message || '連線失敗');
+    showAlert('main-alert','error',
+      (e.message||'連線失敗') + '　<button class="btn sm" style="margin-left:8px;" onclick="refreshCustomers()">重新載入</button>');
+  }
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────────
@@ -832,7 +917,12 @@ async function doLogin() {
 
 async function loadCustomers() {
   const res=await api({action:'getCustomers',type:currentRole,id:currentId,password:currentPw});
-  if(res.ok){ customers=res.customers||[]; currentNeedsPassword=!!res.needsPassword; }
+  if(res.ok){
+    customers=res.customers||[];
+    currentNeedsPassword=!!res.needsPassword;
+    ctLastFetch=new Date();
+    ctSetSyncStatus('ok');
+  }
 }
 
 function enterApp() {
@@ -871,6 +961,9 @@ function enterApp() {
   if (currentRole==='dealer') renderDealerView();
   if (currentRole==='team')   renderTeamView();
   if (currentRole==='admin')  renderAdminView();
+  // 標記首次載入完成時間
+  if (!ctLastFetch) ctLastFetch = new Date();
+  ctSetSyncStatus('ok');
 }
 
 function doLogout() {
