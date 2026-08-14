@@ -502,6 +502,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .ib-warn{background:var(--gold-pale);border:1.5px solid #f0d080;border-radius:12px;
          padding:14px 16px;font-size:13px;color:#7a5500;line-height:1.9;margin-bottom:1.25rem;}
 .ib-warn strong{display:block;font-size:14px;margin-bottom:4px;}
+
+.live-badge{font-size:11px;padding:3px 10px;border-radius:99px;background:var(--cream);
+            color:var(--hint);border:1px solid var(--border2);cursor:pointer;
+            user-select:none;transition:all .15s;white-space:nowrap;}
+.live-badge.on{background:var(--moss-pale);color:var(--moss2);border-color:var(--moss3);}
+.live-badge:hover{opacity:.75;}
 </style>
 </head>
 <body>
@@ -646,7 +652,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
       <div id="main-alert"></div>
 
       <div class="sync-bar">
-        <div><span class="sync-dot" id="sync-dot"></span><span id="sync-text">已同步</span></div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span><span class="sync-dot" id="sync-dot"></span><span id="sync-text">已同步</span></span>
+          <span class="live-badge on" id="live-badge" onclick="toggleLive()">⚡ 即時同步中</span>
+        </div>
         <button class="btn sm" onclick="reloadAll()"><span id="sync-icon">↻</span> 重新整理</button>
       </div>
 
@@ -658,7 +667,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
         <div id="todo-panel"></div>
         <div class="list-bar">
           <div class="list-bar-title" id="list-title">我的客戶</div>
-          <div style="display:flex;gap:7px;">
+          <div style="display:flex;gap:7px;flex-wrap:wrap;">
+            <button class="btn sm" onclick="exportCustomers()" title="將目前篩選出的客戶匯出成 CSV">⬇ 匯出</button>
             <button class="btn sm" id="btn-select-mode" onclick="toggleSelectMode()">選取</button>
             <button class="btn sm primary" onclick="openCustomerForm(null)">＋ 新增客戶</button>
           </div>
@@ -982,11 +992,13 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult,
-  signOut, onAuthStateChanged
+  signOut, onAuthStateChanged, setPersistence, browserLocalPersistence,
+  indexedDBLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where,
-  getDocs, orderBy, limit, writeBatch, serverTimestamp, addDoc, deleteDoc, enableIndexedDbPersistence
+  getDocs, orderBy, limit, writeBatch, serverTimestamp, addDoc, deleteDoc,
+  onSnapshot, enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ══════════════ Firebase ══════════════
@@ -1146,28 +1158,41 @@ window.forceLogin = function(){
 window.doGoogleLogin = async function(){
   const btn = $('gbtn');
   btn.disabled = true;
+  btn.style.opacity = '.6';
+
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
 
   try{
-    if(isMobile){
-      // 手機一律用轉址，避免彈出視窗被擋
-      sessionStorage.setItem('authPending','1');
-      await signInWithRedirect(auth, provider);
-      return;                       // 頁面會離開
-    }
+    // 彈窗優先：手機瀏覽器對「使用者點擊觸發」的彈窗是允許的，
+    // 且不受跨網域 session 限制，比轉址可靠。
     await signInWithPopup(auth, provider);
+    // 成功後 onAuthStateChanged 會接手
   }catch(e){
-    // 桌機彈出視窗被擋 → 自動改用轉址
-    if(!isMobile && (e?.code === 'auth/popup-blocked' || e?.code === 'auth/popup-closed-by-user')){
+    const code = e?.code || '';
+
+    // 彈窗真的被擋 → 才改用轉址
+    if(code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment'){
       try{
+        showAlert('info','正在跳轉到 Google 登入頁面…','login-alert');
         sessionStorage.setItem('authPending','1');
+        localStorage.setItem('authPending','1');
         await signInWithRedirect(auth, provider);
         return;
-      }catch(e2){ /* 落到下面統一處理 */ }
+      }catch(e2){
+        sessionStorage.removeItem('authPending');
+        localStorage.removeItem('authPending');
+      }
     }
-    btn.disabled = false;
-    sessionStorage.removeItem('authPending');
+
+    // 使用者自己關掉彈窗 → 不當作錯誤
+    if(code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request'){
+      btn.disabled = false; btn.style.opacity = '1';
+      $('login-alert').innerHTML = '';
+      return;
+    }
+
+    btn.disabled = false; btn.style.opacity = '1';
     handleAuthError(e);
   }
 };
@@ -1190,11 +1215,52 @@ function handleAuthError(e){
 }
 
 window.doLogout = async function(){
+  stopLiveSync();
   await signOut(auth);
   location.reload();
 };
 
 // ══════════════ 認證狀態 ══════════════
+// ══════════════════════════════════════════════════════════════════
+//  啟動流程：先設定持久化 → 處理轉址結果 → 才開始監聽
+// ══════════════════════════════════════════════════════════════════
+let authReady = false;
+
+(async () => {
+  // 設定登入狀態儲存方式（IndexedDB 失敗時退回 localStorage）
+  try{
+    await setPersistence(auth, indexedDBLocalPersistence);
+  }catch(e){
+    try{ await setPersistence(auth, browserLocalPersistence); }catch(e2){}
+  }
+
+  // 若是從轉址回來，先把結果收下（一定要在 onAuthStateChanged 之前）
+  const pending = sessionStorage.getItem('authPending') || localStorage.getItem('authPending');
+  if(pending){
+    $('boot').querySelector('.boot-text').textContent = '正在完成登入…';
+    try{
+      const res = await getRedirectResult(auth);
+      if(!res || !res.user){
+        // 轉址回來卻沒拿到使用者 → 跨網域 session 被瀏覽器擋掉
+        redirectFailed = true;
+      }
+    }catch(e){
+      redirectFailed = true;
+      redirectErrMsg = e?.message || '';
+    }finally{
+      sessionStorage.removeItem('authPending');
+      localStorage.removeItem('authPending');
+    }
+  }
+
+  authReady = true;
+  startAuthWatch();
+})();
+
+let redirectFailed = false;
+let redirectErrMsg = '';
+
+function startAuthWatch(){
 onAuthStateChanged(auth, async (user) => {
   if(!user){
     // App 內建瀏覽器 → 先顯示導引畫面
@@ -1202,6 +1268,13 @@ onAuthStateChanged(auth, async (user) => {
     const tip = $('login-mobile-tip');
     if(tip && isMobile) tip.style.display = 'block';
     showScreen('login');
+    if(redirectFailed){
+      redirectFailed = false;
+      showAlert('error',
+        '登入沒有完成，請再試一次。<br>' +
+        '<span style="font-size:11.5px;">若重複失敗，請確認瀏覽器沒有封鎖「跨網站追蹤」，' +
+        '或改用 Chrome 開啟。</span>', 'login-alert');
+    }
     return;
   }
 
@@ -1247,6 +1320,7 @@ onAuthStateChanged(auth, async (user) => {
     showScreen('pending');
   }
 });
+}
 
 function renderPendingScreen(){
   const box = $('pend-status');
@@ -1277,6 +1351,9 @@ async function bootApp(user){
   showScreen('app');
   await reloadAll();
   initFilters();
+  liveFirstLoad = false;
+  startLiveSync();
+  updateLiveBadge();
   updateMyStats();
 }
 
@@ -1482,11 +1559,48 @@ window.openCustomerForm = function(id){
   }
 
   $('cust-modal').style.display = 'flex';
+  // 記錄開啟當下的表單內容，用於偵測是否有變更
+  setTimeout(() => { formSnapshot = snapshotForm(); }, 0);
 };
 
-window.closeCustomerForm = function(){
+// ── 表單變更偵測 ──
+let formSnapshot = null;
+
+function snapshotForm(){
+  return JSON.stringify({
+    owner:  $('cm-owner')?.value || '',
+    cname:  $('cm-cname').value,
+    phone:  $('cm-phone').value,
+    line:   $('cm-line').value,
+    sale:   $('cm-saledate').value,
+    fb7:    $('cm-fb7').value,
+    inv:    $('cm-inv').value,
+    fdate:  $('cm-fdate').value,
+    vday:   $('cm-vday').value,
+    v7d:    $('cm-v7d').value,
+    ffb:    $('cm-ffb').value,
+    reason: $('cm-reason').value,
+    notes:  $('cm-notes').value,
+    other:  $('cm-other').value,
+    tasks:  taskState.join(','),
+    attend: attendState,
+    conc:   [...selConcerns].sort().join('|'),
+    qs:     getQuestions().join('|')
+  });
+}
+
+function formChanged(){
+  if(formSnapshot === null) return false;
+  return snapshotForm() !== formSnapshot;
+}
+
+window.closeCustomerForm = function(force){
+  if(force !== true && formChanged()){
+    if(!confirm('你有尚未儲存的變更，確定要離開嗎？\n\n未儲存的內容將會遺失。')) return;
+  }
   $('cust-modal').style.display = 'none';
   editingId = null;
+  formSnapshot = null;
 };
 
 window.toggleTask = function(i){
@@ -1622,7 +1736,7 @@ window.saveCustomer = async function(){
       data.createdAt = serverTimestamp();
       await addDoc(collection(db,'customers'), data);
     }
-    closeCustomerForm();
+    closeCustomerForm(true);
     showAlert('success', editingId ? '✓ 已更新客戶資料' : '✓ 已新增客戶');
     await reloadAll();
     await updateMyStats();
@@ -1645,7 +1759,7 @@ window.deleteCustomer = async function(){
       targetInfo:{ customerName: c?.cname||'', dealerId: c?.did||'', dealerName: c?.dname||'' },
       createdAt: serverTimestamp()
     });
-    closeCustomerForm();
+    closeCustomerForm(true);
     showAlert('success','✓ 已刪除客戶');
     await reloadAll();
     await updateMyStats();
@@ -2358,19 +2472,6 @@ function renderDashboard(){
 // ══════════════════════════════════════════════════════════════════
 //  操作紀錄
 // ══════════════════════════════════════════════════════════════════
-// ══════════════ 處理轉址登入結果 ══════════════
-(async () => {
-  if(sessionStorage.getItem('authPending')){
-    try{
-      await getRedirectResult(auth);
-    }catch(e){
-      showAlert('error', (e?.message || '登入失敗'), 'login-alert');
-    }finally{
-      sessionStorage.removeItem('authPending');
-    }
-  }
-})();
-
 window.loadLogs = async function(){
   const el = $('logs-panel');
   el.innerHTML = '<div class="empty" style="padding:1.25rem;">載入中…</div>';
@@ -2657,6 +2758,153 @@ function renderDealerPanel(){
     b.onclick = () => removeDealer(b.dataset.rmdealer);
   });
 }
+
+
+// ── ESC 關閉視窗（含防呆）──
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  if($('cust-modal')?.style.display === 'flex'){ closeCustomerForm(); return; }
+  if($('edit-user-modal')?.style.display === 'flex'){ closeEditUser(); return; }
+});
+
+// ── 離開頁面前提醒 ──
+window.addEventListener('beforeunload', e => {
+  if($('cust-modal')?.style.display === 'flex' && formChanged()){
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+
+// ══════════════════════════════════════════════════════════════════
+//  即時同步
+// ══════════════════════════════════════════════════════════════════
+let unsubCustomers = null;
+let liveEnabled = true;
+let liveFirstLoad = true;
+
+function startLiveSync(){
+  if(!liveEnabled) return;
+  stopLiveSync();
+
+  let q;
+  if(isAdmin())         q = query(collection(db,'customers'));
+  else if(ME.dealerId)  q = query(collection(db,'customers'), where('did','==',ME.dealerId));
+  else return;
+
+  unsubCustomers = onSnapshot(q, snap => {
+    const next = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+
+    // 首次由 reloadAll 負責渲染，這裡只接手後續變動
+    if(liveFirstLoad){ liveFirstLoad = false; customers = next; return; }
+
+    // 判斷是否為他人造成的變動（本機寫入會先觸發 pending write）
+    const fromServer = !snap.metadata.hasPendingWrites;
+    const changed = snap.docChanges().length;
+
+    customers = next;
+
+    // 編輯視窗開啟時不重繪，避免干擾輸入
+    if($('cust-modal')?.style.display === 'flex') return;
+
+    renderCustomers();
+    if(currentTab === 'dash') renderDashboard();
+    if(isAdmin()) renderAccounts();
+
+    if(fromServer && changed){
+      setSync('ok', '即時更新');
+    }
+  }, err => {
+    // 權限或連線問題就靜默停用，改回手動重新整理
+    liveEnabled = false;
+    stopLiveSync();
+  });
+}
+
+function stopLiveSync(){
+  if(unsubCustomers){ unsubCustomers(); unsubCustomers = null; }
+}
+
+window.toggleLive = function(){
+  liveEnabled = !liveEnabled;
+  if(liveEnabled){ liveFirstLoad = false; startLiveSync(); }
+  else stopLiveSync();
+  updateLiveBadge();
+};
+
+function updateLiveBadge(){
+  const el = $('live-badge');
+  if(!el) return;
+  el.textContent = liveEnabled ? '⚡ 即時同步中' : '⏸ 已暫停';
+  el.className = 'live-badge' + (liveEnabled ? ' on' : '');
+  el.title = liveEnabled ? '資料變動會自動更新畫面（點擊暫停）' : '已暫停自動更新（點擊開啟）';
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+//  客戶資料匯出（CSV）
+// ══════════════════════════════════════════════════════════════════
+function csvCell(v){
+  if(v === null || v === undefined) return '';
+  const s = String(v);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+}
+function tsToCsvDate(ts){
+  if(!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if(isNaN(d.getTime())) return '';
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+window.exportCustomers = function(){
+  const list = applyFilters(customers);
+  if(!list.length){ showAlert('error','目前沒有可匯出的客戶資料'); return; }
+
+  const headers = [
+    '客戶姓名','健管師','團隊','聯絡電話','LINE ID',
+    '恩典卡購買日','7日產品','週二課程','小組活動',
+    '7日產品使用回饋',
+    '邀約狀態','是否參加','參加日期','未參加原因',
+    '當日購買金額','7日內購買金額','活動回饋',
+    '健康關注','其他健康關注','產品使用提問','備註',
+    '來源','偏好聯絡時間','想了解項目',
+    '建立時間','最後更新'
+  ];
+
+  const rows = [...list]
+    .sort((a,b) => (a.dname||'').localeCompare(b.dname||'') || (a.cname||'').localeCompare(b.cname||''))
+    .map(c => [
+      c.cname, c.dname, c.team, c.contactPhone, c.contactLine,
+      tsToCsvDate(c.saleDate),
+      c.task1?'是':'否', c.task2?'是':'否', c.task3?'是':'否',
+      c.feedback7day,
+      c.invitationStatus, c.attendedFamilyDay, tsToCsvDate(c.familyDayDate), c.reasonNotAttended,
+      c.purchaseValueDay || 0, c.purchaseValue7days || 0, c.familyDayFeedback,
+      (c.healthConcerns||[]).join('、'), c.healthOther,
+      (c.questions||[]).join(' ／ '), c.notes,
+      c.source === 'inquiry' ? '客戶自填' : '健管師建立',
+      c.contactTime, (c.inquiryProducts||[]).join('、'),
+      tsToCsvDate(c.createdAt), tsToCsvDate(c.updatedAt)
+    ].map(csvCell).join(','));
+
+  // BOM 讓 Excel 正確辨識 UTF-8
+  const csv  = '\ufeff' + headers.map(csvCell).join(',') + '\r\n' + rows.join('\r\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+
+  const now = new Date();
+  const stamp = now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+  const who   = isAdmin() ? '全部' : (ME.dealerName || '我');
+  const name  = `客戶資料_${who}_${stamp}.csv`;
+
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  showAlert('success', `✓ 已匯出 ${list.length} 位客戶資料`);
+};
 
 // ══════════════ 客戶列表 ══════════════
 function renderCustomers(){
