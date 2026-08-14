@@ -1265,7 +1265,12 @@ window.doGoogleLogin = async function(){
   btn.style.opacity = '.6';
 
   const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account' });
+  // 平常不設 prompt，讓 Google 記住上次登入的帳號；
+  // 只有「主動登出後」才要求重新選擇，方便換帳號
+  if(localStorage.getItem('forceAccountPicker')){
+    provider.setCustomParameters({ prompt: 'select_account' });
+    localStorage.removeItem('forceAccountPicker');
+  }
 
   try{
     // 彈窗優先：手機瀏覽器對「使用者點擊觸發」的彈窗是允許的，
@@ -1319,7 +1324,10 @@ function handleAuthError(e){
 }
 
 window.doLogout = async function(){
+  if(!confirm('確定要登出嗎？\n\n下次登入需重新選擇 Google 帳號。')) return;
   stopLiveSync();
+  // 標記：下次登入要顯示帳號選擇畫面（方便換帳號）
+  localStorage.setItem('forceAccountPicker','1');
   await signOut(auth);
   location.reload();
 };
@@ -1331,12 +1339,19 @@ window.doLogout = async function(){
 let authReady = false;
 
 (async () => {
-  // 設定登入狀態儲存方式（IndexedDB 失敗時退回 localStorage）
+  // 設定登入狀態儲存方式
+  // iOS Safari 的 IndexedDB 有時會被系統清除，改用 localStorage 較穩定
+  let persistOk = false;
   try{
-    await setPersistence(auth, indexedDBLocalPersistence);
+    await setPersistence(auth, browserLocalPersistence);
+    persistOk = true;
   }catch(e){
-    try{ await setPersistence(auth, browserLocalPersistence); }catch(e2){}
+    try{
+      await setPersistence(auth, indexedDBLocalPersistence);
+      persistOk = true;
+    }catch(e2){}
   }
+  if(!persistOk) console.warn('登入狀態無法保存，每次都需重新登入');
 
   // 若是從轉址回來，先把結果收下（一定要在 onAuthStateChanged 之前）
   const pending = sessionStorage.getItem('authPending') || localStorage.getItem('authPending');
@@ -1365,8 +1380,15 @@ let redirectFailed = false;
 let redirectErrMsg = '';
 
 function startAuthWatch(){
+let firstCheck = true;
 onAuthStateChanged(auth, async (user) => {
   if(!user){
+    // 首次回報 null 時稍等一下，讓已保存的登入狀態有機會恢復
+    if(firstCheck){
+      firstCheck = false;
+      await new Promise(r => setTimeout(r, 350));
+      if(auth.currentUser) return;   // 已恢復，交給下一次回呼處理
+    }
     // App 內建瀏覽器 → 先顯示導引畫面
     if(inApp){ showInAppGuide(); return; }
     const tip = $('login-mobile-tip');
@@ -1382,6 +1404,7 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  firstCheck = false;
   MY_UID = user.uid;
   $('pend-avatar').innerHTML = avatarHtml(user.photoURL, user.displayName);
   $('pend-name').textContent = user.displayName || '（未提供名稱）';
