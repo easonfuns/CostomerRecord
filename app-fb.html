@@ -578,9 +578,144 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
         max-width:420px;}
 .dv-err code{background:rgba(255,255,255,.12);padding:2px 7px;border-radius:5px;
              font-size:11.5px;display:inline-block;margin:2px;}
+
+/* ══ ① Toast 浮動提示 ══ */
+#toast-zone{position:fixed;left:50%;transform:translateX(-50%);z-index:600;
+            top:calc(12px + env(safe-area-inset-top));width:min(440px, calc(100vw - 24px));
+            display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{pointer-events:auto;border-radius:12px;padding:12px 15px;font-size:13.5px;line-height:1.7;
+       box-shadow:0 6px 24px rgba(0,0,0,.18);display:flex;align-items:flex-start;gap:10px;
+       animation:toastIn .28s cubic-bezier(.34,1.4,.64,1) both;}
+.toast.out{animation:toastOut .22s ease forwards;}
+.toast-ico{font-size:16px;flex-shrink:0;line-height:1.4;}
+.toast-msg{flex:1;min-width:0;}
+.toast-x{border:none;background:none;cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;
+         border-radius:5px;opacity:.55;flex-shrink:0;}
+.toast-x:hover{opacity:1;background:rgba(0,0,0,.08);}
+.toast.success{background:#e8f4e0;border:1.5px solid #7cc24a;color:#1f5a0c;}
+.toast.error{background:#fef0f0;border:1.5px solid #e88;color:#a3251c;}
+.toast.info{background:var(--gold-pale);border:1.5px solid #e8c260;color:#6b4a00;}
+@keyframes toastIn{from{opacity:0;transform:translateY(-16px) scale(.96);}to{opacity:1;transform:none;}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-10px) scale(.97);}}
+
+/* ══ ② 可點擊聯絡方式 ══ */
+.contact-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;
+              background:var(--moss-pale);color:var(--moss2);font-size:12px;font-weight:500;
+              text-decoration:none;border:1px solid transparent;cursor:pointer;transition:all .15s;}
+.contact-chip:hover{border-color:var(--moss3);background:#e2eee7;}
+.contact-chip:active{transform:scale(.96);}
+.contact-chip.copied{background:#e8f4e0;color:#2a6e10;border-color:#9fd87e;}
+
+/* ══ ③ 固定儲存列 ══ */
+.modal-footer{position:sticky;bottom:0;z-index:5;
+              box-shadow:0 -3px 12px rgba(0,0,0,.06);
+              padding-bottom:calc(1rem + env(safe-area-inset-bottom));}
+
+/* ══ ④⑤ 大字模式 ══ */
+body.big-text{font-size:112%;}
+body.big-text .cc-name,
+body.big-text .acc-name,
+body.big-text .dealer-name{font-size:17px;}
+body.big-text .cc-meta,
+body.big-text .acc-meta,
+body.big-text .dealer-meta,
+body.big-text .todo-desc{font-size:13.5px;}
+body.big-text .htag,
+body.big-text .task-pill,
+body.big-text .qtask,
+body.big-text .inv-tag,
+body.big-text .contact-chip{font-size:13px;padding-top:5px;padding-bottom:5px;}
+body.big-text .field label,
+body.big-text .stat-label,
+body.big-text .card-title{font-size:13.5px;}
+body.big-text .stat-num{font-size:28px;}
+body.big-text .concern-label{font-size:15px;}
+body.big-text .concern-item{padding:11px 12px;}
+body.big-text .concern-ck{width:20px;height:20px;font-size:12px;}
+body.big-text .btn{height:44px;font-size:14.5px;padding:0 18px;}
+body.big-text .btn.sm{height:38px;font-size:13.5px;padding:0 14px;}
+body.big-text .btn.xs{height:34px;font-size:12.5px;padding:0 12px;}
+body.big-text .field input,
+body.big-text .field select{height:48px;font-size:16px;}
+body.big-text .field textarea{font-size:16px;}
+body.big-text .tab,
+body.big-text .wr-mode-btn{padding:10px 20px;font-size:15px;}
+body.big-text .ql-btn{height:38px;font-size:13.5px;}
+body.big-text .ah-btn{height:34px;font-size:13px;}
+body.big-text .metric-input{height:54px;font-size:26px;}
+body.big-text .wtable td,
+body.big-text .wtable th{font-size:14px;padding:12px 9px;}
+body.big-text .snum-v{font-size:23px;}
+body.big-text .snum-l{font-size:11px;}
+body.big-text .wk-nums,
+body.big-text .wk-label{font-size:13px;}
+body.big-text .toast{font-size:15px;}
+
+/* 放大開關 */
+.text-toggle{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;
+             border:1px solid rgba(255,255,255,.22);border-radius:99px;background:none;
+             color:rgba(255,255,255,.65);font-size:12px;font-family:'Noto Sans TC',sans-serif;
+             cursor:pointer;transition:all .15s;white-space:nowrap;}
+.text-toggle:hover{background:rgba(255,255,255,.12);color:#fff;}
+.text-toggle.on{background:var(--gold);border-color:var(--gold);color:var(--moss);font-weight:600;}
+
+/* ══ ⑥ 健康關注搜尋 ══ */
+.concern-search{position:sticky;top:0;z-index:3;background:#fff;padding:0 0 10px;margin-bottom:2px;}
+.concern-search input{width:100%;height:40px;border:1.5px solid var(--border2);border-radius:var(--r);
+                      padding:0 12px 0 34px;font-size:14px;font-family:'Noto Sans TC',sans-serif;
+                      background:var(--cream) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a8a8a2' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 11px center;}
+.concern-search input:focus{outline:none;border-color:var(--moss2);background-color:#fff;}
+.concern-hidden{display:none !important;}
+.concern-selected-bar{display:flex;flex-wrap:wrap;gap:5px;padding:9px 11px;background:var(--moss-pale);
+                      border:1.5px solid var(--moss3);border-radius:var(--r);margin-bottom:12px;}
+.csb-label{font-size:11px;font-weight:700;color:var(--moss2);width:100%;margin-bottom:2px;}
+.csb-chip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--moss3);
+          border-radius:99px;padding:3px 6px 3px 10px;font-size:12px;color:var(--moss2);}
+.csb-x{border:none;background:none;cursor:pointer;color:var(--moss3);font-size:13px;line-height:1;
+       padding:1px 3px;border-radius:4px;}
+.csb-x:hover{background:#ffe8e8;color:#c0392b;}
+
+/* ══ ⑦ 快速動作儲存中 ══ */
+.qtask.saving{opacity:.45;pointer-events:none;}
+.quick-inv.saving{opacity:.45;pointer-events:none;}
+
+/* ══ ⑧ 空狀態引導 ══ */
+.empty-guide{text-align:center;padding:2.5rem 1.5rem;}
+.eg-icon{font-size:40px;margin-bottom:12px;opacity:.4;}
+.eg-title{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.eg-desc{font-size:13px;color:var(--muted);line-height:2;margin-bottom:1.25rem;}
+.eg-steps{max-width:340px;margin:0 auto 1.25rem;text-align:left;background:var(--cream);
+          border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;}
+.eg-step{display:flex;gap:10px;font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:7px;}
+.eg-step:last-child{margin-bottom:0;}
+.eg-num{width:20px;height:20px;border-radius:50%;background:var(--moss2);color:#fff;font-size:11px;
+        font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+
+/* ══ ⑨ 數字加減 ══ */
+.metric-stepper{display:flex;align-items:center;gap:6px;}
+.mstep{width:38px;height:46px;border:1.5px solid var(--border2);border-radius:10px;background:#fff;
+       font-size:20px;font-weight:700;color:var(--moss2);cursor:pointer;flex-shrink:0;
+       font-family:'Noto Sans TC',sans-serif;transition:all .12s;
+       display:flex;align-items:center;justify-content:center;}
+.mstep:hover{background:var(--moss-pale);border-color:var(--moss3);}
+.mstep:active{transform:scale(.93);}
+.metric-stepper .metric-input{flex:1;min-width:0;}
+body.big-text .mstep{width:44px;height:54px;font-size:23px;}
+
+/* ══ 回到頂端 ══ */
+.to-top{position:fixed;right:16px;z-index:90;width:44px;height:44px;border-radius:50%;
+        bottom:calc(20px + env(safe-area-inset-bottom));
+        background:var(--moss2);color:#fff;border:none;font-size:18px;cursor:pointer;
+        box-shadow:0 4px 16px rgba(30,61,48,.35);display:none;
+        align-items:center;justify-content:center;transition:all .2s;}
+.to-top.show{display:flex;}
+.to-top:hover{background:var(--moss);transform:translateY(-2px);}
 </style>
 </head>
 <body>
+
+<div id="toast-zone"></div>
+<button class="to-top" id="to-top" onclick="scrollTop()" title="回到頂端">↑</button>
 
 <!-- ══════════ 載入中 ══════════ -->
 <div id="boot">
@@ -655,7 +790,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
       <div id="login-mobile-tip" style="display:none;text-align:center;font-size:11.5px;
            color:var(--hint);margin-top:12px;line-height:1.8;padding:10px;
            background:var(--cream);border-radius:10px;">
-        📱 點擊後會跳到 Google 登入頁面<br>完成後會自動回到本系統
+        📱 點擊後會開啟 Google 登入視窗<br>選擇帳號後會自動回到本系統
       </div>
     </div>
   </div>
@@ -704,6 +839,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
         </div>
       </div>
       <span class="ah-badge" id="hd-role">-</span>
+      <button class="text-toggle" id="text-toggle" onclick="toggleBigText()" title="放大文字">🔍 大字</button>
       <button class="ah-btn" onclick="doLogout()">登出</button>
     </div>
   </div>
@@ -818,12 +954,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
               <div class="field"><label>填報週次</label><div class="ai-val" id="wr-week" style="padding:10px 12px;background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r);">—</div></div>
             </div>
             <div class="metrics-grid">
-              <div class="metric-cell"><label>新開發<br>潛在名單（人）</label><input class="metric-input" type="number" id="wr-m0" min="0" value="0"></div>
-              <div class="metric-cell"><label>恩典卡<br>售出（張）</label><input class="metric-input" type="number" id="wr-m1" min="0" value="0"></div>
-              <div class="metric-cell"><label>線上課程<br>邀請（人）</label><input class="metric-input" type="number" id="wr-m2" min="0" value="0"></div>
-              <div class="metric-cell"><label>家庭日/ABC/小組<br>成功邀約（人）</label><input class="metric-input" type="number" id="wr-m3" min="0" value="0"></div>
-              <div class="metric-cell"><label>健康卡<br>售出（張）</label><input class="metric-input" type="number" id="wr-m4" min="0" value="0"></div>
-              <div class="metric-cell"><label>帶領<br>加入B11（人）</label><input class="metric-input" type="number" id="wr-m5" min="0" value="0"></div>
+              <div class="metric-cell"><label>新開發<br>潛在名單（人）</label><div class="metric-stepper"><button class="mstep" data-step="-1" data-target="wr-m0">−</button><input class="metric-input" type="number" id="wr-m0" min="0" value="0" inputmode="numeric"><button class="mstep" data-step="1" data-target="wr-m0">＋</button></div></div>
+              <div class="metric-cell"><label>恩典卡<br>售出（張）</label><div class="metric-stepper"><button class="mstep" data-step="-1" data-target="wr-m1">−</button><input class="metric-input" type="number" id="wr-m1" min="0" value="0" inputmode="numeric"><button class="mstep" data-step="1" data-target="wr-m1">＋</button></div></div>
+              <div class="metric-cell"><label>線上課程<br>邀請（人）</label><div class="metric-stepper"><button class="mstep" data-step="-1" data-target="wr-m2">−</button><input class="metric-input" type="number" id="wr-m2" min="0" value="0" inputmode="numeric"><button class="mstep" data-step="1" data-target="wr-m2">＋</button></div></div>
+              <div class="metric-cell"><label>家庭日/ABC/小組<br>成功邀約（人）</label><div class="metric-stepper"><button class="mstep" data-step="-1" data-target="wr-m3">−</button><input class="metric-input" type="number" id="wr-m3" min="0" value="0" inputmode="numeric"><button class="mstep" data-step="1" data-target="wr-m3">＋</button></div></div>
+              <div class="metric-cell"><label>健康卡<br>售出（張）</label><div class="metric-stepper"><button class="mstep" data-step="-1" data-target="wr-m4">−</button><input class="metric-input" type="number" id="wr-m4" min="0" value="0" inputmode="numeric"><button class="mstep" data-step="1" data-target="wr-m4">＋</button></div></div>
+              <div class="metric-cell"><label>帶領<br>加入B11（人）</label><div class="metric-stepper"><button class="mstep" data-step="-1" data-target="wr-m5">−</button><input class="metric-input" type="number" id="wr-m5" min="0" value="0" inputmode="numeric"><button class="mstep" data-step="1" data-target="wr-m5">＋</button></div></div>
             </div>
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
@@ -995,6 +1131,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 
       <div class="fsec">
         <div class="fsec-title">身體狀況與資訊</div>
+        <div class="concern-search">
+          <input type="text" id="cm-concern-search" placeholder="搜尋項目…（例如：失眠、壓力）" autocomplete="off">
+        </div>
+        <div id="cm-concern-selected"></div>
         <div id="cm-concerns"></div>
         <div id="cm-other-wrap" style="display:none;margin-top:8px;">
           <div class="field"><label>其他（請說明）</label><input type="text" id="cm-other" placeholder="輸入其他健康關注"></div>
@@ -1095,9 +1235,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult,
-  signOut, onAuthStateChanged, setPersistence, browserLocalPersistence,
-  indexedDBLocalPersistence
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
+  setPersistence, browserLocalPersistence, indexedDBLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where,
@@ -1134,6 +1273,9 @@ let currentTab = 'customers';
 
 // ══════════════ 工具 ══════════════
 const $ = id => document.getElementById(id);
+
+// 盡早套用大字設定，避免畫面閃動
+if(localStorage.getItem('bigText') === '1') document.body.classList.add('big-text');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => (
   {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -1147,10 +1289,44 @@ function initial(name){ return (name||'?')[0].toUpperCase(); }
 function avatarHtml(photo, name){
   return photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer">` : esc(initial(name));
 }
-function showAlert(type, msg, zone='main-alert'){
-  const el = $(zone); if(!el) return;
-  el.innerHTML = `<div class="alert ${type}">${msg}</div>`;
-  if(type !== 'error') setTimeout(()=>{ if(el) el.innerHTML=''; }, 4000);
+// ══ 浮動提示（Toast）══
+const TOAST_ICON = { success:'✓', error:'⚠️', info:'💡' };
+
+function showAlert(type, msg, zone){
+  // 登入畫面等特定區域仍用內嵌提示
+  if(zone && zone !== 'main-alert'){
+    const el = $(zone);
+    if(el){
+      el.innerHTML = `<div class="alert ${type}">${msg}</div>`;
+      if(type !== 'error') setTimeout(()=>{ if(el) el.innerHTML=''; }, 4000);
+      return;
+    }
+  }
+  showToast(type, msg);
+}
+
+function showToast(type, msg, ms){
+  const zone = $('toast-zone');
+  if(!zone) return;
+
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = `<span class="toast-ico">${TOAST_ICON[type]||'•'}</span>
+                 <div class="toast-msg">${msg}</div>
+                 <button class="toast-x" aria-label="關閉">✕</button>`;
+
+  const close = () => {
+    t.classList.add('out');
+    setTimeout(() => t.remove(), 220);
+  };
+  t.querySelector('.toast-x').onclick = close;
+  zone.appendChild(t);
+
+  // 同時最多 3 則
+  while(zone.children.length > 3) zone.firstChild.remove();
+
+  const dur = ms !== undefined ? ms : (type === 'error' ? 7000 : 3500);
+  if(dur > 0) setTimeout(close, dur);
 }
 function setSync(state, detail){
   const dot=$('sync-dot'), txt=$('sync-text'), icon=$('sync-icon');
@@ -1263,45 +1439,37 @@ window.doGoogleLogin = async function(){
   const btn = $('gbtn');
   btn.disabled = true;
   btn.style.opacity = '.6';
+  $('login-alert').innerHTML = '';
 
   const provider = new GoogleAuthProvider();
-  // 平常不設 prompt，讓 Google 記住上次登入的帳號；
-  // 只有「主動登出後」才要求重新選擇，方便換帳號
+  // 平常讓 Google 記住上次的帳號；主動登出後才要求重選
   if(localStorage.getItem('forceAccountPicker')){
     provider.setCustomParameters({ prompt: 'select_account' });
     localStorage.removeItem('forceAccountPicker');
   }
 
   try{
-    // 彈窗優先：手機瀏覽器對「使用者點擊觸發」的彈窗是允許的，
-    // 且不受跨網域 session 限制，比轉址可靠。
+    // 只用彈窗登入。
+    // 本站在 GitHub Pages，與 Firebase 的 authDomain 不同網域，
+    // 轉址登入(signInWithRedirect)會因瀏覽器儲存分區而失敗，故不使用。
     await signInWithPopup(auth, provider);
-    // 成功後 onAuthStateChanged 會接手
   }catch(e){
+    btn.disabled = false;
+    btn.style.opacity = '1';
+
     const code = e?.code || '';
+    // 使用者自己關掉彈窗 → 不視為錯誤
+    if(code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
 
-    // 彈窗真的被擋 → 才改用轉址
-    if(code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment'){
-      try{
-        showAlert('info','正在跳轉到 Google 登入頁面…','login-alert');
-        sessionStorage.setItem('authPending','1');
-        localStorage.setItem('authPending','1');
-        await signInWithRedirect(auth, provider);
-        return;
-      }catch(e2){
-        sessionStorage.removeItem('authPending');
-        localStorage.removeItem('authPending');
-      }
-    }
-
-    // 使用者自己關掉彈窗 → 不當作錯誤
-    if(code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request'){
-      btn.disabled = false; btn.style.opacity = '1';
-      $('login-alert').innerHTML = '';
+    if(code === 'auth/popup-blocked'){
+      showAlert('error',
+        '瀏覽器擋住了登入視窗<br>' +
+        '<span style="font-size:11.5px;line-height:1.9;display:block;margin-top:6px;">' +
+        'iPhone：設定 → Safari → 關閉「阻擋彈出式視窗」<br>' +
+        'Android：點網址列旁的圖示 → 允許彈出式視窗<br>' +
+        '或改用 Chrome 開啟本頁</span>', 'login-alert');
       return;
     }
-
-    btn.disabled = false; btn.style.opacity = '1';
     handleAuthError(e);
   }
 };
@@ -1326,6 +1494,7 @@ function handleAuthError(e){
 window.doLogout = async function(){
   if(!confirm('確定要登出嗎？\n\n下次登入需重新選擇 Google 帳號。')) return;
   stopLiveSync();
+  stopMeWatch();
   // 標記：下次登入要顯示帳號選擇畫面（方便換帳號）
   localStorage.setItem('forceAccountPicker','1');
   await signOut(auth);
@@ -1353,31 +1522,13 @@ let authReady = false;
   }
   if(!persistOk) console.warn('登入狀態無法保存，每次都需重新登入');
 
-  // 若是從轉址回來，先把結果收下（一定要在 onAuthStateChanged 之前）
-  const pending = sessionStorage.getItem('authPending') || localStorage.getItem('authPending');
-  if(pending){
-    $('boot').querySelector('.boot-text').textContent = '正在完成登入…';
-    try{
-      const res = await getRedirectResult(auth);
-      if(!res || !res.user){
-        // 轉址回來卻沒拿到使用者 → 跨網域 session 被瀏覽器擋掉
-        redirectFailed = true;
-      }
-    }catch(e){
-      redirectFailed = true;
-      redirectErrMsg = e?.message || '';
-    }finally{
-      sessionStorage.removeItem('authPending');
-      localStorage.removeItem('authPending');
-    }
-  }
+  // 清掉舊版可能殘留的轉址標記
+  sessionStorage.removeItem('authPending');
+  localStorage.removeItem('authPending');
 
   authReady = true;
   startAuthWatch();
 })();
-
-let redirectFailed = false;
-let redirectErrMsg = '';
 
 function startAuthWatch(){
 let firstCheck = true;
@@ -1394,13 +1545,6 @@ onAuthStateChanged(auth, async (user) => {
     const tip = $('login-mobile-tip');
     if(tip && isMobile) tip.style.display = 'block';
     showScreen('login');
-    if(redirectFailed){
-      redirectFailed = false;
-      showAlert('error',
-        '登入沒有完成，請再試一次。<br>' +
-        '<span style="font-size:11.5px;">若重複失敗，請確認瀏覽器沒有封鎖「跨網站追蹤」，' +
-        '或改用 Chrome 開啟。</span>', 'login-alert');
-    }
     return;
   }
 
@@ -1434,6 +1578,8 @@ onAuthStateChanged(auth, async (user) => {
     ME = snap.data();
 
     if(ME.status !== 'active'){
+      stopLiveSync();
+      stopMeWatch();
       renderPendingScreen();
       showScreen('pending');
       return;
@@ -1476,11 +1622,15 @@ async function bootApp(user){
   renderTabs();
   initWrPage();
   renderDocLinks();
+  initBigText();
+  initSteppers();
+  initToTop();
   showScreen('app');
   await reloadAll();
   initFilters();
   liveFirstLoad = false;
   startLiveSync();
+  startMeWatch();
   updateLiveBadge();
   updateMyStats();
 }
@@ -1518,9 +1668,34 @@ function switchTab(k){
 
 // ══════════════ 載入資料 ══════════════
 window.reloadAll = async function(){
+  // 編輯視窗開啟時不重新載入，避免覆蓋使用者正在填的內容
+  if($('cust-modal')?.style.display === 'flex'){
+    showAlert('info','請先儲存或關閉客戶編輯視窗，再重新整理');
+    return;
+  }
   setSync('syncing');
   const t0 = Date.now();
   try{
+    // 先確認自己的權限仍有效（可能已被管理員停用）
+    const meSnap = await getDoc(doc(db,'users',MY_UID));
+    if(!meSnap.exists()){ handleAccessRevoked('您的帳號已被移除'); return; }
+    const meNow = meSnap.data();
+    if(meNow.status !== 'active'){
+      ME = meNow;
+      handleAccessRevoked(meNow.status === 'disabled' ? '您的帳號已被停用' : '您的帳號權限已變更');
+      return;
+    }
+    // 權限有變動就更新
+    const roleChanged = meNow.role !== ME.role || meNow.team !== ME.team
+                     || String(meNow.dealerId||'') !== String(ME.dealerId||'');
+    ME = meNow;
+    if(roleChanged){
+      $('hd-name').textContent = ME.dealerName || ME.displayName || '';
+      $('hd-team').textContent = ME.team || '';
+      $('hd-role').textContent = roleLabel(ME.role);
+      renderTabs();
+    }
+
     await Promise.all([loadCustomers(), loadDealersTeams(), loadReports(), loadDealerStats(), isAdmin()?loadUsers():Promise.resolve()]);
     renderCustomers();
     renderWrStats();
@@ -1530,11 +1705,16 @@ window.reloadAll = async function(){
     setSync('ok', ((Date.now()-t0)/1000).toFixed(1)+'秒');
   }catch(e){
     setSync('error');
+    if(e?.code === 'permission-denied'){
+      handleAccessRevoked('權限不足，可能帳號已被停用');
+      return;
+    }
     showAlert('error','載入失敗：'+esc(e.message||e));
   }
 };
 
 async function loadCustomers(){
+  try{
   let q;
   if(isAdmin()){
     q = query(collection(db,'customers'));
@@ -1545,20 +1725,34 @@ async function loadCustomers(){
   }
   const snap = await getDocs(q);
   customers = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  }catch(e){
+    if(e?.code === 'permission-denied') throw e;   // 權限問題往上拋
+    customers = [];
+  }
 }
 
 async function loadDealersTeams(){
+  try{
   const [ds, ts] = await Promise.all([
     getDocs(collection(db,'dealers')),
     getDocs(collection(db,'teams'))
   ]);
   dealers = ds.docs.map(d => ({ id:d.id, ...d.data() }));
   teams   = ts.docs.map(d => ({ id:d.id, ...d.data() }));
+  }catch(e){
+    if(e?.code === 'permission-denied') throw e;   // 權限問題往上拋
+    dealers = []; teams = [];
+  }
 }
 
 async function loadUsers(){
+  try{
   const snap = await getDocs(collection(db,'users'));
   allUsers = snap.docs.map(d => ({ uid:d.id, ...d.data() }));
+  }catch(e){
+    if(e?.code === 'permission-denied') throw e;   // 權限問題往上拋
+    allUsers = [];
+  }
 }
 
 
@@ -1672,6 +1866,8 @@ window.openCustomerForm = function(id){
 
   // 健康關注
   selConcerns = new Set(c?.healthConcerns || []);
+  const cs = $('cm-concern-search');
+  if(cs) cs.value = '';
   buildConcernsGrid();
 
   // 提問
@@ -1776,11 +1972,14 @@ function buildConcernsGrid(){
     el.onclick = () => toggleConcern(el.dataset.v, el);
   });
   $('cm-other-wrap').style.display = selConcerns.has('其他') ? 'block' : 'none';
+  initConcernSearch();
+  renderSelectedConcerns();
 }
 function toggleConcern(v, el){
   if(selConcerns.has(v)){ selConcerns.delete(v); el.classList.remove('selected'); el.querySelector('.concern-ck').textContent=''; }
   else { selConcerns.add(v); el.classList.add('selected'); el.querySelector('.concern-ck').textContent='✓'; }
   $('cm-other-wrap').style.display = selConcerns.has('其他') ? 'block' : 'none';
+  renderSelectedConcerns();
 }
 
 window.addQuestion = function(val){
@@ -1907,12 +2106,19 @@ window.quickToggleTask = async function(id, n, ev){
   const nv  = !c[key];
   c[key] = nv;
   renderCustomers();
+  // 標記儲存中
+  const el = $('customer-list').querySelector(`[data-qt="${id}"][data-n="${n}"]`);
+  if(el) el.classList.add('saving');
   try{
     await updateDoc(doc(db,'customers',id), { [key]: nv, updatedAt: serverTimestamp() });
     updateMyStats();
+    showToast('success', `${esc(c.cname||'客戶')} · ${['','7日產品','週二課程','小組活動'][n]} 已${nv?'完成':'取消'}`, 1800);
   }catch(e){
     c[key] = !nv; renderCustomers();
     showAlert('error','更新失敗：'+esc(e.message||e));
+  }finally{
+    const e2 = $('customer-list').querySelector(`[data-qt="${id}"][data-n="${n}"]`);
+    if(e2) e2.classList.remove('saving');
   }
 };
 
@@ -1926,6 +2132,7 @@ window.quickSetInv = async function(id, val, ev){
   try{
     await updateDoc(doc(db,'customers',id), { invitationStatus: val, updatedAt: serverTimestamp() });
     updateMyStats();
+    showToast('success', `${esc(c.cname||'客戶')} · 邀約狀態已更新為「${esc(val||'未設定')}」`, 1800);
   }catch(e){
     c.invitationStatus = old; renderCustomers();
     showAlert('error','更新失敗：'+esc(e.message||e));
@@ -3162,6 +3369,208 @@ window.closeDoc = function(){
   $('dv-body').innerHTML = '';
 };
 
+
+// ══════════════════════════════════════════════════════════════════
+//  監聽自己的權限變動（被停用 / 改團隊 / 改角色時立即反應）
+// ══════════════════════════════════════════════════════════════════
+let unsubMe = null;
+
+function startMeWatch(){
+  stopMeWatch();
+  if(!MY_UID) return;
+
+  unsubMe = onSnapshot(doc(db,'users',MY_UID), snap => {
+    if(!snap.exists()){
+      // 帳號被最高管理員刪除
+      handleAccessRevoked('您的帳號已被移除');
+      return;
+    }
+    const next = snap.data();
+    const prev = ME || {};
+
+    // ① 被停用 → 立刻退出
+    if(next.status !== 'active'){
+      ME = next;
+      handleAccessRevoked(next.status === 'disabled' ? '您的帳號已被停用' : '您的帳號權限已變更');
+      return;
+    }
+
+    // ② 角色 / 團隊 / 綁定經銷商變更 → 提示重新載入
+    const changed =
+      next.role     !== prev.role   ||
+      next.team     !== prev.team   ||
+      String(next.dealerId||'') !== String(prev.dealerId||'');
+
+    ME = next;
+
+    if(changed){
+      // 更新頂欄顯示
+      $('hd-name').textContent = ME.dealerName || ME.displayName || '';
+      $('hd-team').textContent = ME.team || '';
+      $('hd-role').textContent = roleLabel(ME.role);
+      showAlert('info',
+        '您的帳號設定已由管理員更新（角色或團隊變更）<br>' +
+        '<button class="btn sm" style="margin-top:8px;" onclick="location.reload()">重新載入以套用</button>');
+      renderTabs();
+      startLiveSync();   // 權限變了，重新建立客戶監聽
+    }else{
+      // 只是名稱等小異動
+      $('hd-name').textContent = ME.dealerName || ME.displayName || '';
+    }
+  }, err => {
+    // 讀不到自己的權限文件 = 權限已被撤銷
+    handleAccessRevoked('無法讀取權限資料，請重新登入');
+  });
+}
+
+function stopMeWatch(){
+  if(unsubMe){ unsubMe(); unsubMe = null; }
+}
+
+// 權限被撤銷：停止所有監聽並切回等待畫面
+function handleAccessRevoked(msg){
+  stopLiveSync();
+  stopMeWatch();
+  const u = auth.currentUser;
+  if(u){
+    $('pend-avatar').innerHTML = avatarHtml(u.photoURL, u.displayName);
+    $('pend-name').textContent = u.displayName || '';
+    $('pend-mail').textContent = u.email || '';
+  }
+  $('pend-status').innerHTML = `<div class="pend-box off">
+    <strong>⚠️ ${esc(msg)}</strong>
+    目前無法使用系統，如有疑問請聯繫管理員。
+  </div>`;
+  // 關掉可能開著的視窗
+  const cm = $('cust-modal'); if(cm) cm.style.display = 'none';
+  const eu = $('edit-user-modal'); if(eu) eu.style.display = 'none';
+  showScreen('pending');
+}
+
+
+// ══ 大字模式 ══
+function initBigText(){
+  const on = localStorage.getItem('bigText') === '1';
+  document.body.classList.toggle('big-text', on);
+  const b = $('text-toggle');
+  if(b){
+    b.classList.toggle('on', on);
+    b.innerHTML = on ? '🔍 大字 ✓' : '🔍 大字';
+  }
+}
+window.toggleBigText = function(){
+  const on = !(localStorage.getItem('bigText') === '1');
+  localStorage.setItem('bigText', on ? '1' : '0');
+  initBigText();
+  showToast('info', on ? '已開啟大字模式' : '已關閉大字模式', 2000);
+};
+
+
+// ══ ⑥ 健康關注搜尋與已選清單 ══
+function initConcernSearch(){
+  const inp = $('cm-concern-search');
+  if(!inp || inp.dataset.bound) return;
+  inp.dataset.bound = '1';
+  inp.oninput = () => {
+    const kw = inp.value.trim().toLowerCase();
+    const box = $('cm-concerns');
+    box.querySelectorAll('.concern-item').forEach(el => {
+      const hit = !kw || (el.dataset.v || '').toLowerCase().includes(kw);
+      el.classList.toggle('concern-hidden', !hit);
+    });
+    // 整組都沒符合就把標題也藏起來
+    box.querySelectorAll('.concern-group-title').forEach(t => {
+      const grid = t.nextElementSibling;
+      const any = grid && [...grid.querySelectorAll('.concern-item')]
+        .some(el => !el.classList.contains('concern-hidden'));
+      t.classList.toggle('concern-hidden', !any);
+      if(grid) grid.classList.toggle('concern-hidden', !any);
+    });
+  };
+}
+
+function renderSelectedConcerns(){
+  const box = $('cm-concern-selected');
+  if(!box) return;
+  if(!selConcerns.size){ box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="concern-selected-bar">
+    <div class="csb-label">已選 ${selConcerns.size} 項</div>
+    ${[...selConcerns].map(v =>
+      `<span class="csb-chip">${esc(v)}<button class="csb-x" data-unsel="${esc(v)}">✕</button></span>`
+    ).join('')}
+  </div>`;
+  box.querySelectorAll('[data-unsel]').forEach(b => {
+    b.onclick = () => {
+      const v = b.dataset.unsel;
+      selConcerns.delete(v);
+      const el = $('cm-concerns').querySelector(`[data-v="${CSS.escape(v)}"]`);
+      if(el){ el.classList.remove('selected'); el.querySelector('.concern-ck').textContent=''; }
+      $('cm-other-wrap').style.display = selConcerns.has('其他') ? 'block' : 'none';
+      renderSelectedConcerns();
+    };
+  });
+}
+
+// ══ ⑨ 數字加減 ══
+function initSteppers(){
+  document.querySelectorAll('.mstep').forEach(b => {
+    if(b.dataset.bound) return;
+    b.dataset.bound = '1';
+    b.onclick = () => {
+      const inp = $(b.dataset.target);
+      if(!inp) return;
+      const cur = parseInt(inp.value) || 0;
+      inp.value = Math.max(0, cur + parseInt(b.dataset.step));
+    };
+  });
+}
+
+// ══ 回到頂端 ══
+window.scrollTop = function(){
+  const m = $('app-main');
+  if(m) m.scrollTo({ top:0, behavior:'smooth' });
+};
+function initToTop(){
+  const m = $('app-main'), btn = $('to-top');
+  if(!m || !btn || m.dataset.topBound) return;
+  m.dataset.topBound = '1';
+  m.addEventListener('scroll', () => {
+    btn.classList.toggle('show', m.scrollTop > 400);
+  }, { passive:true });
+}
+
+// ══ ⑧ 空狀態引導 ══
+function emptyGuideHtml(){
+  if(isAdmin()){
+    return `<div class="empty-guide">
+      <div class="eg-icon">📋</div>
+      <div class="eg-title">目前沒有客戶資料</div>
+      <div class="eg-desc">可以先為健管師開通帳號，<br>或直接新增客戶並指定歸屬</div>
+    </div>`;
+  }
+  if(!ME.dealerId){
+    return `<div class="empty-guide">
+      <div class="eg-icon">🔗</div>
+      <div class="eg-title">帳號尚未綁定編號</div>
+      <div class="eg-desc">您的帳號還沒綁定經銷商編號，<br>無法建立客戶資料</div>
+      <div class="eg-steps">
+        <div class="eg-step"><span class="eg-num">!</span><div>請聯繫管理員為您完成綁定</div></div>
+      </div>
+    </div>`;
+  }
+  return `<div class="empty-guide">
+    <div class="eg-icon">🌱</div>
+    <div class="eg-title">開始追蹤你的第一位客戶</div>
+    <div class="eg-desc">建立客戶資料後，系統會自動幫你分類與提醒</div>
+    <div class="eg-steps">
+      <div class="eg-step"><span class="eg-num">1</span><div>點右上角「＋ 新增客戶」建立資料</div></div>
+      <div class="eg-step"><span class="eg-num">2</span><div>記錄恩典卡購買日與 GHOS 轉化點</div></div>
+      <div class="eg-step"><span class="eg-num">3</span><div>系統會依進度自動分成四組，並提醒該跟進的人</div></div>
+    </div>
+    <button class="btn primary" onclick="openCustomerForm(null)">＋ 新增第一位客戶</button>
+  </div>`;
+}
+
 // ══════════════ 客戶列表 ══════════════
 function renderCustomers(){
   const shown = applyFilters(customers);
@@ -3189,9 +3598,7 @@ function renderCustomers(){
 
   const list = $('customer-list');
   if(!customers.length){
-    list.innerHTML = `<div class="empty">尚無客戶紀錄${
-      (!ME.dealerId && !isAdmin()) ? '<br><span style="font-size:12px;">您的帳號尚未綁定經銷商編號</span>' : ''
-    }</div>`;
+    list.innerHTML = emptyGuideHtml();
     return;
   }
   if(!shown.length){
@@ -3261,8 +3668,18 @@ function customerCard(c){
   const meta = [];
   if(isAdmin() && c.dname) meta.push(esc(c.dname));
   if(c.saleDate) meta.push('恩典卡 '+fmtDate(c.saleDate));
-  if(c.contactPhone) meta.push('📞 '+esc(c.contactPhone));
-  if(c.contactLine)  meta.push('💬 '+esc(c.contactLine));
+
+  // 聯絡方式做成可點擊：電話直撥、LINE ID 複製
+  const contacts = [];
+  if(c.contactPhone){
+    const tel = String(c.contactPhone).replace(/[^\d+]/g,'');
+    contacts.push(`<a class="contact-chip" href="tel:${esc(tel)}" data-stop="1"
+                     title="點擊撥號">📞 ${esc(c.contactPhone)}</a>`);
+  }
+  if(c.contactLine){
+    contacts.push(`<span class="contact-chip" data-copy="${esc(c.contactLine)}" data-stop="1"
+                     title="點擊複製 LINE ID">💬 ${esc(c.contactLine)}</span>`);
+  }
 
   const on = selectedIds.has(c.id);
   const cb = selectMode
@@ -3278,6 +3695,7 @@ function customerCard(c){
               ${c.source==='inquiry'?'<span class="tag-inquiry">客戶自填</span>':''}
             </div>
             ${meta.length?`<div class="cc-meta">${meta.join(' · ')}</div>`:''}
+            ${contacts.length?`<div class="cc-meta" style="margin-top:5px;gap:6px;">${contacts.join('')}</div>`:''}
           </div>
           ${invHtml}
         </div>
@@ -3292,7 +3710,7 @@ function bindCardEvents(){
   const list = $('customer-list');
   list.querySelectorAll('[data-open]').forEach(card => {
     card.onclick = e => {
-      if(e.target.closest('[data-qt]') || e.target.closest('[data-qi]')) return;
+      if(e.target.closest('[data-qt]') || e.target.closest('[data-qi]') || e.target.closest('[data-stop]')) return;
       if(selectMode){
         const id = card.dataset.open;
         if(selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id);
@@ -3311,6 +3729,31 @@ function bindCardEvents(){
   });
   list.querySelectorAll('[data-group]').forEach(el => {
     el.onclick = () => toggleGroup(el.dataset.group);
+  });
+  // 複製 LINE ID
+  list.querySelectorAll('[data-copy]').forEach(el => {
+    el.onclick = e => {
+      e.stopPropagation();
+      const v = el.dataset.copy;
+      const done = () => {
+        el.classList.add('copied');
+        const orig = el.innerHTML;
+        el.innerHTML = '✓ 已複製';
+        setTimeout(() => { el.innerHTML = orig; el.classList.remove('copied'); }, 1600);
+      };
+      if(navigator.clipboard?.writeText) navigator.clipboard.writeText(v).then(done).catch(()=>{});
+      else{
+        const ta = document.createElement('textarea');
+        ta.value = v; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); done(); }catch(err){}
+        document.body.removeChild(ta);
+      }
+    };
+  });
+  // 電話點擊不觸發卡片
+  list.querySelectorAll('a[href^="tel:"]').forEach(el => {
+    el.onclick = e => e.stopPropagation();
   });
 }
 
